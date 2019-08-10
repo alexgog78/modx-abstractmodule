@@ -2,6 +2,8 @@
 
 abstract class abstractModule
 {
+    private $basePackage = 'abstractmodule';
+
     /** @var string|null */
     public $package = null;
 
@@ -31,12 +33,19 @@ abstract class abstractModule
 
         $basePath = $this->modx->getOption($this->package . '.core_path', $config, $this->modx->getOption('core_path') . 'components/' . $this->package . '/');
         $assetsUrl = $this->modx->getOption($this->package . '.assets_url', $config, $this->modx->getOption('assets_url') . 'components/' . $this->package . '/');
+        $baseAssetsUrl = $this->modx->getOption($this->basePackage . '.assets_url', $config, $this->modx->getOption('assets_url') . 'components/' . $this->basePackage . '/');
+
         $this->config = array_merge([
             'basePath' => $basePath,
             'corePath' => $basePath,
             'modelPath' => $basePath . 'model/',
             'handlersPath' => $basePath . 'handlers/',
             'processorsPath' => $basePath . 'processors/',
+
+            'baseAssetsUrl' => $baseAssetsUrl,
+            'baseJsUrl' => $baseAssetsUrl . 'js/',
+            'baseCssUrl' => $baseAssetsUrl . 'css/',
+
             'assetsUrl' => $assetsUrl,
             'jsUrl' => $assetsUrl . 'js/',
             'cssUrl' => $assetsUrl . 'css/',
@@ -59,11 +68,11 @@ abstract class abstractModule
      */
     public function initialize($ctx = 'web', $scriptProperties = [])
     {
+        if (isset($this->initialized[$ctx])) {
+            return $this->initialized[$ctx];
+        }
         $this->config = array_merge($this->config, $scriptProperties);
         $this->config['ctx'] = $ctx;
-        if ($this->initialized[$ctx]) {
-            return true;
-        }
 
         $this->addHandlers($ctx);
         switch ($ctx) {
@@ -119,6 +128,25 @@ abstract class abstractModule
     }
 
     /**
+     * @param mixed $data
+     * @param string $level
+     */
+    public function log($data, $level = 'LOG_LEVEL_ERROR')
+    {
+        if ($data instanceof xPDOObject) {
+            $data = $data->toArray('', false, true, true);
+        }
+        if (is_array($data)) {
+            $data = print_r($data, true);
+        }
+
+        $trace = debug_backtrace();
+        $file = $trace[1]['file'];
+        $line = $trace[1]['line'];
+        $this->modx->log(constant('modX::'. $level), $data, '', get_class($this), $file, $line);
+    }
+
+    /**
      * @return bool
      */
     protected function initializeBackend()
@@ -140,6 +168,9 @@ abstract class abstractModule
      */
     private function addHandlers($ctx = 'default')
     {
+        //TODO check
+        require_once MODX_CORE_PATH . 'components/abstractmodule/handlers/handler.class.php';
+
         $handlers = $this->handlers[$ctx] ?? $this->handlers['default'];
         foreach ($handlers as $className) {
             require_once $this->config['handlersPath'] . mb_strtolower($className) . '.class.php';
