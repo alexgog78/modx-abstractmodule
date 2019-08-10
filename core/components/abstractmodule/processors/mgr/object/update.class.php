@@ -87,7 +87,7 @@ abstract class amObjectUpdateProcessor extends modObjectUpdateProcessor
             }
 
             if ($this->modx->getCount($this->classKey, $checkQuery)) {
-                $this->addFieldError($tmp, $this->modx->lexicon('ms2bundle_err_ae'));
+                $this->addFieldError($tmp, $this->modx->lexicon('abstractmodule_err_ae'));
                 return false;
             }
         }

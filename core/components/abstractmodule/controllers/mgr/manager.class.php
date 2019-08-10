@@ -39,25 +39,7 @@ abstract class abstractModuleManagerController extends modExtraManagerController
      */
     public function loadCustomCssJs()
     {
-        //
-        $this->addJavascript($this->module->config['baseJsUrl'] . 'mgr/abstractmodule.js');
-        $this->addJavascript($this->module->config['baseJsUrl'] . 'mgr/record.panel.js');
-
-        //Base JS and CSS
-        $this->addCss($this->module->config['cssUrl'] . 'mgr/default.css');
-        $this->addJavascript($this->module->config['jsUrl'] . 'mgr/ms2bundle.js');
-        $this->addJavascript($this->module->config['jsUrl'] . 'mgr/misc/renderer.list.js');
-        $this->addJavascript($this->module->config['jsUrl'] . 'mgr/misc/combo.list.js');
-        $this->addJavascript($this->module->config['jsUrl'] . 'mgr/misc/function.list.js');
-
-        $configJs = $this->modx->toJSON($this->module->config ?? []);
-        $this->addHtml('
-            <script type="text/javascript">
-                Ext.onReady(function () {
-                    ' . get_class($this->module) . '.config = ' . $configJs . ';
-                });
-            </script>'
-        );
+        $this->module->initializeBackend();
     }
 
     abstract protected function getService();
@@ -72,13 +54,13 @@ abstract class abstractModuleManagerController extends modExtraManagerController
 
         //Check request for primary key
         if (empty($primaryKey) || strlen($primaryKey) !== strlen((integer) $primaryKey)) {
-            $this->failure($this->modx->lexicon($this->module->package . '_err_ns'));
+            $this->failure($this->modx->lexicon('abstractmodule_err_ns'));
         }
 
         //Check for record
         $this->record = $this->modx->getObject($this->recordClassKey, ['id' => $primaryKey]);
         if (!$this->record) {
-            $this->failure($this->modx->lexicon($this->module->package . '_err_nf'));
+            $this->failure($this->modx->lexicon('abstractmodule_err_nf'));
         }
     }
 }

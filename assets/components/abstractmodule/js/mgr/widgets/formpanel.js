@@ -1,4 +1,4 @@
-abstractModule.formPanel = function (config) {
+abstractModule.formPanel.abstract = function (config) {
     config = config || {};
     if (!config.id) {
         config.id = 'abstract-formpanel';
@@ -38,9 +38,9 @@ abstractModule.formPanel = function (config) {
             'failureSubmit': {fn: this.failureSubmit, scope: this}
         }
     });
-    abstractModule.formPanel.superclass.constructor.call(this, config);
+    abstractModule.formPanel.abstract.superclass.constructor.call(this, config);
 };
-Ext.extend(abstractModule.formPanel, MODx.FormPanel, {
+Ext.extend(abstractModule.formPanel.abstract, MODx.FormPanel, {
     formInputs: {},
 
     getPanelTabs: function (config) {
@@ -60,20 +60,6 @@ Ext.extend(abstractModule.formPanel, MODx.FormPanel, {
             }]
         };
     },
-
-    /*getFormColumn: function (width, content) {
-        return {
-            columnWidth: width,
-            layout: 'form',
-            defaults: {
-                msgTarget: 'under',
-                anchor: '100%'
-            },
-            items: [
-                content
-            ]
-        };
-    },*/
 
     getFormInput: function (name, config) {
         var formInput = Ext.apply(this.formInputs[name], {
@@ -106,4 +92,4 @@ Ext.extend(abstractModule.formPanel, MODx.FormPanel, {
 
     }
 });
-Ext.reg('abstractmodule-forpanel-group', abstractModule.formPanel);
+Ext.reg('abstractmodule-forpanel', abstractModule.formPanel.abstract);

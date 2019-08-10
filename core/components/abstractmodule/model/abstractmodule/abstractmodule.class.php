@@ -2,8 +2,6 @@
 
 abstract class abstractModule
 {
-    private $basePackage = 'abstractmodule';
-
     /** @var string|null */
     public $package = null;
 
@@ -31,21 +29,30 @@ abstract class abstractModule
     {
         $this->modx = &$modx;
 
+        //TODO check
+        $abstractBasePath = $this->modx->getOption('abstractmodule.core_path', $config, $this->modx->getOption('core_path') . 'components/abstractmodule/');
+        $abstractAssetsUrl = $this->modx->getOption('abstractmodule.assets_url', $config, $this->modx->getOption('assets_url') . 'components/abstractmodule/');
+
         $basePath = $this->modx->getOption($this->package . '.core_path', $config, $this->modx->getOption('core_path') . 'components/' . $this->package . '/');
         $assetsUrl = $this->modx->getOption($this->package . '.assets_url', $config, $this->modx->getOption('assets_url') . 'components/' . $this->package . '/');
-        $baseAssetsUrl = $this->modx->getOption($this->basePackage . '.assets_url', $config, $this->modx->getOption('assets_url') . 'components/' . $this->basePackage . '/');
 
         $this->config = array_merge([
+            'abstractBasePath' => $abstractBasePath,
+            'abstractCorePath' => $abstractBasePath,
+            'abstractModelPath' => $abstractBasePath . 'model/',
+            'abstractHandlersPath' => $abstractBasePath . 'handlers/',
+            'abstractProcessorsPath' => $abstractBasePath . 'processors/',
+            'abstractAssetsUrl' => $abstractAssetsUrl,
+            'abstractJsUrl' => $abstractAssetsUrl . 'js/',
+            'abstractСssUrl' => $assetsUrl . 'css/',
+            //'connectorUrl' => $assetsUrl . 'connector.php',
+            //'actionUrl' => $assetsUrl . 'action.php'
+        ], [
             'basePath' => $basePath,
             'corePath' => $basePath,
             'modelPath' => $basePath . 'model/',
             'handlersPath' => $basePath . 'handlers/',
             'processorsPath' => $basePath . 'processors/',
-
-            'baseAssetsUrl' => $baseAssetsUrl,
-            'baseJsUrl' => $baseAssetsUrl . 'js/',
-            'baseCssUrl' => $baseAssetsUrl . 'css/',
-
             'assetsUrl' => $assetsUrl,
             'jsUrl' => $assetsUrl . 'js/',
             'cssUrl' => $assetsUrl . 'css/',
@@ -149,16 +156,34 @@ abstract class abstractModule
     /**
      * @return bool
      */
-    protected function initializeBackend()
+    public function initializeBackend()
     {
+        $this->modx->controller->addCss($this->config['abstractСssUrl'] . 'mgr/default.css');
+        $this->modx->controller->addJavascript($this->config['abstractJsUrl'] . 'mgr/abstractmodule.js');
+        $this->modx->controller->addJavascript($this->config['abstractJsUrl'] . 'mgr/misc/renderer.list.js');
+        $this->modx->controller->addJavascript($this->config['abstractJsUrl'] . 'mgr/misc/combo.list.js');
+        $this->modx->controller->addJavascript($this->config['abstractJsUrl'] . 'mgr/misc/function.list.js');
+        $this->modx->controller->addJavascript($this->config['abstractJsUrl'] . 'mgr/widgets/panel.js');
+        $this->modx->controller->addJavascript($this->config['abstractJsUrl'] . 'mgr/widgets/formpanel.js');
+        $this->modx->controller->addJavascript($this->config['abstractJsUrl'] . 'mgr/widgets/grid.js');
+        $this->modx->controller->addJavascript($this->config['abstractJsUrl'] . 'mgr/widgets/window.js');
         return true;
     }
 
     /**
      * @return bool
      */
-    protected function initializeFrontend()
+    public function initializeFrontend()
     {
+        $configJs = $this->modx->toJSON(array(
+            'cssUrl' => $this->config['cssUrl'] . 'web/',
+            'jsUrl' => $this->config['jsUrl'] . 'web/',
+            'actionUrl' => $this->config['actionUrl']
+        ));
+        $this->modx->regClientStartupScript(
+            '<script type="text/javascript">' . get_class($this) . ' = {config: ' . $configJs . '};</script>',
+            true
+        );
         return true;
     }
 
@@ -168,13 +193,13 @@ abstract class abstractModule
      */
     private function addHandlers($ctx = 'default')
     {
-        //TODO check
-        require_once MODX_CORE_PATH . 'components/abstractmodule/handlers/handler.class.php';
+        require_once $this->config['abstractHandlersPath'] . 'handler.class.php';
 
         $handlers = $this->handlers[$ctx] ?? $this->handlers['default'];
         foreach ($handlers as $className) {
-            require_once $this->config['handlersPath'] . mb_strtolower($className) . '.class.php';
             $classNamespace = get_class($this) . '\Handlers\\' . $className;
+
+            require_once $this->config['handlersPath'] . mb_strtolower($className) . '.class.php';
             $this->$className = new $classNamespace($this, $this->config);
             if (!($this->$className instanceof $classNamespace)) {
                 $this->modx->log(modX::LOG_LEVEL_ERROR, 'Could not initialize ' . $classNamespace . ' class');
