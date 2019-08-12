@@ -1,13 +1,13 @@
 <?php
 //Controls
-$_lang['abstractmodule.controls.search'] = 'Поиск...';
-$_lang['abstractmodule.controls.save'] = 'Сохранить';
-$_lang['abstractmodule.controls.create'] = 'Добавить';
-$_lang['abstractmodule.controls.update'] = 'Редактировать';
-$_lang['abstractmodule.controls.remove'] = 'Удалить';
-$_lang['abstractmodule.controls.view'] = 'Просмотр';
-$_lang['abstractmodule.controls.cancel'] = 'Отменить';
-$_lang['abstractmodule.controls.return'] = 'Назад';
-$_lang['abstractmodule.controls.remove_confirm'] = 'Вы действительно хотите удалить запись?';
-$_lang['abstractmodule.controls.upload'] = 'Загрузить';
-$_lang['abstractmodule.controls.source'] = 'Источник файлов';
+$_abstract_lang['controls.search'] = 'Поиск...';
+$_abstract_lang['controls.save'] = 'Сохранить';
+$_abstract_lang['controls.create'] = 'Добавить';
+$_abstract_lang['controls.update'] = 'Редактировать';
+$_abstract_lang['controls.remove'] = 'Удалить';
+$_abstract_lang['controls.view'] = 'Просмотр';
+$_abstract_lang['controls.cancel'] = 'Отменить';
+$_abstract_lang['controls.return'] = 'Назад';
+$_abstract_lang['controls.remove_confirm'] = 'Вы действительно хотите удалить запись?';
+$_abstract_lang['controls.upload'] = 'Загрузить';
+$_abstract_lang['controls.source'] = 'Источник файлов';

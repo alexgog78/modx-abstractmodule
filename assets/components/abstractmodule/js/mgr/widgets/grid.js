@@ -1,5 +1,7 @@
 abstractModule.grid.abstract = function (config) {
     config = config || {};
+    //console.log(config.id);
+    //console.log(config.namespace);
     if (!config.id) {
         config.id = 'abstract-grid';
     }
@@ -8,37 +10,11 @@ abstractModule.grid.abstract = function (config) {
         remoteSort: true,
         anchor: '97%',
         autosave: true,
-        fields: [],
-        columns: [],
-        //Settings
-        /*id: 'ms2bundle-grid-groups',
-        url: ms2Bundle.config.connectorUrl,
-        baseParams: {
-            action: 'mgr/group/getlist'
-        },
-        paging: true,
-        remoteSort: true,
-        anchor: '97%',
-        save_action: 'mgr/group/updatefromgrid',
-        autosave: true,
-
-        //Grid
-        fields: [
-            'id',
-            'name',
-            'description',
-            'template_id',
-            'active'
-        ],
-        columns: [
-            {header: _('id'), dataIndex: 'id', sortable: true, width: 0.05},
-            {header: _('ms2bundle.field.name'), dataIndex: 'name', sortable: true, width: 0.2, editor: {xtype: 'textfield'}},
-            {header: _('ms2bundle.field.template'), dataIndex: 'template_id', sortable: true, width: 0.2},
-            {header: _('ms2bundle.field.active'), dataIndex: 'active', sortable: true, width: 0.1, editor: {xtype: 'combo-boolean', renderer: 'boolean'}}
-        ],
+        fields: this.getGridFields(),
+        columns: this.getGridColumns(config),
 
         //Toolbar
-        tbar: [
+        /*tbar: [
             //Search panel
             {
                 xtype: 'textfield',
@@ -85,6 +61,32 @@ abstractModule.grid.abstract = function (config) {
     abstractModule.grid.abstract.superclass.constructor.call(this, config)
 };
 Ext.extend(abstractModule.grid.abstract, MODx.grid.Grid, {
+    gridFields: [],
+
+    gridColumns: [],
+
+    getGridFields: function () {
+        return this.gridFields;
+    },
+
+    getGridColumns: function (config) {
+        if (this.gridColumns.length) {
+            return this.gridColumns;
+        }
+        var columns = [];
+        Ext.each(this.gridFields, function(field) {
+            columns.push({header: _(config.namespace + '.field.' + field), dataIndex: field, sortable: true});
+        });
+        return columns;
+    },
+
+    search: function (tf, nv, ov) {
+        var s = this.getStore();
+        s.baseParams.query = tf.getValue();
+        this.getBottomToolbar().changePage(1);
+        this.refresh();
+    }
+
     //Context menu function
     /*getMenu: function () {
         return [{
@@ -109,4 +111,4 @@ Ext.extend(abstractModule.grid.abstract, MODx.grid.Grid, {
         MODx.loadPage('mgr/group/update', 'namespace=ms2bundle&id=' + this.menu.record.id);
     }*/
 });
-Ext.reg('abstractmodule-grid', abstractModule.grid.abstract);
+Ext.reg('abstractmodule-grid-abstract', abstractModule.grid.abstract);

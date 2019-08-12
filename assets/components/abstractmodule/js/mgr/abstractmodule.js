@@ -18,6 +18,7 @@ Ext.reg('abstractmodule', abstractModule);*/
 //abstractModule = new abstractModule();
 
 abstractModule = {
+    namespace: '',
     page: {},
     window: {},
     grid: {},

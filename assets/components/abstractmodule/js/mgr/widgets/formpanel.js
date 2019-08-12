@@ -92,4 +92,4 @@ Ext.extend(abstractModule.formPanel.abstract, MODx.FormPanel, {
 
     }
 });
-Ext.reg('abstractmodule-forpanel', abstractModule.formPanel.abstract);
+Ext.reg('abstractmodule-forpanel-abstract', abstractModule.formPanel.abstract);
