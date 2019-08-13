@@ -1,6 +1,10 @@
 abstractModule.window.abstract = function (config) {
     config = config || {};
+    if (!config.id) {
+        config.id = 'abstract-window';
+    }
     Ext.applyIf(config, {
+        url: null,
         width: config.width || 600,
         fields: this.getFormFields(),
         listeners: {

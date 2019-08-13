@@ -1,5 +1,8 @@
 abstractModule.panel.abstract = function (config) {
     config = config || {};
+    if (!config.id) {
+        config.id = 'abstract-panel';
+    }
     Ext.apply(config, {
         cls: 'container',
         items: [

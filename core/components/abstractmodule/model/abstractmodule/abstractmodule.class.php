@@ -6,7 +6,10 @@ abstract class abstractModule
     public $package = null;
 
     /** @var array */
-    public $handlers = [];
+    public $handlers = [
+        'mgr' => [],
+        'default' => []
+    ];
 
     /** @var modX */
     public $modx;

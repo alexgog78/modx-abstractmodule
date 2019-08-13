@@ -4,9 +4,13 @@ abstractModule.grid.abstract = function (config) {
         config.id = 'abstract-grid';
     }
     Ext.applyIf(config, {
+        url: null,
+        baseParams: {
+            action: null
+        },
+        save_action: null,
         paging: true,
         remoteSort: true,
-        //anchor: '100%',
         autosave: true,
         fields: this.getGridFields(),
         columns: this.getGridColumns(config),
