@@ -1,52 +1,20 @@
 abstractModule.grid.abstract = function (config) {
     config = config || {};
-    //console.log(config.id);
-    //console.log(config.namespace);
     if (!config.id) {
         config.id = 'abstract-grid';
     }
     Ext.applyIf(config, {
         paging: true,
         remoteSort: true,
-        anchor: '97%',
+        //anchor: '100%',
         autosave: true,
         fields: this.getGridFields(),
         columns: this.getGridColumns(config),
-
-        //Toolbar
-        /*tbar: [
-            //Search panel
-            {
-                xtype: 'textfield',
-                id: config.id + '-search-filter',
-                emptyText: _('ms2bundle.controls.search'),
-                listeners: {
-                    'change': {fn: ms2Bundle.function.search, scope: this},
-                    'render': {
-                        fn: function (cmp) {
-                            new Ext.KeyMap(cmp.getEl(), {
-                                key: Ext.EventObject.ENTER,
-                                fn: function () {
-                                    this.fireEvent('change', this);
-                                    this.blur();
-                                    return true;
-                                },
-                                scope: cmp
-                            });
-                        }, scope: this
-                    }
-                }
-            },
-            //Create button
-            {
-                text: _('ms2bundle.controls.create'),
-                handler: this.createFunction,
-                scope: this,
-                cls: 'primary-button'
-            }
-        ],*/
-
-        //Grid row additional classes
+        tbar: [
+            this.createButton(config),
+            '->',
+            this.searchPanel(config)
+        ],
         viewConfig: {
             forceFit: true,
             getRowClass: function (record, index, rowParams, store) {
@@ -65,6 +33,26 @@ Ext.extend(abstractModule.grid.abstract, MODx.grid.Grid, {
 
     gridColumns: [],
 
+    createRecordForm: {
+        xtype: 'abstractmodule-window-abstract',
+        baseParams: {
+            action: null,
+        }
+    },
+
+    updateRecordForm: {
+        xtype: 'abstractmodule-window-abstract',
+        baseParams: {
+            action: null,
+        }
+    },
+
+    removeRecordForm: {
+        baseParams: {
+            action: null
+        },
+    },
+
     getGridFields: function () {
         return this.gridFields;
     },
@@ -74,41 +62,121 @@ Ext.extend(abstractModule.grid.abstract, MODx.grid.Grid, {
             return this.gridColumns;
         }
         var columns = [];
-        Ext.each(this.gridFields, function(field) {
+        Ext.each(this.gridFields, function (field) {
             columns.push({header: _(config.namespace + '.field.' + field), dataIndex: field, sortable: true});
         });
         return columns;
     },
 
-    search: function (tf, nv, ov) {
-        var s = this.getStore();
-        s.baseParams.query = tf.getValue();
-        this.getBottomToolbar().changePage(1);
-        this.refresh();
-    }
+    createButton: function (config) {
+        return {
+            text: _(config.lexicon_namespace + '.controls.create'),
+            cls: 'primary-button',
+            handler: this.createRecord,
+            scope: this
+        };
+    },
 
-    //Context menu function
-    /*getMenu: function () {
+    searchPanel: function (config) {
         return [{
-            text: _('ms2bundle.controls.update'),
-            handler: this.updateFunction
-        }, '-', {
-            text: _('ms2bundle.controls.remove'),
-            handler: ms2Bundle.function.removeRecord,
-            baseParams: {
-                action: 'mgr/group/remove'
+            xtype: 'textfield',
+            name: 'search',
+            id: config.id + '-filter-search',
+            cls: 'x-form-filter',
+            emptyText: _(config.lexicon_namespace + '.controls.search'),
+            listeners: {
+                'change': {fn: this.searchFilter, scope: this},
+                'render': {
+                    fn: function (cmp) {
+                        new Ext.KeyMap(cmp.getEl(), {
+                            key: Ext.EventObject.ENTER,
+                            fn: this.blur,
+                            scope: cmp
+                        });
+                    }, scope: this
+                }
+            }
+        }, {
+            xtype: 'button',
+            id: config.id + '-filter-clear',
+            cls: 'x-form-filter-clear',
+            text: _(config.lexicon_namespace + '.controls.search_clear'),
+            listeners: {
+                'click': {fn: this.clearFilter, scope: this},
+                'mouseout': {
+                    fn: function (evt) {
+                        this.removeClass('x-btn-focus');
+                    }
+                }
             }
         }];
     },
 
-    //Create function
-    createFunction: function (btn, e) {
-        MODx.loadPage('mgr/group/create', 'namespace=ms2bundle');
+    getMenu: function () {
+        return [{
+            text: _(this.config.lexicon_namespace + '.controls.update'),
+            handler: this.updateRecord,
+            scope: this
+        }, '-', {
+            text: _(this.config.lexicon_namespace + '.controls.remove'),
+            handler: this.removeRecord,
+            scope: this
+        }];
     },
 
-    //Update function
-    updateFunction: function (btn, e) {
-        MODx.loadPage('mgr/group/update', 'namespace=ms2bundle&id=' + this.menu.record.id);
-    }*/
+    searchFilter: function (tf, newValue, oldValue) {
+        var query = newValue || tf.getValue();
+        this.getStore().baseParams.query = query;
+        this.getBottomToolbar().changePage(1);
+    },
+
+    clearFilter: function() {
+        console.log(this.config);
+        this.getStore().baseParams = {
+            action: this.config.baseParams.action
+        };
+        Ext.getCmp(this.config.id + '-filter-search').reset();
+        this.getBottomToolbar().changePage(1);
+    },
+
+    createRecord: function (btn, e) {
+        var window = Ext.getCmp(this.createRecordForm.xtype);
+        if (window) {
+            window.close();
+        }
+        window = MODx.load(Ext.apply({
+            title: _(this.config.lexicon_namespace + '.controls.create'),
+            parent: this
+        }, this.createRecordForm));
+        window.show(e.target);
+    },
+
+    updateRecord: function (btn, e) {
+        var window = Ext.getCmp(this.updateRecordForm.xtype);
+        if (window) {
+            window.close();
+        }
+        window = MODx.load(Ext.apply({
+            title: _(this.config.lexicon_namespace + '.controls.update'),
+            parent: this
+        }, this.updateRecordForm));
+        window.setRecord(this.menu.record);
+        window.show(e.target);
+    },
+
+    removeRecord: function (btn, e) {
+        MODx.msg.confirm(Ext.apply({
+            title: _(this.config.lexicon_namespace + '.controls.remove'),
+            text: _(this.config.lexicon_namespace + '.controls.remove_confirm'),
+            url: this.config.url,
+            params: {
+                action: this.removeRecordForm.baseParams.action,
+                id: this.menu.record.id
+            },
+            listeners: {
+                success: {fn: this.refresh, scope: this},
+            }
+        }, this.removeRecordForm));
+    }
 });
 Ext.reg('abstractmodule-grid-abstract', abstractModule.grid.abstract);

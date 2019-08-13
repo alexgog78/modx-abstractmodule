@@ -1,6 +1,7 @@
 <?php
 //Controls
 $_abstract_lang['controls.search'] = 'Поиск...';
+$_abstract_lang['controls.search_clear'] = 'Сбросить фильтр';
 $_abstract_lang['controls.save'] = 'Сохранить';
 $_abstract_lang['controls.create'] = 'Добавить';
 $_abstract_lang['controls.update'] = 'Редактировать';
