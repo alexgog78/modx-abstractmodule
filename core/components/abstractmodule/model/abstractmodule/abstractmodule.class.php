@@ -157,6 +157,21 @@ abstract class abstractModule
     }
 
     /**
+     * @param $eventName
+     * @param array $data
+     * @return array
+     */
+    public function invokeEvent($eventName, $data = [])
+    {
+        $this->modx->event->returnedValues = null;
+        $response = [
+            'eventOutput' => $this->modx->invokeEvent($eventName, $data),
+            'returnedValues' => $this->modx->event->returnedValues
+        ];
+        return $response;
+    }
+
+    /**
      * @return bool
      */
     public function initializeBackend()
