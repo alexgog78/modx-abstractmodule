@@ -6,6 +6,7 @@ abstractModule.window.abstract = function (config) {
     Ext.applyIf(config, {
         url: null,
         width: config.width || 600,
+        autoHeight: true,
         fields: this.getFormFields(),
         listeners: {
             success: {fn: config.parent.refresh, scope: config.parent},

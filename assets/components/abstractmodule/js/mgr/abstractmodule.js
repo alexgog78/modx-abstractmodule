@@ -1,5 +1,4 @@
 abstractModule = {
-    lexicon_namespace: '',
     page: {},
     window: {},
     grid: {},

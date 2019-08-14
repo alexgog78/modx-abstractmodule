@@ -8,10 +8,11 @@ abstractModule.grid.abstract = function (config) {
         baseParams: {
             action: null
         },
+        autosave: true,
         save_action: null,
+        saveParams: {},
         paging: true,
         remoteSort: true,
-        autosave: true,
         fields: this.getGridFields(),
         columns: this.getGridColumns(config),
         tbar: [
@@ -33,6 +34,15 @@ abstractModule.grid.abstract = function (config) {
     abstractModule.grid.abstract.superclass.constructor.call(this, config)
 };
 Ext.extend(abstractModule.grid.abstract, MODx.grid.Grid, {
+    lexicons: {
+        search: _('controls.search'),
+        search_clear: _('controls.search_clear'),
+        create: _('controls.create'),
+        update: _('controls.update'),
+        remove: _('controls.remove'),
+        remove_confirm: _('controls.remove_confirm')
+    },
+
     gridFields: [],
 
     gridColumns: [],
@@ -74,7 +84,7 @@ Ext.extend(abstractModule.grid.abstract, MODx.grid.Grid, {
 
     createButton: function (config) {
         return {
-            text: _(config.lexicon_namespace + '.controls.create'),
+            text: this.lexicons.create,
             cls: 'primary-button',
             handler: this.createRecord,
             scope: this
@@ -87,7 +97,7 @@ Ext.extend(abstractModule.grid.abstract, MODx.grid.Grid, {
             name: 'search',
             id: config.id + '-filter-search',
             cls: 'x-form-filter',
-            emptyText: _(config.lexicon_namespace + '.controls.search'),
+            emptyText: this.lexicons.search,
             listeners: {
                 'change': {fn: this.searchFilter, scope: this},
                 'render': {
@@ -104,7 +114,7 @@ Ext.extend(abstractModule.grid.abstract, MODx.grid.Grid, {
             xtype: 'button',
             id: config.id + '-filter-clear',
             cls: 'x-form-filter-clear',
-            text: _(config.lexicon_namespace + '.controls.search_clear'),
+            text: this.lexicons.search_clear,
             listeners: {
                 'click': {fn: this.clearFilter, scope: this},
                 'mouseout': {
@@ -118,11 +128,11 @@ Ext.extend(abstractModule.grid.abstract, MODx.grid.Grid, {
 
     getMenu: function () {
         return [{
-            text: _(this.config.lexicon_namespace + '.controls.update'),
+            text: this.lexicons.update,
             handler: this.updateRecord,
             scope: this
         }, '-', {
-            text: _(this.config.lexicon_namespace + '.controls.remove'),
+            text: this.lexicons.remove,
             handler: this.removeRecord,
             scope: this
         }];
@@ -149,7 +159,7 @@ Ext.extend(abstractModule.grid.abstract, MODx.grid.Grid, {
             window.close();
         }
         window = MODx.load(Ext.apply({
-            title: _(this.config.lexicon_namespace + '.controls.create'),
+            title: this.lexicons.create,
             parent: this
         }, this.createRecordForm));
         window.show(e.target);
@@ -161,7 +171,7 @@ Ext.extend(abstractModule.grid.abstract, MODx.grid.Grid, {
             window.close();
         }
         window = MODx.load(Ext.apply({
-            title: _(this.config.lexicon_namespace + '.controls.update'),
+            title: this.lexicons.update,
             parent: this
         }, this.updateRecordForm));
         window.setRecord(this.menu.record);
@@ -170,8 +180,8 @@ Ext.extend(abstractModule.grid.abstract, MODx.grid.Grid, {
 
     removeRecord: function (btn, e) {
         MODx.msg.confirm(Ext.apply({
-            title: _(this.config.lexicon_namespace + '.controls.remove'),
-            text: _(this.config.lexicon_namespace + '.controls.remove_confirm'),
+            title: this.lexicons.remove,
+            text: this.lexicons.remove_confirm,
             url: this.config.url,
             params: {
                 action: this.removeRecordForm.baseParams.action,
