@@ -2,12 +2,6 @@
 
 abstract class amObjectCreateProcessor extends modObjectCreateProcessor
 {
-    /** @var array */
-    //public $languageTopics = ['ms2bundle:default'];
-
-    /** @var string */
-    //public $objectType = 'ms2bundle';
-
     /**
      * @return mixed
      * TODO Combo-boolean
@@ -15,14 +9,15 @@ abstract class amObjectCreateProcessor extends modObjectCreateProcessor
     public function beforeSet()
     {
         //Combo-boolean
-        $boolean = ['active', 'by_default'];
+        $this->setBoolean();
+        /*$boolean = ['is_active', 'is_default'];
         foreach ($boolean as $tmp) {
             if ($this->getProperty($tmp) == $this->modx->lexicon('yes') || $this->getProperty($tmp) == 1) {
                 $this->setProperty($tmp, true);
             } else {
                 $this->setProperty($tmp, false);
             }
-        }
+        }*/
 
         return parent::beforeSet();
     }
@@ -40,6 +35,16 @@ abstract class amObjectCreateProcessor extends modObjectCreateProcessor
         }
 
         return parent::beforeSave();
+    }
+
+    /**
+     * @return void
+     */
+    private function setBoolean()
+    {
+        foreach ($this->object->getBooleanFields() as $field) {
+            $this->setCheckbox($field);
+        }
     }
 
     /**
@@ -82,7 +87,7 @@ abstract class amObjectCreateProcessor extends modObjectCreateProcessor
             }
 
             if ($this->modx->getCount($this->classKey, $checkQuery)) {
-                $this->addFieldError($tmp, $this->modx->lexicon('abstractmodule_err_ae'));
+                $this->addFieldError($tmp, $this->modx->lexicon($this->objectType . '.err_ae'));
                 return false;
             }
         }

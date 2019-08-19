@@ -1,7 +1,7 @@
 abstractModule.grid.abstract = function (config) {
     config = config || {};
     if (!config.id) {
-        config.id = 'abstract-grid';
+        config.id = 'abstractmodule-grid';
     }
     Ext.applyIf(config, {
         url: null,
@@ -14,21 +14,21 @@ abstractModule.grid.abstract = function (config) {
         paging: true,
         remoteSort: true,
         fields: this.getGridFields(),
-        columns: this.getGridColumns(config),
+        columns: this.renderGridColumns(config),
+        anchor: '100%',
         tbar: [
-            this.createButton(config),
+            this.renderCreateButton(config),
             '->',
-            this.searchPanel(config)
+            this.renderSearchPanel(config)
         ],
         viewConfig: {
             forceFit: true,
-            getRowClass: function (record, index, rowParams, store) {
-                var rowClass = [];
-                if (record.get('active') == 0 || record.get('blocked') == 1) {
-                    rowClass.push('grid-row-inactive');
-                }
-                return rowClass.join(' ');
-            }
+            enableRowBody: true,
+            autoFill: true,
+            showPreview: true,
+            scrollOffset: 0,
+            emptyText: config.emptyText || _('ext_emptymsg'),
+            getRowClass: this.getRowClass
         }
     });
     abstractModule.grid.abstract.superclass.constructor.call(this, config)
@@ -71,18 +71,18 @@ Ext.extend(abstractModule.grid.abstract, MODx.grid.Grid, {
         return this.gridFields;
     },
 
-    getGridColumns: function (config) {
+    renderGridColumns: function (config) {
         if (this.gridColumns.length) {
             return this.gridColumns;
         }
         var columns = [];
         Ext.each(this.gridFields, function (field) {
-            columns.push({header: _(config.namespace + '.field.' + field), dataIndex: field, sortable: true});
+            columns.push({header: field, dataIndex: field, sortable: true});
         });
         return columns;
     },
 
-    createButton: function (config) {
+    renderCreateButton: function (config) {
         return {
             text: this.lexicons.create,
             cls: 'primary-button',
@@ -91,7 +91,7 @@ Ext.extend(abstractModule.grid.abstract, MODx.grid.Grid, {
         };
     },
 
-    searchPanel: function (config) {
+    renderSearchPanel: function (config) {
         return [{
             xtype: 'textfield',
             name: 'search',
@@ -124,6 +124,12 @@ Ext.extend(abstractModule.grid.abstract, MODx.grid.Grid, {
                 }
             }
         }];
+    },
+
+    getRowClass: function (record, index, rowParams, store) {
+        if (record.get('is_active') == 0) {
+            return 'grid-row-inactive';
+        }
     },
 
     getMenu: function () {
@@ -160,7 +166,8 @@ Ext.extend(abstractModule.grid.abstract, MODx.grid.Grid, {
         }
         window = MODx.load(Ext.apply({
             title: this.lexicons.create,
-            parent: this
+            parent: this,
+            record: {}
         }, this.createRecordForm));
         window.show(e.target);
     },
@@ -172,9 +179,9 @@ Ext.extend(abstractModule.grid.abstract, MODx.grid.Grid, {
         }
         window = MODx.load(Ext.apply({
             title: this.lexicons.update,
-            parent: this
+            parent: this,
+            record: this.menu.record
         }, this.updateRecordForm));
-        window.setRecord(this.menu.record);
         window.show(e.target);
     },
 

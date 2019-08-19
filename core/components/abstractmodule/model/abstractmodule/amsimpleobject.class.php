@@ -5,6 +5,14 @@ abstract class amSimpleObject extends xPDOSimpleObject
     /**
      * @return array
      */
+    public function getBooleanFields()
+    {
+        return $this::BOOLEAN_FIELDS ?? [];
+    }
+
+    /**
+     * @return array
+     */
     public function getRequiredFields()
     {
         return $this::REQUIRED_FIELDS ?? [];

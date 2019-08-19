@@ -47,7 +47,7 @@ abstract class abstractModule
             'abstractProcessorsPath' => $abstractBasePath . 'processors/',
             'abstractAssetsUrl' => $abstractAssetsUrl,
             'abstractJsUrl' => $abstractAssetsUrl . 'js/',
-            'abstractСssUrl' => $assetsUrl . 'css/',
+            'abstractСssUrl' => $abstractAssetsUrl . 'css/',
             //'connectorUrl' => $assetsUrl . 'connector.php',
             //'actionUrl' => $assetsUrl . 'action.php'
         ], [
@@ -178,13 +178,18 @@ abstract class abstractModule
     {
         $this->modx->controller->addCss($this->config['abstractСssUrl'] . 'mgr/default.css');
         $this->modx->controller->addJavascript($this->config['abstractJsUrl'] . 'mgr/abstractmodule.js');
-        $this->modx->controller->addJavascript($this->config['abstractJsUrl'] . 'mgr/misc/renderer.list.js');
-        $this->modx->controller->addJavascript($this->config['abstractJsUrl'] . 'mgr/misc/combo.list.js');
-        $this->modx->controller->addJavascript($this->config['abstractJsUrl'] . 'mgr/misc/function.list.js');
         $this->modx->controller->addJavascript($this->config['abstractJsUrl'] . 'mgr/widgets/panel.js');
         $this->modx->controller->addJavascript($this->config['abstractJsUrl'] . 'mgr/widgets/formpanel.js');
         $this->modx->controller->addJavascript($this->config['abstractJsUrl'] . 'mgr/widgets/grid.js');
         $this->modx->controller->addJavascript($this->config['abstractJsUrl'] . 'mgr/widgets/window.js');
+        $this->modx->controller->addJavascript($this->config['abstractJsUrl'] . 'mgr/combo/select.local.js');
+        $this->modx->controller->addJavascript($this->config['abstractJsUrl'] . 'mgr/combo/multiselect.local.js');
+        $this->modx->controller->addJavascript($this->config['abstractJsUrl'] . 'mgr/combo/select.remote.js');
+        $this->modx->controller->addJavascript($this->config['abstractJsUrl'] . 'mgr/combo/multiselect.remote.js');
+        $this->modx->controller->addJavascript($this->config['abstractJsUrl'] . 'mgr/combo/browser.js');
+        $this->modx->controller->addJavascript($this->config['abstractJsUrl'] . 'mgr/util/panel.notice.js');
+        $this->modx->controller->addJavascript($this->config['abstractJsUrl'] . 'mgr/misc/renderer.list.js');
+        $this->modx->controller->addJavascript($this->config['abstractJsUrl'] . 'mgr/misc/function.list.js');
         return true;
     }
 

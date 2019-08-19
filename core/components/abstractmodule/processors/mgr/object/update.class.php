@@ -2,12 +2,6 @@
 
 abstract class amObjectUpdateProcessor extends modObjectUpdateProcessor
 {
-    /** @var array */
-    //public $languageTopics = ['ms2bundle:default'];
-
-    /** @var string */
-    //public $objectType = 'ms2bundle';
-
     /**
      * @return mixed
      * TODO Combo-boolean
@@ -15,14 +9,17 @@ abstract class amObjectUpdateProcessor extends modObjectUpdateProcessor
     public function beforeSet()
     {
         //Combo-boolean
-        $boolean = ['active', 'by_default'];
+        $this->setBoolean();
+        //$this->setCheckbox('is_active');
+        /*$boolean = ['is_active', 'is_default'];
         foreach ($boolean as $tmp) {
             if ($this->getProperty($tmp) == $this->modx->lexicon('yes') || $this->getProperty($tmp) == 1) {
                 $this->setProperty($tmp, true);
             } else {
                 $this->setProperty($tmp, false);
             }
-        }
+        }*/
+        //var_dump($this->getProperty('xtype'));
 
         return parent::beforeSet();
     }
@@ -41,6 +38,16 @@ abstract class amObjectUpdateProcessor extends modObjectUpdateProcessor
         }
 
         return parent::beforeSave();
+    }
+
+    /**
+     * @return void
+     */
+    private function setBoolean()
+    {
+        foreach ($this->object->getBooleanFields() as $field) {
+            $this->setCheckbox($field);
+        }
     }
 
     /**
@@ -87,7 +94,7 @@ abstract class amObjectUpdateProcessor extends modObjectUpdateProcessor
             }
 
             if ($this->modx->getCount($this->classKey, $checkQuery)) {
-                $this->addFieldError($tmp, $this->modx->lexicon('abstractmodule_err_ae'));
+                 $this->addFieldError($tmp, $this->modx->lexicon($this->objectType . '.err_ae'));
                 return false;
             }
         }

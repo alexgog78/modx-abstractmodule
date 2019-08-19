@@ -3,11 +3,6 @@
 abstract class amObjectGetListProcessor extends modObjectGetListProcessor
 {
     /**
-     * @var array
-     */
-    public $languageTopics = ['ms2bundle:default'];
-
-    /**
      * @var string
      */
     public $defaultSortField = 'id';

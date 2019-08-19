@@ -2,6 +2,17 @@
 
 abstract class amObject extends xPDOObject
 {
+    //TODO properties
+    //BOOLEAN_FIELDS
+
+    /**
+     * @return array
+     */
+    public function getBooleanFields()
+    {
+        return $this::BOOLEAN_FIELDS ?? [];
+    }
+
     /**
      * @return array
      */

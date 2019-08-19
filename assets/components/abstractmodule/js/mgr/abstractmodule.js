@@ -6,7 +6,9 @@ abstractModule = {
     panel: {},
     formPanel: {},
     combo: {},
+    util: {},
     config: {},
     renderer: {},
     function: {}
 };
+//TODO remove Ext.each Ext.iterate

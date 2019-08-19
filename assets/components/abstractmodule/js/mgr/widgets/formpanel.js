@@ -1,24 +1,30 @@
 abstractModule.formPanel.abstract = function (config) {
     config = config || {};
     if (!config.id) {
-        config.id = 'abstract-formpanel';
+        config.id = 'abstractmodule-forpanel';
     }
-    if (!config.title) {
-        config.title = '';
-    }
-    Ext.apply(config, {
-        baseParams: {},
-        border: false,
+    Ext.applyIf(config, {
+        url: null,
+        baseParams: {
+            getAction: null
+        },
         baseCls: 'modx-formpanel',
         cls: 'container',
         useLoadingMask: true,
         items: [{
-            html: '<h2>' + config.title + '</h2>',
-            border: false,
-            cls: 'modx-page-header',
-            id: config.id + '-header'
+            id: config.id + '-header',
+            html: '<h2>' + this.pageHeader + '</h2>',
+            cls: 'modx-page-header'
         }, {
             xtype: 'modx-tabs',
+            /*stateful: true,
+            stateId: config.id + '-vtabs',
+            stateEvents: ['tabchange'],
+            getState: function () {
+                return {
+                    activeTab: this.items.indexOf(this.getActiveTab())
+                };
+            },*/
             defaults: {
                 autoHeight: true,
                 layout: 'form',
@@ -27,41 +33,65 @@ abstractModule.formPanel.abstract = function (config) {
                 bodyCssClass: 'tab-panel-wrapper',
                 layoutOnTabChange: true
             },
-            items: this.getPanelTabs(config)
+            items: this.renderPanelTabs(config)
         }],
         listeners: {
             'setup': {fn: this.setup, scope: this},
             'success': {fn: this.success, scope: this},
             'failure': {fn: this.failure, scope: this},
             'beforeSubmit': {fn: this.beforeSubmit, scope: this},
-            'fieldChange': {fn: this.onFieldChange, scope: this},
+            'fieldChange': {fn: this.fieldChange, scope: this},
             'failureSubmit': {fn: this.failureSubmit, scope: this}
         }
     });
     abstractModule.formPanel.abstract.superclass.constructor.call(this, config);
 };
 Ext.extend(abstractModule.formPanel.abstract, MODx.FormPanel, {
+    pageHeader: null,
+
     formInputs: {},
 
-    getPanelTabs: function (config) {
-        return [];
+    renderPanelTabs: function (config) {
+        var tab = this.renderPanelTab(
+            null,
+            [
+                this.renderPanelDescription(null),
+                this.renderPanelContent(null)
+            ]
+        );
+        return [tab];
     },
 
-    getPanelTab: function (title, description, content) {
+    renderPanelTab: function (title, items) {
         return {
             title: title,
-            items: [{
-                html: '<p>' + description + '</p>',
-                bodyCssClass: 'panel-desc'
-            }, {
-                cls: 'main-wrapper form-with-labels',
-                labelAlign: 'top',
-                items: content
-            }]
+            layout: 'anchor',
+            items: items
         };
     },
 
-    getFormInput: function (name, config) {
+    renderPanelDescription: function (html) {
+        return {
+            html: '<p>' + html + '</p>',
+            bodyCssClass: 'panel-desc'
+        };
+    },
+
+    renderPanelContent: function (content) {
+        return {
+            cls: 'main-wrapper form-with-labels',
+            labelAlign: 'top',
+            items: content
+        };
+    },
+
+    renderFormInput: function (name, config) {
+        if (!this.formInputs[name]) {
+            return {
+                xtype: 'displayfield',
+                fieldLabel: '<span class="x-form-invalid-msg">Undefined field "' + name + '"</span>'
+            };
+        }
         var formInput = Ext.apply(this.formInputs[name], {
             name: name
         }, config);
@@ -84,7 +114,7 @@ Ext.extend(abstractModule.formPanel.abstract, MODx.FormPanel, {
 
     },
 
-    onFieldChange: function (o) {
+    fieldChange: function (o) {
 
     },
 

@@ -7,7 +7,11 @@ abstractModule.window.abstract = function (config) {
         url: null,
         width: config.width || 600,
         autoHeight: true,
-        fields: this.getFormFields(),
+        fields: {
+            layout: 'form',
+            defaults: {msgTarget: 'under', anchor: '100%'},
+            items: this.renderFormFields(config)
+        },
         listeners: {
             success: {fn: config.parent.refresh, scope: config.parent},
             hide: {fn: function () {
@@ -18,25 +22,32 @@ abstractModule.window.abstract = function (config) {
     abstractModule.window.abstract.superclass.constructor.call(this, config);
 };
 Ext.extend(abstractModule.window.abstract, MODx.Window, {
-    formFields: [],
+    formInputs: {},
 
     defaultValues: {},
 
+    renderFormFields: function (config) {
+        var _this = this;
+        var form = [];
+        var fields = this.getFormInputs(config);
+        Ext.iterate(fields, function (name, field) {
+            var formInput = _this.renderFormInput(name);
+            form.push(formInput);
+        });
+        return form;
+    },
+
+    renderFormInput: function (name, config) {
+        var formInput = Ext.apply(this.formInputs[name], {
+            name: name
+        }, config);
+        return formInput;
+    },
+
     renderForm: function() {
         abstractModule.window.abstract.superclass.renderForm.call(this);
-        this.setDefault();
-    },
-
-    getFormFields: function () {
-        return this.formFields;
-    },
-
-    setDefault: function () {
         this.setValues(this.defaultValues);
-    },
-
-    setRecord: function (record) {
-        this.setValues(record);
+        this.setValues(this.record);
     }
 });
 Ext.reg('abstractmodule-window-abstract', abstractModule.window.abstract);
