@@ -67,6 +67,7 @@ Ext.extend(abstractModule.panel.abstract, MODx.Panel, {
         return {
             layout: 'anchor',
             cls: 'main-wrapper',
+            //TODO
             //labelAlign: 'top',
             items: content
         };

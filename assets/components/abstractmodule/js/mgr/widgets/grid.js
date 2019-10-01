@@ -68,21 +68,13 @@ Ext.extend(abstractModule.grid.abstract, MODx.grid.Grid, {
 
     getRowClass: function (record, index, rowParams, store) {
         var rowCssClasses = [];
-        for (var cssClass in this.cssClasses) {
-            if (!this.cssClasses.hasOwnProperty(cssClass)) {
-                continue;
-            }
-            var conditions = this.cssClasses[cssClass];
-            for (var field in conditions) {
-                if (!conditions.hasOwnProperty(field)) {
-                    continue;
-                }
-                var value = conditions[field];
+        Ext.iterate(this.cssClasses, function (cssClass, conditions) {
+            Ext.iterate(conditions, function (field, value) {
                 if (record.get(field) == value) {
                     rowCssClasses.push(cssClass);
                 }
-            };
-        };
+            });
+        });
         return rowCssClasses.join(' ');
     },
 
@@ -175,27 +167,6 @@ Ext.extend(abstractModule.grid.abstract, MODx.grid.Grid, {
         this.getBottomToolbar().changePage(1);
     },
 
-    //TODO
-    /*createRecordForm: {
-        xtype: 'abstractmodule-window-abstract',
-        baseParams: {
-            action: null,
-        }
-    },*/
-
-    /*updateRecordForm: {
-        xtype: 'abstractmodule-window-abstract',
-        baseParams: {
-            action: null,
-        }
-    },*/
-
-    removeRecordForm: {
-        baseParams: {
-            action: null
-        },
-    },
-
     createRecord: function (btn, e) {
         var window = Ext.getCmp(this.config.record.xtype);
         if (window) {
@@ -214,18 +185,6 @@ Ext.extend(abstractModule.grid.abstract, MODx.grid.Grid, {
             window.show(e.target);
         }
     },
-    /*_createRecord: function (btn, e) {
-        var window = Ext.getCmp(this.createRecordForm.xtype);
-        if (window) {
-            window.close();
-        }
-        window = MODx.load(Ext.apply({
-            title: _('create'),
-            parent: this,
-            record: {}
-        }, this.createRecordForm));
-        window.show(e.target);
-    },*/
 
     updateRecord: function (btn, e) {
         var window = Ext.getCmp(this.config.record.xtype);
@@ -245,18 +204,6 @@ Ext.extend(abstractModule.grid.abstract, MODx.grid.Grid, {
             window.show(e.target);
         }
     },
-    /*_updateRecord: function (btn, e) {
-        var window = Ext.getCmp(this.updateRecordForm.xtype);
-        if (window) {
-            window.close();
-        }
-        window = MODx.load(Ext.apply({
-            title: _('edit'),
-            parent: this,
-            record: this.menu.record
-        }, this.updateRecordForm));
-        window.show(e.target);
-    },*/
 
     removeRecord: function (btn, e) {
         MODx.msg.confirm({
