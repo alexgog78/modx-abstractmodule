@@ -159,7 +159,6 @@ Ext.extend(abstractModule.grid.abstract, MODx.grid.Grid, {
     },
 
     clearFilter: function() {
-        console.log(this.config);
         this.getStore().baseParams = {
             action: this.config.baseParams.action
         };

@@ -8,14 +8,6 @@ abstractModule.window.abstract = function (config) {
     Ext.applyIf(config, {
         //Custom settings
         url: null,
-        fields: {
-            layout: 'form',
-            defaults: {
-                msgTarget: 'under',
-                anchor: '100%'
-            },
-            items: this.renderFormFields()
-        },
 
         //Core settings
         width: config.width || 600,
@@ -36,6 +28,24 @@ Ext.extend(abstractModule.window.abstract, MODx.Window, {
 
     defaultValues: {},
 
+    _loadForm: function() {
+        this.config.fields = {
+            layout: 'form',
+            defaults: {
+                msgTarget: 'under',
+                anchor: '100%'
+            },
+            items: this.renderFormFields()
+        };
+        abstractModule.window.abstract.superclass._loadForm.call(this);
+    },
+
+    renderForm: function () {
+        this.setValues(this.defaultValues);
+        this.setValues(this.record);
+        abstractModule.window.abstract.superclass.renderForm.call(this);
+    },
+
     renderFormFields: function () {
         var _this = this;
         var form = [];
@@ -47,17 +57,14 @@ Ext.extend(abstractModule.window.abstract, MODx.Window, {
     },
 
     renderFormInput: function (name, config) {
-        var formInput = Ext.apply(this.formInputs[name], {
+        var formInput = Ext.applyIf(this.formInputs[name], {
+            xtype: 'textfield',
             name: name,
-            hiddenName: name
+            hiddenName: name,
+            fieldLabel: name,
+            anchor: '100%'
         }, config);
         return formInput;
-    },
-
-    renderForm: function () {
-        abstractModule.window.abstract.superclass.renderForm.call(this);
-        this.setValues(this.defaultValues);
-        this.setValues(this.record);
     }
 });
 Ext.reg('abstractmodule-window-abstract', abstractModule.window.abstract);
