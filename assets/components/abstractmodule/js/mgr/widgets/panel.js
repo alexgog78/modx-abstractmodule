@@ -1,41 +1,50 @@
+'use strict';
+
 abstractModule.panel.abstract = function (config) {
     config = config || {};
     if (!config.id) {
         config.id = 'abstractmodule-panel';
     }
     Ext.applyIf(config, {
-        cls: 'container',
-        items: [{
-            id: config.id + '-header',
-            html: '<h2>' + this.pageHeader + '</h2>',
-            cls: 'modx-page-header'
-        }, {
-            xtype: 'modx-tabs',
-            stateful: true,
-            stateId: config.id + '-tabs',
-            stateEvents: ['tabchange'],
-            getState: function () {
-                return {
-                    activeTab: this.items.indexOf(this.getActiveTab())
-                };
-            },
-            items: this.renderPanelTabs(config)
-        }]
+        cls: 'container'
     });
     abstractModule.panel.abstract.superclass.constructor.call(this, config);
+    this.config = config;
 };
 Ext.extend(abstractModule.panel.abstract, MODx.Panel, {
-    pageHeader: null,
+    pageHeader: '',
 
-    renderPanelTabs: function (config) {
-        var tab = this.renderPanelTab(
-            null,
-            [
-                this.renderPanelDescription(null),
-                this.renderPanelContent(null)
-            ]
-        );
-        return [tab];
+    panelTabs: [],
+
+    initComponent: function() {
+        this.items = [
+            this.renderPanelHeader(this.pageHeader),
+            {
+                xtype: 'modx-tabs',
+                stateful: true,
+                stateId: this.id + '-tabs',
+                stateEvents: ['tabchange'],
+                getState: function () {
+                    return {
+                        activeTab: this.items.indexOf(this.getActiveTab())
+                    };
+                },
+                items: this.renderPanelTabs(),
+            }
+        ];
+        abstractModule.panel.abstract.superclass.initComponent.call(this);
+    },
+
+    renderPanelTabs: function () {
+        return this.panelTabs;
+    },
+
+    renderPanelHeader: function (html) {
+        return {
+            xtype: 'modx-header',
+            itemId: '',
+            html: html
+        };
     },
 
     renderPanelTab: function (title, items) {
@@ -48,15 +57,17 @@ Ext.extend(abstractModule.panel.abstract, MODx.Panel, {
 
     renderPanelDescription: function (html) {
         return {
-            html: '<p>' + html + '</p>',
-            bodyCssClass: 'panel-desc'
+            xtype: 'modx-description',
+            itemId: '',
+            html: '<p>' + html + '</p>'
         };
     },
 
     renderPanelContent: function (content) {
         return {
-            cls: 'main-wrapper form-with-labels',
-            labelAlign: 'top',
+            layout: 'anchor',
+            cls: 'main-wrapper',
+            //labelAlign: 'top',
             items: content
         };
     }

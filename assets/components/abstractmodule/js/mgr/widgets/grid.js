@@ -1,9 +1,12 @@
+'use strict';
+
 abstractModule.grid.abstract = function (config) {
     config = config || {};
     if (!config.id) {
         config.id = 'abstractmodule-grid';
     }
     Ext.applyIf(config, {
+        //Custom settings
         url: null,
         baseParams: {
             action: null
@@ -11,16 +14,20 @@ abstractModule.grid.abstract = function (config) {
         autosave: true,
         save_action: null,
         saveParams: {},
+        fields: [],
+        record: {
+            xtype: null,
+            action: {
+                create: null,
+                update: null,
+                remove: null
+            }
+        },
+
+        //Core settings
         paging: true,
         remoteSort: true,
-        fields: this.getGridFields(),
-        columns: this.renderGridColumns(config),
         anchor: '100%',
-        tbar: [
-            this.renderCreateButton(config),
-            '->',
-            this.renderSearchPanel(config)
-        ],
         viewConfig: {
             forceFit: true,
             enableRowBody: true,
@@ -28,76 +35,99 @@ abstractModule.grid.abstract = function (config) {
             showPreview: true,
             scrollOffset: 0,
             emptyText: config.emptyText || _('ext_emptymsg'),
-            getRowClass: this.getRowClass
+            getRowClass: this.getRowClass,
+            cssClasses: {
+                'grid-row-inactive': {
+                    'is_active': 0
+                }
+            }
         }
     });
     abstractModule.grid.abstract.superclass.constructor.call(this, config)
 };
 Ext.extend(abstractModule.grid.abstract, MODx.grid.Grid, {
-    lexicons: {
-        search: _('controls.search'),
-        search_clear: _('controls.search_clear'),
-        create: _('controls.create'),
-        update: _('controls.update'),
-        remove: _('controls.remove'),
-        remove_confirm: _('controls.remove_confirm')
-    },
-
-    gridFields: [],
-
     gridColumns: [],
 
-    createRecordForm: {
-        xtype: 'abstractmodule-window-abstract',
-        baseParams: {
-            action: null,
-        }
+    initComponent: function() {
+        this.columns = this.renderGridColumns();
+        this.tbar = this.renderToolbar();
+        abstractModule.grid.abstract.superclass.initComponent.call(this);
     },
 
-    updateRecordForm: {
-        xtype: 'abstractmodule-window-abstract',
-        baseParams: {
-            action: null,
-        }
+    getMenu: function () {
+        return [{
+            text: _('edit'),
+            handler: this.updateRecord,
+            scope: this
+        }, '-', {
+            text: _('delete'),
+            handler: this.removeRecord,
+            scope: this
+        }];
     },
 
-    removeRecordForm: {
-        baseParams: {
-            action: null
-        },
+    getRowClass: function (record, index, rowParams, store) {
+        var rowCssClasses = [];
+        for (var cssClass in this.cssClasses) {
+            if (!this.cssClasses.hasOwnProperty(cssClass)) {
+                continue;
+            }
+            var conditions = this.cssClasses[cssClass];
+            for (var field in conditions) {
+                if (!conditions.hasOwnProperty(field)) {
+                    continue;
+                }
+                var value = conditions[field];
+                if (record.get(field) == value) {
+                    rowCssClasses.push(cssClass);
+                }
+            };
+        };
+        return rowCssClasses.join(' ');
     },
 
-    getGridFields: function () {
-        return this.gridFields;
-    },
-
-    renderGridColumns: function (config) {
+    renderGridColumns: function () {
         if (this.gridColumns.length) {
             return this.gridColumns;
         }
         var columns = [];
-        Ext.each(this.gridFields, function (field) {
+        Ext.each(this.config.fields, function (field) {
             columns.push({header: field, dataIndex: field, sortable: true});
         });
         return columns;
     },
 
-    renderCreateButton: function (config) {
+    renderToolbar: function () {
+        return [
+            this.renderCreateButton(),
+            '->',
+            this.renderSearchPanel()
+        ];
+    },
+
+    renderCreateButton: function () {
         return {
-            text: this.lexicons.create,
+            text: _('add'),
             cls: 'primary-button',
             handler: this.createRecord,
             scope: this
         };
     },
 
-    renderSearchPanel: function (config) {
-        return [{
+    renderSearchPanel: function () {
+        return [
+            this.renderSearchField(),
+            this.renderClearSearchButton()
+        ];
+    },
+
+    renderSearchField: function () {
+        return {
             xtype: 'textfield',
             name: 'search',
-            id: config.id + '-filter-search',
+            id: this.config.id + '-filter-search',
             cls: 'x-form-filter',
-            emptyText: this.lexicons.search,
+            emptyText: _('search_ellipsis'),
             listeners: {
                 'change': {fn: this.searchFilter, scope: this},
                 'render': {
@@ -110,11 +140,15 @@ Ext.extend(abstractModule.grid.abstract, MODx.grid.Grid, {
                     }, scope: this
                 }
             }
-        }, {
+        };
+    },
+
+    renderClearSearchButton: function () {
+        return {
             xtype: 'button',
-            id: config.id + '-filter-clear',
+            id: this.config.id + '-filter-clear',
             cls: 'x-form-filter-clear',
-            text: this.lexicons.search_clear,
+            text: _('filter_clear'),
             listeners: {
                 'click': {fn: this.clearFilter, scope: this},
                 'mouseout': {
@@ -123,25 +157,7 @@ Ext.extend(abstractModule.grid.abstract, MODx.grid.Grid, {
                     }
                 }
             }
-        }];
-    },
-
-    getRowClass: function (record, index, rowParams, store) {
-        if (record.get('is_active') == 0) {
-            return 'grid-row-inactive';
-        }
-    },
-
-    getMenu: function () {
-        return [{
-            text: this.lexicons.update,
-            handler: this.updateRecord,
-            scope: this
-        }, '-', {
-            text: this.lexicons.remove,
-            handler: this.removeRecord,
-            scope: this
-        }];
+        };
     },
 
     searchFilter: function (tf, newValue, oldValue) {
@@ -159,45 +175,102 @@ Ext.extend(abstractModule.grid.abstract, MODx.grid.Grid, {
         this.getBottomToolbar().changePage(1);
     },
 
+    //TODO
+    /*createRecordForm: {
+        xtype: 'abstractmodule-window-abstract',
+        baseParams: {
+            action: null,
+        }
+    },*/
+
+    /*updateRecordForm: {
+        xtype: 'abstractmodule-window-abstract',
+        baseParams: {
+            action: null,
+        }
+    },*/
+
+    removeRecordForm: {
+        baseParams: {
+            action: null
+        },
+    },
+
     createRecord: function (btn, e) {
+        var window = Ext.getCmp(this.config.record.xtype);
+        if (window) {
+            window.close();
+        }
+        window = MODx.load({
+            xtype: this.config.record.xtype,
+            title: _('create'),
+            parent: this,
+            record: {},
+            baseParams: {
+                action: this.config.record.action.create
+            }
+        });
+        if (window) {
+            window.show(e.target);
+        }
+    },
+    /*_createRecord: function (btn, e) {
         var window = Ext.getCmp(this.createRecordForm.xtype);
         if (window) {
             window.close();
         }
         window = MODx.load(Ext.apply({
-            title: this.lexicons.create,
+            title: _('create'),
             parent: this,
             record: {}
         }, this.createRecordForm));
         window.show(e.target);
-    },
+    },*/
 
     updateRecord: function (btn, e) {
+        var window = Ext.getCmp(this.config.record.xtype);
+        if (window) {
+            window.close();
+        }
+        window = MODx.load({
+            xtype: this.config.record.xtype,
+            title: _('create'),
+            parent: this,
+            record: this.menu.record,
+            baseParams: {
+                action: this.config.record.action.update
+            }
+        });
+        if (window) {
+            window.show(e.target);
+        }
+    },
+    /*_updateRecord: function (btn, e) {
         var window = Ext.getCmp(this.updateRecordForm.xtype);
         if (window) {
             window.close();
         }
         window = MODx.load(Ext.apply({
-            title: this.lexicons.update,
+            title: _('edit'),
             parent: this,
             record: this.menu.record
         }, this.updateRecordForm));
         window.show(e.target);
-    },
+    },*/
 
     removeRecord: function (btn, e) {
-        MODx.msg.confirm(Ext.apply({
-            title: this.lexicons.remove,
-            text: this.lexicons.remove_confirm,
+        MODx.msg.confirm({
+            title: _('delete'),
+            text: _('confirm_remove'),
             url: this.config.url,
             params: {
-                action: this.removeRecordForm.baseParams.action,
+                action: this.config.record.action.remove,
                 id: this.menu.record.id
             },
             listeners: {
                 success: {fn: this.refresh, scope: this},
             }
-        }, this.removeRecordForm));
+        });
     }
 });
 Ext.reg('abstractmodule-grid-abstract', abstractModule.grid.abstract);

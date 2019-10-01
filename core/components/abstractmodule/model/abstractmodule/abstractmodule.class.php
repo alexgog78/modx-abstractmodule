@@ -21,7 +21,11 @@ abstract class abstractModule
     public $initialized = [];
 
     /** @var pdoFetch */
+    //TODO remove
     public $pdoTools;
+
+    /** @var string|null */
+    protected $tablePrefix = null;
 
     /**
      * abstractModule constructor.
@@ -63,7 +67,7 @@ abstract class abstractModule
             'actionUrl' => $assetsUrl . 'action.php'
         ], $config);
 
-        $this->modx->addPackage($this->package, $this->config['modelPath']);
+        $this->modx->addPackage($this->package, $this->config['modelPath'], $this->tablePrefix);
         $this->modx->lexicon->load($this->package . ':default');
 
         if ($this->pdoTools = $this->modx->getService('pdoFetch')) {
@@ -151,8 +155,8 @@ abstract class abstractModule
         }
 
         $trace = debug_backtrace();
-        $file = $trace[1]['file'];
-        $line = $trace[1]['line'];
+        $file = $trace[0]['file'];
+        $line = $trace[0]['line'];
         $this->modx->log(constant('modX::'. $level), $data, '', get_class($this), $file, $line);
     }
 
@@ -190,6 +194,11 @@ abstract class abstractModule
         $this->modx->controller->addJavascript($this->config['abstractJsUrl'] . 'mgr/util/panel.notice.js');
         $this->modx->controller->addJavascript($this->config['abstractJsUrl'] . 'mgr/misc/renderer.list.js');
         $this->modx->controller->addJavascript($this->config['abstractJsUrl'] . 'mgr/misc/function.list.js');
+
+        $configJs = $this->modx->toJSON($this->config ?? []);
+        $this->modx->controller->addHtml(
+            '<script type="text/javascript">' . get_class($this) . '.config = ' . $configJs . ';</script>'
+        );
         return true;
     }
 

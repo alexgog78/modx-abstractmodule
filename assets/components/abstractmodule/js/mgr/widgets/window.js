@@ -29,7 +29,7 @@ Ext.extend(abstractModule.window.abstract, MODx.Window, {
     renderFormFields: function (config) {
         var _this = this;
         var form = [];
-        var fields = this.getFormInputs(config);
+        var fields = this.formInputs;
         Ext.iterate(fields, function (name, field) {
             var formInput = _this.renderFormInput(name);
             form.push(formInput);
