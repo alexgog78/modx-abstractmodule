@@ -1,5 +1,6 @@
 <?php
 
+//TODO refactor /ru folder
 class amLexicon
 {
     /** @var string */

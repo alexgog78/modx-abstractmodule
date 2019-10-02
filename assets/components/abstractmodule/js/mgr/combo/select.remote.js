@@ -1,6 +1,9 @@
+'use strict';
+
 abstractModule.combo.selectRemote = function (config) {
     config = config || {};
     Ext.applyIf(config, {
+        //Custom settings
         url: null,
         baseParams: {
             action: null,
@@ -9,6 +12,8 @@ abstractModule.combo.selectRemote = function (config) {
         fields: [],
         displayField: null,
         valueField: null,
+
+        //Core settings
         name: config.name || 'select-remote',
         hiddenName: config.name || 'select-remote',
         anchor: '100%',
@@ -17,7 +22,7 @@ abstractModule.combo.selectRemote = function (config) {
         allowBlank: true,
         emptyText: _('no'),
         pageSize: 20,
-        //hideMode: 'offsets',
+        //TODO check hideMode: 'offsets',
     });
     abstractModule.combo.selectRemote.superclass.constructor.call(this, config);
 };

@@ -29,14 +29,7 @@ Ext.extend(abstractModule.window.abstract, MODx.Window, {
     defaultValues: {},
 
     _loadForm: function() {
-        this.config.fields = {
-            layout: 'form',
-            defaults: {
-                msgTarget: 'under',
-                anchor: '100%'
-            },
-            items: this.renderFormFields()
-        };
+        this.config.fields = this.renderFormPanel();
         abstractModule.window.abstract.superclass._loadForm.call(this);
     },
 
@@ -46,24 +39,32 @@ Ext.extend(abstractModule.window.abstract, MODx.Window, {
         abstractModule.window.abstract.superclass.renderForm.call(this);
     },
 
-    renderFormFields: function () {
-        var _this = this;
+    renderFormPanel: function () {
         var form = [];
-        Ext.iterate(_this.formInputs, function (name, field) {
-            var formInput = _this.renderFormInput(name);
+        Ext.iterate(this.formInputs, function (name, config) {
+            var formInput = this.renderFormInput(name, config);
             form.push(formInput);
-        });
+        }, this);
         return form;
     },
 
-    renderFormInput: function (name, config) {
-        var formInput = Ext.applyIf(this.formInputs[name], {
+    renderFormFieldset: function (fields = {}) {
+        var fieldset = [];
+        Ext.each(fields, function (name) {
+            var formInput = this.renderFormInput(name, this.formInputs[name]);
+            fieldset.push(formInput);
+        }, this);
+        return fieldset;
+    },
+
+    renderFormInput: function (name, config = {}) {
+        var formInput = Ext.applyIf(config, {
             xtype: 'textfield',
             name: name,
             hiddenName: name,
             fieldLabel: name,
             anchor: '100%'
-        }, config);
+        });
         return formInput;
     }
 });

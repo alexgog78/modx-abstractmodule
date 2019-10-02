@@ -23,6 +23,11 @@ abstract class amObjectGetListProcessor extends modObjectGetListProcessor
         if (!empty($query) && empty($valuesqry)) {
             $this->searchQuery($c, $query);
         }
+
+        $combo = $this->getProperty('combo');
+        if ($combo) {
+            $this->comboQuery($c);
+        }
         return $c;
     }
 
@@ -31,7 +36,16 @@ abstract class amObjectGetListProcessor extends modObjectGetListProcessor
      * @param string $query
      * @return xPDOQuery
      */
-    public function searchQuery(xPDOQuery $c, $query)
+    protected function searchQuery(xPDOQuery $c, $query)
+    {
+        return $c;
+    }
+
+    /**
+     * @param xPDOQuery $c
+     * @return xPDOQuery
+     */
+    protected function comboQuery(xPDOQuery $c)
     {
         return $c;
     }

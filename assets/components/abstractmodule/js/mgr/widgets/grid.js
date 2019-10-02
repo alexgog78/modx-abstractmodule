@@ -15,14 +15,6 @@ abstractModule.grid.abstract = function (config) {
         save_action: null,
         saveParams: {},
         fields: [],
-        record: {
-            xtype: null,
-            action: {
-                create: null,
-                update: null,
-                remove: null
-            }
-        },
 
         //Core settings
         paging: true,
@@ -46,7 +38,16 @@ abstractModule.grid.abstract = function (config) {
     abstractModule.grid.abstract.superclass.constructor.call(this, config)
 };
 Ext.extend(abstractModule.grid.abstract, MODx.grid.Grid, {
-    gridColumns: [],
+    gridColumns: null,
+
+    recordActions: {
+        xtype: null,
+        action: {
+            create: null,
+            update: null,
+            remove: null
+        }
+    },
 
     initComponent: function() {
         this.columns = this.renderGridColumns();
@@ -79,14 +80,27 @@ Ext.extend(abstractModule.grid.abstract, MODx.grid.Grid, {
     },
 
     renderGridColumns: function () {
-        if (this.gridColumns.length) {
-            return this.gridColumns;
-        }
         var columns = [];
-        Ext.each(this.config.fields, function (field) {
-            columns.push({header: field, dataIndex: field, sortable: true});
-        });
+        if (!this.gridColumns) {
+            this.gridColumns = {};
+            Ext.each(this.config.fields, function (field) {
+                this.gridColumns[field] = {};
+            }, this);
+        }
+        Ext.iterate(this.gridColumns, function (name, config) {
+            var column = this.renderGridColumn(name, config);
+            columns.push(column);
+        }, this);
         return columns;
+    },
+
+    renderGridColumn: function (name, config = {}) {
+        var column = Ext.applyIf(config, {
+            header: name,
+            dataIndex: name,
+            sortable: true
+        });
+        return column;
     },
 
     renderToolbar: function () {
@@ -167,17 +181,17 @@ Ext.extend(abstractModule.grid.abstract, MODx.grid.Grid, {
     },
 
     createRecord: function (btn, e) {
-        var window = Ext.getCmp(this.config.record.xtype);
+        var window = Ext.getCmp(this.recordActions.xtype);
         if (window) {
             window.close();
         }
         window = MODx.load({
-            xtype: this.config.record.xtype,
+            xtype: this.recordActions.xtype,
             title: _('create'),
             parent: this,
             record: {},
             baseParams: {
-                action: this.config.record.action.create
+                action: this.recordActions.action.create
             }
         });
         if (window) {
@@ -186,17 +200,17 @@ Ext.extend(abstractModule.grid.abstract, MODx.grid.Grid, {
     },
 
     updateRecord: function (btn, e) {
-        var window = Ext.getCmp(this.config.record.xtype);
+        var window = Ext.getCmp(this.recordActions.xtype);
         if (window) {
             window.close();
         }
         window = MODx.load({
-            xtype: this.config.record.xtype,
+            xtype: this.recordActions.xtype,
             title: _('create'),
             parent: this,
             record: this.menu.record,
             baseParams: {
-                action: this.config.record.action.update
+                action: this.recordActions.action.update
             }
         });
         if (window) {
@@ -210,7 +224,7 @@ Ext.extend(abstractModule.grid.abstract, MODx.grid.Grid, {
             text: _('confirm_remove'),
             url: this.config.url,
             params: {
-                action: this.config.record.action.remove,
+                action: this.recordActions.action.remove,
                 id: this.menu.record.id
             },
             listeners: {

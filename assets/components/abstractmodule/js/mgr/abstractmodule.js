@@ -1,4 +1,6 @@
-abstractModule = {
+'use strict';
+
+var abstractModule = {
     page: {},
     window: {},
     grid: {},
@@ -11,4 +13,3 @@ abstractModule = {
     renderer: {},
     function: {}
 };
-//TODO remove Ext.each Ext.iterate

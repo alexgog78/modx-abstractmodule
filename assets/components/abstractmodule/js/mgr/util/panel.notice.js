@@ -1,3 +1,5 @@
+'use strict';
+
 Ext.namespace('abstractModule.util.panelNotice');
 abstractModule.util.panelNotice.abstract = function (config) {
     config = config || {};
