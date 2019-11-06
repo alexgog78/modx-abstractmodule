@@ -16,10 +16,10 @@ abstractModule.combo.selectRemote = function (config) {
         //Core settings
         name: config.name || 'select-remote',
         hiddenName: config.name || 'select-remote',
-        anchor: '100%',
+        //anchor: '100%',
         typeAhead: true,
         editable: true,
-        allowBlank: true,
+        //allowBlank: true,
         emptyText: _('no'),
         pageSize: 20,
         //TODO check hideMode: 'offsets',

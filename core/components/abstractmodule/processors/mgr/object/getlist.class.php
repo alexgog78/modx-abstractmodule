@@ -2,14 +2,10 @@
 
 abstract class amObjectGetListProcessor extends modObjectGetListProcessor
 {
-    /**
-     * @var string
-     */
+    /** @var string */
     public $defaultSortField = 'id';
 
-    /**
-     * @var string
-     */
+    /** @var string */
     public $defaultSortDirection = 'ASC';
 
     /**
@@ -28,6 +24,15 @@ abstract class amObjectGetListProcessor extends modObjectGetListProcessor
         if ($combo) {
             $this->comboQuery($c);
         }
+        return $c;
+    }
+
+    /**
+     * @param xPDOQuery $c
+     * @return xPDOQuery
+     */
+    public function prepareQueryAfterCount(xPDOQuery $c) {
+        $c->select($this->modx->getSelectColumns($this->classKey, $this->classKey));
         return $c;
     }
 

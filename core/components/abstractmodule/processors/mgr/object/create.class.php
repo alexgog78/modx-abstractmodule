@@ -52,6 +52,7 @@ abstract class amObjectCreateProcessor extends modObjectCreateProcessor
      */
     private function validateRequiredFields()
     {
+        $errors = 0;
         foreach ($this->object->getRequiredFields() as $tmp) {
             $property = $this->getProperty($tmp);
             if (is_array($property)) {
@@ -63,8 +64,12 @@ abstract class amObjectCreateProcessor extends modObjectCreateProcessor
                     $tmp .= '[]';
                 }
                 $this->addFieldError($tmp, $this->modx->lexicon('field_required'));
-                return false;
+                $errors++;
+                //return false;
             }
+        }
+        if ($errors) {
+            return false;
         }
         return true;
     }

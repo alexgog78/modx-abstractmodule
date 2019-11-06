@@ -1,9 +1,10 @@
 <?php
 
+//TODO Refactor traits
 abstract class abstractModule
 {
-    /** @var string|null */
-    public $package = null;
+    /** @var string */
+    public $objectType = null;
 
     /** @var array */
     public $handlers = [
@@ -20,10 +21,6 @@ abstract class abstractModule
     /** @var array */
     public $initialized = [];
 
-    /** @var pdoFetch */
-    //TODO remove
-    public $pdoTools;
-
     /** @var string|null */
     protected $tablePrefix = null;
 
@@ -36,12 +33,14 @@ abstract class abstractModule
     {
         $this->modx = &$modx;
 
+        $this->objectType = strtolower(get_class($this));
+
         //TODO check
         $abstractBasePath = $this->modx->getOption('abstractmodule.core_path', $config, $this->modx->getOption('core_path') . 'components/abstractmodule/');
         $abstractAssetsUrl = $this->modx->getOption('abstractmodule.assets_url', $config, $this->modx->getOption('assets_url') . 'components/abstractmodule/');
 
-        $basePath = $this->modx->getOption($this->package . '.core_path', $config, $this->modx->getOption('core_path') . 'components/' . $this->package . '/');
-        $assetsUrl = $this->modx->getOption($this->package . '.assets_url', $config, $this->modx->getOption('assets_url') . 'components/' . $this->package . '/');
+        $basePath = $this->modx->getOption($this->objectType . '.core_path', $config, $this->modx->getOption('core_path') . 'components/' . $this->objectType . '/');
+        $assetsUrl = $this->modx->getOption($this->objectType . '.assets_url', $config, $this->modx->getOption('assets_url') . 'components/' . $this->objectType . '/');
 
         $this->config = array_merge([
             'abstractBasePath' => $abstractBasePath,
@@ -67,12 +66,8 @@ abstract class abstractModule
             'actionUrl' => $assetsUrl . 'action.php'
         ], $config);
 
-        $this->modx->addPackage($this->package, $this->config['modelPath'], $this->tablePrefix);
-        $this->modx->lexicon->load($this->package . ':default');
-
-        if ($this->pdoTools = $this->modx->getService('pdoFetch')) {
-            $this->pdoTools->setConfig($this->config);
-        }
+        $this->modx->addPackage($this->objectType, $this->config['modelPath'], $this->tablePrefix);
+        $this->modx->lexicon->load($this->objectType . ':default');
     }
 
     /**
@@ -138,7 +133,7 @@ abstract class abstractModule
      */
     public function getLexiconTopic($key = '', $placeholders = [])
     {
-        return $this->modx->lexicon($this->package . '.' . $key, $placeholders);
+        return $this->modx->lexicon($this->objectType . '.' . $key, $placeholders);
     }
 
     /**
@@ -180,32 +175,55 @@ abstract class abstractModule
      */
     public function initializeBackend()
     {
-        $this->modx->controller->addCss($this->config['abstractСssUrl'] . 'mgr/default.css');
-        $this->modx->controller->addJavascript($this->config['abstractJsUrl'] . 'mgr/abstractmodule.js');
-        $this->modx->controller->addJavascript($this->config['abstractJsUrl'] . 'mgr/widgets/panel.js');
-        $this->modx->controller->addJavascript($this->config['abstractJsUrl'] . 'mgr/widgets/formpanel.js');
-        $this->modx->controller->addJavascript($this->config['abstractJsUrl'] . 'mgr/widgets/grid.js');
-        $this->modx->controller->addJavascript($this->config['abstractJsUrl'] . 'mgr/widgets/window.js');
-        $this->modx->controller->addJavascript($this->config['abstractJsUrl'] . 'mgr/combo/select.local.js');
-        $this->modx->controller->addJavascript($this->config['abstractJsUrl'] . 'mgr/combo/multiselect.local.js');
-        $this->modx->controller->addJavascript($this->config['abstractJsUrl'] . 'mgr/combo/select.remote.js');
-        $this->modx->controller->addJavascript($this->config['abstractJsUrl'] . 'mgr/combo/multiselect.remote.js');
-        $this->modx->controller->addJavascript($this->config['abstractJsUrl'] . 'mgr/combo/browser.js');
-        $this->modx->controller->addJavascript($this->config['abstractJsUrl'] . 'mgr/util/panel.notice.js');
-        $this->modx->controller->addJavascript($this->config['abstractJsUrl'] . 'mgr/misc/renderer.list.js');
-        $this->modx->controller->addJavascript($this->config['abstractJsUrl'] . 'mgr/misc/function.list.js');
+        if ($this->modx->controller) {
+            $this->addBackendAssets($this->modx->controller);
+        }
+        return true;
+    }
+
+    /**
+     * @param modManagerController $controller
+     * @return void
+     */
+    public function addBackendAssets(modManagerController $controller)
+    {
+        $controller->addCss($this->config['abstractСssUrl'] . 'mgr/default.css');
+        $controller->addJavascript($this->config['abstractJsUrl'] . 'mgr/abstractmodule.js');
+        $controller->addJavascript($this->config['abstractJsUrl'] . 'mgr/widgets/panel.js');
+        $controller->addJavascript($this->config['abstractJsUrl'] . 'mgr/widgets/formpanel.js');
+        $controller->addJavascript($this->config['abstractJsUrl'] . 'mgr/widgets/tabs.js');
+        $controller->addJavascript($this->config['abstractJsUrl'] . 'mgr/widgets/grid.js');
+        $controller->addJavascript($this->config['abstractJsUrl'] . 'mgr/widgets/window.js');
+        $controller->addJavascript($this->config['abstractJsUrl'] . 'mgr/widgets/page.js');
+        $controller->addJavascript($this->config['abstractJsUrl'] . 'mgr/combo/select.local.js');
+        $controller->addJavascript($this->config['abstractJsUrl'] . 'mgr/combo/multiselect.local.js');
+        $controller->addJavascript($this->config['abstractJsUrl'] . 'mgr/combo/select.remote.js');
+        $controller->addJavascript($this->config['abstractJsUrl'] . 'mgr/combo/multiselect.remote.js');
+        $controller->addJavascript($this->config['abstractJsUrl'] . 'mgr/combo/browser.js');
+        $controller->addJavascript($this->config['abstractJsUrl'] . 'mgr/util/panel.notice.js');
+        $controller->addJavascript($this->config['abstractJsUrl'] . 'mgr/misc/renderer.list.js');
+        $controller->addJavascript($this->config['abstractJsUrl'] . 'mgr/misc/function.list.js');
 
         $configJs = $this->modx->toJSON($this->config ?? []);
-        $this->modx->controller->addHtml(
+        $controller->addHtml(
             '<script type="text/javascript">' . get_class($this) . '.config = ' . $configJs . ';</script>'
         );
-        return true;
     }
 
     /**
      * @return bool
      */
     public function initializeFrontend()
+    {
+        $this->addFrontendAssets();
+        return true;
+    }
+
+    /**
+     * @param modManagerController $controller
+     * @return void
+     */
+    public function addFrontendAssets()
     {
         $configJs = $this->modx->toJSON(array(
             'cssUrl' => $this->config['cssUrl'] . 'web/',
@@ -216,10 +234,10 @@ abstract class abstractModule
             '<script type="text/javascript">' . get_class($this) . ' = {config: ' . $configJs . '};</script>',
             true
         );
-        return true;
     }
 
     /**
+     * TODO check namespace
      * @param string $ctx
      * @return bool
      */

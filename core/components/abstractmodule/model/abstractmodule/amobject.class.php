@@ -2,9 +2,6 @@
 
 abstract class amObject extends xPDOObject
 {
-    //TODO properties
-    //BOOLEAN_FIELDS
-
     /**
      * @return array
      */

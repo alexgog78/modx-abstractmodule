@@ -180,6 +180,7 @@ Ext.extend(abstractModule.grid.abstract, MODx.grid.Grid, {
         this.getBottomToolbar().changePage(1);
     },
 
+    //TODO
     createRecord: function (btn, e) {
         var window = Ext.getCmp(this.recordActions.xtype);
         if (window) {
@@ -189,7 +190,7 @@ Ext.extend(abstractModule.grid.abstract, MODx.grid.Grid, {
             xtype: this.recordActions.xtype,
             title: _('create'),
             parent: this,
-            record: {},
+            record: false,
             baseParams: {
                 action: this.recordActions.action.create
             }
@@ -233,4 +234,3 @@ Ext.extend(abstractModule.grid.abstract, MODx.grid.Grid, {
         });
     }
 });
-Ext.reg('abstractmodule-grid-abstract', abstractModule.grid.abstract);

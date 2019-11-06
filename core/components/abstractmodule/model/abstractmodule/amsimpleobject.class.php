@@ -27,6 +27,7 @@ abstract class amSimpleObject extends xPDOSimpleObject
     }
 
     /**
+     * TODO
      * @return array
      */
     public function getUniqueFieldsConditions()

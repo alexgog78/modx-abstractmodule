@@ -4,6 +4,9 @@ class amLexiconManager
 {
     /** @var array */
     public static $languageTopics = [
+        'title.creating' => 'Создаем: [[+record]]',
+        'title.editing' => 'Редактируем: [[+record]]',
+
         //'controls.search' => 'Поиск...',
         //'controls.search_clear' => 'Сбросить фильтр',
         //'controls.save' => 'Сохранить',

@@ -1,3 +1,4 @@
+//TODO
 abstractModule.formPanel.abstract = function (config) {
     config = config || {};
     if (!config.id) {
@@ -122,4 +123,3 @@ Ext.extend(abstractModule.formPanel.abstract, MODx.FormPanel, {
 
     }
 });
-Ext.reg('abstractmodule-forpanel-abstract', abstractModule.formPanel.abstract);
