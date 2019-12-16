@@ -82,7 +82,7 @@ abstract class amObjectCreateProcessor extends modObjectCreateProcessor
     {
         foreach ($this->object->getUniqueFields() as $tmp) {
             $checkQuery = [
-                $tmp => $this->getProperty($tmp)
+                $tmp => $this->getProperty($tmp),
             ];
 
             if (!empty($this->object->getUniqueFieldsConditions())) {

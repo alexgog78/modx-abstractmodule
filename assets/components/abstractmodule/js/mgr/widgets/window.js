@@ -17,39 +17,28 @@ abstractModule.window.abstract = function (config) {
         //resizable: false,
         listeners: {
             beforeSubmit: {fn: this.beforeSubmit, scope: this},
-            success: {fn: config.parent.refresh, scope: config.parent},
-            hide: {
-                fn: function () {
-                    config.parent.refresh
-                }
-            }
+            success: {fn: this.success, scope: this},
         }
     });
     abstractModule.window.abstract.superclass.constructor.call(this, config);
 };
 Ext.extend(abstractModule.window.abstract, MODx.Window, {
     formInputs: {},
-
     defaultValues: {},
 
     _loadForm: function() {
-        this.config.fields = this.renderFormPanel();
+        this.config.fields = this.renderFormPanel(this.formInputs);
         abstractModule.window.abstract.superclass._loadForm.call(this);
     },
 
     renderForm: function () {
+        console.log(this.record);
+        this.setValues(this.defaultValues);
         this.setValues(this.record);
-        if (!this.record) {
-            this.setValues(this.defaultValues);
-        }
         abstractModule.window.abstract.superclass.renderForm.call(this);
     },
 
     renderFormPanel: function (formInputs) {
-        if (!formInputs) {
-            formInputs = this.formInputs;
-        }
-
         var form = [];
         Ext.iterate(formInputs, function (name, config) {
             var formInput = this.renderFormInput(name, config);
@@ -58,27 +47,23 @@ Ext.extend(abstractModule.window.abstract, MODx.Window, {
         return form;
     },
 
-    renderFormFieldset: function (fields = {}) {
-        var fieldset = [];
-        Ext.each(fields, function (name) {
-            var formInput = this.renderFormInput(name, this.formInputs[name]);
-            fieldset.push(formInput);
-        }, this);
-        return fieldset;
-    },
-
     renderFormInput: function (name, config = {}) {
-        var formInput = Ext.applyIf(config, {
+        var formInput = {
             xtype: 'textfield',
             name: name,
             hiddenName: name,
             fieldLabel: name,
             anchor: '100%'
-        });
+        };
+        Ext.apply(formInput, config);
         return formInput;
     },
 
     beforeSubmit: function (record) {
         return true;
-    }
+    },
+
+    success: function () {
+        this.config.parent.refresh();
+    },
 });

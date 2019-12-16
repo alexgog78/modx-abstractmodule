@@ -15,11 +15,9 @@ abstractModule.combo.selectRemote = function (config) {
 
         //Core settings
         name: config.name || 'select-remote',
-        hiddenName: config.name || 'select-remote',
-        //anchor: '100%',
         typeAhead: true,
         editable: true,
-        //allowBlank: true,
+        allowBlank: true,
         emptyText: _('no'),
         pageSize: 20,
         //TODO check hideMode: 'offsets',
@@ -27,4 +25,3 @@ abstractModule.combo.selectRemote = function (config) {
     abstractModule.combo.selectRemote.superclass.constructor.call(this, config);
 };
 Ext.extend(abstractModule.combo.selectRemote, MODx.combo.ComboBox);
-Ext.reg('abstract-combo-select-remote', abstractModule.combo.selectRemote);

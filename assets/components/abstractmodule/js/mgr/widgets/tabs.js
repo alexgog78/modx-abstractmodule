@@ -1,5 +1,6 @@
 'use strict';
 
+//TODO maybe remove
 abstractModule.tabs.abstract = function (config) {
     config = config || {};
     if (!config.id) {

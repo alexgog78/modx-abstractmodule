@@ -15,6 +15,15 @@ abstractModule.grid.abstract = function (config) {
         save_action: null,
         saveParams: {},
         fields: [],
+        gridColumns: null,
+        recordActions: {
+            xtype: null,
+            action: {
+                create: null,
+                update: null,
+                remove: null
+            }
+        },
 
         //Core settings
         paging: true,
@@ -38,17 +47,6 @@ abstractModule.grid.abstract = function (config) {
     abstractModule.grid.abstract.superclass.constructor.call(this, config)
 };
 Ext.extend(abstractModule.grid.abstract, MODx.grid.Grid, {
-    gridColumns: null,
-
-    recordActions: {
-        xtype: null,
-        action: {
-            create: null,
-            update: null,
-            remove: null
-        }
-    },
-
     initComponent: function() {
         this.columns = this.renderGridColumns();
         this.tbar = this.renderToolbar();
@@ -180,7 +178,6 @@ Ext.extend(abstractModule.grid.abstract, MODx.grid.Grid, {
         this.getBottomToolbar().changePage(1);
     },
 
-    //TODO
     createRecord: function (btn, e) {
         var window = Ext.getCmp(this.recordActions.xtype);
         if (window) {
@@ -190,7 +187,7 @@ Ext.extend(abstractModule.grid.abstract, MODx.grid.Grid, {
             xtype: this.recordActions.xtype,
             title: _('create'),
             parent: this,
-            record: false,
+            blankValues: true,
             baseParams: {
                 action: this.recordActions.action.create
             }

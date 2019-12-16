@@ -29,7 +29,7 @@ abstract class abstractModule
      * @param modX $modx
      * @param array $config
      */
-    function __construct(modX &$modx, array $config = [])
+    public function __construct(modX &$modx, array $config = [])
     {
         $this->modx = &$modx;
 
@@ -97,33 +97,11 @@ abstract class abstractModule
     }
 
     /**
-     * @param string $message
-     * @param array $data
-     * @param array $placeholders
-     * @return array
+     * @param modManagerController $controller
      */
-    public function success($message = '', $data = [], $placeholders = [])
+    public function addLexicon(modManagerController $controller)
     {
-        return [
-            'success' => true,
-            'message' => $this->getLexiconTopic($message, $placeholders),
-            'data' => $data
-        ];
-    }
-
-    /**
-     * @param string $message
-     * @param array $data
-     * @param array $placeholders
-     * @return array
-     */
-    public function error($message = '', $data = [], $placeholders = [])
-    {
-        return [
-            'success' => false,
-            'message' => $this->getLexiconTopic($message, $placeholders),
-            'data' => $data
-        ];
+        $controller->addLexiconTopic($this->objectType . ':default');
     }
 
     /**
@@ -183,7 +161,7 @@ abstract class abstractModule
 
     /**
      * @param modManagerController $controller
-     * @return void
+     * @return bool
      */
     public function addBackendAssets(modManagerController $controller)
     {
@@ -208,6 +186,7 @@ abstract class abstractModule
         $controller->addHtml(
             '<script type="text/javascript">' . get_class($this) . '.config = ' . $configJs . ';</script>'
         );
+        return true;
     }
 
     /**
@@ -220,8 +199,7 @@ abstract class abstractModule
     }
 
     /**
-     * @param modManagerController $controller
-     * @return void
+     * @return bool
      */
     public function addFrontendAssets()
     {
@@ -231,28 +209,31 @@ abstract class abstractModule
             'actionUrl' => $this->config['actionUrl']
         ));
         $this->modx->regClientStartupScript(
-            '<script type="text/javascript">' . get_class($this) . ' = {config: ' . $configJs . '};</script>',
+            '<script type="text/javascript">' . get_class($this) . 'Config = ' . $configJs . ';</script>',
             true
         );
+        return true;
     }
 
     /**
-     * TODO check namespace
      * @param string $ctx
      * @return bool
      */
     private function addHandlers($ctx = 'default')
     {
-        require_once $this->config['abstractHandlersPath'] . 'handler.class.php';
-
         $handlers = $this->handlers[$ctx] ?? $this->handlers['default'];
-        foreach ($handlers as $className) {
-            $classNamespace = get_class($this) . '\Handlers\\' . $className;
-
-            require_once $this->config['handlersPath'] . mb_strtolower($className) . '.class.php';
-            $this->$className = new $classNamespace($this, $this->config);
-            if (!($this->$className instanceof $classNamespace)) {
-                $this->modx->log(modX::LOG_LEVEL_ERROR, 'Could not initialize ' . $classNamespace . ' class');
+        foreach ($handlers as $key => $className) {
+            if (!class_exists($className)) {
+                $file = $this->config['handlersPath'] . mb_strtolower($key) . '.class.php';
+                if (!is_readable($file)) {
+                    $this->log('Could not load ' . $file);
+                    return false;
+                }
+                require_once $file;
+            }
+            $this->$key = new $className($this, $this->config);
+            if (!($this->$key instanceof $className)) {
+                $this->log('Could not initialize ' . $className . ' class');
                 return false;
             }
         }

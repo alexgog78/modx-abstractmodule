@@ -1,12 +1,6 @@
 <?php
 
-namespace abstractModule\Handlers;
-
-use \abstractModule;
-use \modX;
-use \xPDO;
-
-abstract class abstractHandler
+abstract class amHandler
 {
     /** @var abstractModule */
     protected $module;
@@ -22,7 +16,7 @@ abstract class abstractHandler
      * @param abstractModule $module
      * @param array $config
      */
-    function __construct(& $module, array $config = [])
+    public function __construct(& $module, array $config = [])
     {
         $this->module = &$module;
         $this->modx = &$module->modx;

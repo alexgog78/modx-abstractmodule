@@ -1,5 +1,6 @@
 <?php
 
+//TODO if (!$this->object->validate()) {
 abstract class amObjectUpdateProcessor extends modObjectUpdateProcessor
 {
     /**

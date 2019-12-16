@@ -1,5 +1,6 @@
 <?php
 
+//TODO Validator
 abstract class amSimpleObject extends xPDOSimpleObject
 {
     /**
