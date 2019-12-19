@@ -1,6 +1,7 @@
 'use strict';
 
 var abstractModule = {
+    namespace: '',
     page: {},
     window: {},
     grid: {},
@@ -13,5 +14,5 @@ var abstractModule = {
     util: {},
     config: {},
     renderer: {},
-    function: {}
+    function: {},
 };

@@ -167,9 +167,9 @@ abstract class abstractModule
     {
         $controller->addCss($this->config['abstractСssUrl'] . 'mgr/default.css');
         $controller->addJavascript($this->config['abstractJsUrl'] . 'mgr/abstractmodule.js');
-        $controller->addJavascript($this->config['abstractJsUrl'] . 'mgr/widgets/panel.js');
+        $controller->addJavascript($this->config['abstractJsUrl'] . 'mgr/widgets/panel.simple.js');
+        $controller->addJavascript($this->config['abstractJsUrl'] . 'mgr/widgets/panel.tabs.js');
         $controller->addJavascript($this->config['abstractJsUrl'] . 'mgr/widgets/formpanel.js');
-        $controller->addJavascript($this->config['abstractJsUrl'] . 'mgr/widgets/tabs.js');
         $controller->addJavascript($this->config['abstractJsUrl'] . 'mgr/widgets/grid.js');
         $controller->addJavascript($this->config['abstractJsUrl'] . 'mgr/widgets/window.js');
         $controller->addJavascript($this->config['abstractJsUrl'] . 'mgr/widgets/page.js');

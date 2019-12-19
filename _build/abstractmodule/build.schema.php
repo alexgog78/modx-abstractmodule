@@ -29,6 +29,9 @@ abstract class amBuildSchema
         $this->generator = $this->manager->getGenerator();
     }
 
+    /**
+     * return void
+     */
     public function process()
     {
         $this->getSources();
