@@ -23,7 +23,7 @@ Ext.extend(abstractModule.panel.simple, MODx.Panel, {
     },
 
     getContent: function () {
-        return [];
+        return this.panelContent;
     },
 
     renderHeader: function (html) {
@@ -32,6 +32,7 @@ Ext.extend(abstractModule.panel.simple, MODx.Panel, {
         }
         return {
             xtype: 'modx-header',
+            id: this.id ? this.id + '-header' : '',
             itemId: '',
             html: html
         };

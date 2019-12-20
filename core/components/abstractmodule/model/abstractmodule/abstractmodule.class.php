@@ -166,19 +166,27 @@ abstract class abstractModule
     public function addBackendAssets(modManagerController $controller)
     {
         $controller->addCss($this->config['abstractСssUrl'] . 'mgr/default.css');
+
         $controller->addJavascript($this->config['abstractJsUrl'] . 'mgr/abstractmodule.js');
+
         $controller->addJavascript($this->config['abstractJsUrl'] . 'mgr/widgets/panel.simple.js');
         $controller->addJavascript($this->config['abstractJsUrl'] . 'mgr/widgets/panel.tabs.js');
-        $controller->addJavascript($this->config['abstractJsUrl'] . 'mgr/widgets/formpanel.js');
+
+        $controller->addJavascript($this->config['abstractJsUrl'] . 'mgr/widgets/formpanel.simple.js');
+        $controller->addJavascript($this->config['abstractJsUrl'] . 'mgr/widgets/formpanel.tabs.js');
+
         $controller->addJavascript($this->config['abstractJsUrl'] . 'mgr/widgets/grid.js');
         $controller->addJavascript($this->config['abstractJsUrl'] . 'mgr/widgets/window.js');
         $controller->addJavascript($this->config['abstractJsUrl'] . 'mgr/widgets/page.js');
+
         $controller->addJavascript($this->config['abstractJsUrl'] . 'mgr/combo/select.local.js');
         $controller->addJavascript($this->config['abstractJsUrl'] . 'mgr/combo/multiselect.local.js');
         $controller->addJavascript($this->config['abstractJsUrl'] . 'mgr/combo/select.remote.js');
         $controller->addJavascript($this->config['abstractJsUrl'] . 'mgr/combo/multiselect.remote.js');
         $controller->addJavascript($this->config['abstractJsUrl'] . 'mgr/combo/browser.js');
+
         $controller->addJavascript($this->config['abstractJsUrl'] . 'mgr/util/panel.notice.js');
+
         $controller->addJavascript($this->config['abstractJsUrl'] . 'mgr/misc/renderer.list.js');
         $controller->addJavascript($this->config['abstractJsUrl'] . 'mgr/misc/function.list.js');
 
