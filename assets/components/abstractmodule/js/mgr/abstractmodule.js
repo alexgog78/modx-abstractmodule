@@ -10,7 +10,7 @@ var abstractModule = {
     formPanel: {},
     tabs: {},
     combo: {},
-    util: {},
+    notice: {},
     config: {},
     renderer: {},
     function: {},

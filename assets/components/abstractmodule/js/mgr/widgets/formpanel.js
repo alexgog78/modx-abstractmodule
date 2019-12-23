@@ -1,12 +1,14 @@
 'use strict';
 
-abstractModule.formPanel.simple = function (config) {
+abstractModule.formPanel.abstract = function (config) {
     config = config || {};
     Ext.applyIf(config, {
         //Custom settings
+        tabs: false,
         pageHeader: '',
         panelContent: [],
         recordId: null,
+        record: null,
         baseParams: {},
 
         //Core settings
@@ -19,87 +21,79 @@ abstractModule.formPanel.simple = function (config) {
             'beforeSubmit': {fn: this.beforeSubmit, scope: this}
         }
     });
-    abstractModule.formPanel.simple.superclass.constructor.call(this, config);
+    abstractModule.formPanel.abstract.superclass.constructor.call(this, config);
 };
-Ext.extend(abstractModule.formPanel.simple, MODx.FormPanel, {
+Ext.extend(abstractModule.formPanel.abstract, MODx.FormPanel, {
     initComponent: function () {
         this.panelContent = this.getContent();
+        var content = this.renderMainPlain(this.panelContent);
+        if (this.tabs) {
+            content = this.renderMainTabs(this.panelContent);
+        }
         this.items = [
             this.renderHeader(this.pageHeader),
-            this.renderMain(this.panelContent),
+            content,
         ];
-        abstractModule.formPanel.simple.superclass.initComponent.call(this);
+        abstractModule.formPanel.abstract.superclass.initComponent.call(this);
     },
 
     getContent: function () {
         return this.panelContent;
     },
 
-    //TODO maybe function. Dublicate in Panel
-    renderHeader: function (html) {
-        if (!html) {
-            this.header = true;
-            return {};
-        }
-        return {
-            xtype: 'modx-header',
-            id: this.id ? this.id + '-header' : '',
-            itemId: '',
-            html: html
-        };
+    renderMainPlain: function (html) {
+        return abstractModule.function.getPanelMainPart(html);
     },
 
-    renderMain: function (html) {
-        return {
-            cls: 'x-form-label-left',
-            items: html || []
-        }
+    renderMainTabs: function (tabs) {
+        return abstractModule.function.getTabs(tabs);
+    },
+
+    renderHeader: function (html) {
+        return abstractModule.function.getPanelHeader(html);
     },
 
     renderDescription: function (html) {
-        if (!html) {
-            return {};
-        }
-        return {
-            xtype: 'modx-description',
-            itemId: '',
-            html: '<p>' + html + '</p>'
-        };
+        return abstractModule.function.getPanelDescription(html);
     },
 
     renderContent: function (html) {
-        return {
-            layout: 'anchor',
-            cls: 'main-wrapper',
-            //TODO
-            //labelAlign: 'top',
-            items: html || []
-        };
+        return abstractModule.function.getPanelContent(html);
     },
 
     setup: function () {
-        if (!this.recordId) {
+        if (this.initialized) { this.clearDirty(); return true; }
+        this.setValues(this.record);
+        console.log(this)
+        this.fireEvent('ready');
+        this.initialized = true;
+        /*if (!this.recordId) {
             this.fireEvent('ready');
             return true;
         }
         MODx.Ajax.request({
             url: this.config.url,
             params: {
-                action: this.baseParams.action,
+                action: this.baseParams.actionGet,
                 id: this.recordId
             },
             listeners: {
                 success: {
                     fn: function (response) {
                         var object = response.object;
+                        //TODO remove
+                        console.log(object);
                         this.setValues(object);
-
                         this.fireEvent('ready', object);
+
+                        //if (MODx.onLoadEditor) { MODx.onLoadEditor(this); }
+                        //this.clearDirty();
+
                         MODx.fireEvent('ready');
                     }, scope: this
                 }
             }
-        });
+        });*/
     },
 
     setValues: function (object) {
@@ -107,6 +101,7 @@ Ext.extend(abstractModule.formPanel.simple, MODx.FormPanel, {
     },
 
     success: function (o) {
+        this.getForm().setValues(o.result.object);
         return true;
     },
 

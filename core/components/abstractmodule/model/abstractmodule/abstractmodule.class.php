@@ -36,19 +36,19 @@ abstract class abstractModule
         $this->objectType = strtolower(get_class($this));
 
         //TODO check
-        $abstractBasePath = $this->modx->getOption('abstractmodule.core_path', $config, $this->modx->getOption('core_path') . 'components/abstractmodule/');
+        //$abstractBasePath = $this->modx->getOption('abstractmodule.core_path', $config, $this->modx->getOption('core_path') . 'components/abstractmodule/');
         $abstractAssetsUrl = $this->modx->getOption('abstractmodule.assets_url', $config, $this->modx->getOption('assets_url') . 'components/abstractmodule/');
 
         $basePath = $this->modx->getOption($this->objectType . '.core_path', $config, $this->modx->getOption('core_path') . 'components/' . $this->objectType . '/');
         $assetsUrl = $this->modx->getOption($this->objectType . '.assets_url', $config, $this->modx->getOption('assets_url') . 'components/' . $this->objectType . '/');
 
         $this->config = array_merge([
-            'abstractBasePath' => $abstractBasePath,
-            'abstractCorePath' => $abstractBasePath,
-            'abstractModelPath' => $abstractBasePath . 'model/',
-            'abstractHandlersPath' => $abstractBasePath . 'handlers/',
-            'abstractProcessorsPath' => $abstractBasePath . 'processors/',
-            'abstractAssetsUrl' => $abstractAssetsUrl,
+            //'abstractBasePath' => $abstractBasePath,
+            //'abstractCorePath' => $abstractBasePath,
+            //'abstractModelPath' => $abstractBasePath . 'model/',
+            //'abstractHandlersPath' => $abstractBasePath . 'handlers/',
+            //'abstractProcessorsPath' => $abstractBasePath . 'processors/',
+            //'abstractAssetsUrl' => $abstractAssetsUrl,
             'abstractJsUrl' => $abstractAssetsUrl . 'js/',
             'abstractСssUrl' => $abstractAssetsUrl . 'css/',
             //'connectorUrl' => $assetsUrl . 'connector.php',
@@ -169,11 +169,11 @@ abstract class abstractModule
 
         $controller->addJavascript($this->config['abstractJsUrl'] . 'mgr/abstractmodule.js');
 
-        $controller->addJavascript($this->config['abstractJsUrl'] . 'mgr/widgets/panel.simple.js');
-        $controller->addJavascript($this->config['abstractJsUrl'] . 'mgr/widgets/panel.tabs.js');
+        $controller->addJavascript($this->config['abstractJsUrl'] . 'mgr/widgets/panel.js');
+        //$controller->addJavascript($this->config['abstractJsUrl'] . 'mgr/widgets/panel.tabs.js');
 
-        $controller->addJavascript($this->config['abstractJsUrl'] . 'mgr/widgets/formpanel.simple.js');
-        $controller->addJavascript($this->config['abstractJsUrl'] . 'mgr/widgets/formpanel.tabs.js');
+        $controller->addJavascript($this->config['abstractJsUrl'] . 'mgr/widgets/formpanel.js');
+        //$controller->addJavascript($this->config['abstractJsUrl'] . 'mgr/widgets/formpanel.tabs.js');
 
         $controller->addJavascript($this->config['abstractJsUrl'] . 'mgr/widgets/grid.js');
         $controller->addJavascript($this->config['abstractJsUrl'] . 'mgr/widgets/window.js');
@@ -185,7 +185,7 @@ abstract class abstractModule
         $controller->addJavascript($this->config['abstractJsUrl'] . 'mgr/combo/multiselect.remote.js');
         $controller->addJavascript($this->config['abstractJsUrl'] . 'mgr/combo/browser.js');
 
-        $controller->addJavascript($this->config['abstractJsUrl'] . 'mgr/util/panel.notice.js');
+        $controller->addJavascript($this->config['abstractJsUrl'] . 'mgr/utils/notice.js');
 
         $controller->addJavascript($this->config['abstractJsUrl'] . 'mgr/misc/renderer.list.js');
         $controller->addJavascript($this->config['abstractJsUrl'] . 'mgr/misc/function.list.js');
