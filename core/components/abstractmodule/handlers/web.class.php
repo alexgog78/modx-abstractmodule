@@ -6,18 +6,6 @@ if (!class_exists('amHandler')) {
 
 abstract class amWebHandler extends amHandler
 {
-    public function __construct(& $module, array $config = [])
-    {
-        parent::__construct($module, $config);
-        /*if ($this->modx->controller) {
-            $this->addBackendAssets($this->modx->controller);
-        }*/
-        //$this->addFrontendAssets();
-    }
-
-    /**
-     * @return bool
-     */
     public function loadAssets()
     {
         $configJs = $this->modx->toJSON(array(
@@ -26,13 +14,9 @@ abstract class amWebHandler extends amHandler
             'actionUrl' => $this->config['actionUrl']
         ));
 
-        //$this->modx->regClientCSS('assets/css/my-custom.css');
-
-        //TODO addJavascript
         $this->modx->regClientStartupScript(
             '<script type="text/javascript">' . get_class($this->module) . 'Config = ' . $configJs . ';</script>',
             true
         );
-        return true;
     }
 }

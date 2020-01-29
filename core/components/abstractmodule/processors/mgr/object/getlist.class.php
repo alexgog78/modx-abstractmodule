@@ -57,4 +57,14 @@ abstract class amObjectGetListProcessor extends modObjectGetListProcessor
     {
         return $c;
     }
+
+    /**
+     * @param xPDOObject $object
+     * @return array
+     */
+    public function prepareRow(xPDOObject $object)
+    {
+        $objectArray = parent::prepareRow($object);
+        return $objectArray;
+    }
 }
