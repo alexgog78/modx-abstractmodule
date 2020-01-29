@@ -41,7 +41,18 @@ abstractModule.function = {
         };
     },
 
+    getFormInput: function (name, config = {}) {
+        return Ext.apply({
+            xtype: 'textfield',
+            name: name,
+            hiddenName: name,
+            fieldLabel: name,
+            anchor: '100%'
+        }, config);
+    },
+
     //TODO check
+    //TODO save state
     getTabs: function (tabs) {
         var html = [];
         Ext.iterate(tabs, function (tab) {
@@ -55,9 +66,7 @@ abstractModule.function = {
                 border: false,
                 autoHeight: true,
                 layoutOnTabChange: true,
-
-                //layout: 'form',
-                labelAlign: 'top',
+                labelAlign: 'top'
             },
             deferredRender: false,
             /*defaults: {
@@ -76,8 +85,30 @@ abstractModule.function = {
         }
     },
 
+    getVerticalTabs: function (tabs) {
+        var html = [];
+        Ext.iterate(tabs, function (tab) {
+            var tab = this.getTab(tab.title, tab.items);
+            html.push(tab);
+        }, this);
+        return {
+            xtype: 'modx-vtabs',
+            //autoTabs: true,
+            //border: false,
+            //plain: true,
+            deferredRender: false,
+            //id: this.id + '-vtabs',
+            items: html,
+            //items: [],
+        };
+    },
+
     getTab: function (title, html) {
         return {
+            defaults: {
+                msgTarget: 'under',
+                anchor: '100%'
+            },
             title: title,
             items: html
         };

@@ -6,11 +6,11 @@ abstractModule.combo.multiSelectLocal = function (config) {
         //Custom settings
         store: new Ext.data.SimpleStore({
             id: (config.name || 'multiselect-local') + '-store',
-            fields: [],
+            fields: ['value'],
             data: []
         }),
         displayField: null,
-        valueField: null,
+        valueField: 'value',
         dataIndex: null,
         allowAddNewData: false,
 
@@ -36,6 +36,9 @@ abstractModule.combo.multiSelectLocal = function (config) {
             }
         }
     });
+    if (!config.hiddenName) {
+        config.hiddenName = config.name;
+    }
     config.name += '[]';
     config.hiddenName += '[]';
     abstractModule.combo.multiSelectLocal.superclass.constructor.call(this, config);

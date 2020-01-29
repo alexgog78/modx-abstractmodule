@@ -16,6 +16,9 @@ abstractModule.combo.selectLocal = function (config) {
         allowBlank: true,
         emptyText: _('no'),
     });
+    if (!config.hiddenName) {
+        config.hiddenName = config.name;
+    }
     abstractModule.combo.selectLocal.superclass.constructor.call(this, config);
 };
 Ext.extend(abstractModule.combo.selectLocal, MODx.combo.ComboBox);

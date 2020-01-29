@@ -37,6 +37,7 @@ abstractModule.grid.abstract = function (config) {
             scrollOffset: 0,
             emptyText: config.emptyText || _('ext_emptymsg'),
             getRowClass: this.getRowClass,
+            //TODO
             cssClasses: {
                 'grid-row-inactive': {
                     'is_active': 0
@@ -65,6 +66,7 @@ Ext.extend(abstractModule.grid.abstract, MODx.grid.Grid, {
         }];
     },
 
+    //TODO
     getRowClass: function (record, index, rowParams, store) {
         var rowCssClasses = [];
         Ext.iterate(this.cssClasses, function (cssClass, conditions) {
@@ -171,9 +173,7 @@ Ext.extend(abstractModule.grid.abstract, MODx.grid.Grid, {
     },
 
     clearFilter: function() {
-        this.getStore().baseParams = {
-            action: this.config.baseParams.action
-        };
+        this.getStore().baseParams.query = null;
         Ext.getCmp(this.config.id + '-filter-search').reset();
         this.getBottomToolbar().changePage(1);
     },
@@ -204,7 +204,7 @@ Ext.extend(abstractModule.grid.abstract, MODx.grid.Grid, {
         }
         window = MODx.load({
             xtype: this.recordActions.xtype,
-            title: _('create'),
+            title: _('update'),
             parent: this,
             record: this.menu.record,
             baseParams: {

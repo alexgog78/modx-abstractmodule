@@ -14,8 +14,8 @@ abstract class amManagerController extends modExtraManagerController
     /** @var string */
     protected $recordPrimaryKey = 'id';
 
-    /** @var xPDOObject */
-    protected $record;
+    /** @var xPDOObject|null */
+    protected $record = null;
 
     /**
      * @return void
@@ -25,6 +25,8 @@ abstract class amManagerController extends modExtraManagerController
         $this->getService();
         parent::initialize();
     }
+
+    abstract protected function getService();
 
     /**
      * @return array
@@ -39,10 +41,7 @@ abstract class amManagerController extends modExtraManagerController
      */
     public function loadCustomCssJs()
     {
-        $this->module->addBackendAssets($this);
     }
-
-    abstract protected function getService();
 
     /**
      * @param $key
@@ -58,18 +57,18 @@ abstract class amManagerController extends modExtraManagerController
      * @param array $scriptProperties
      * @return void
      */
-    protected function checkForRecord($scriptProperties = [])
+    protected function getRecord($scriptProperties = [])
     {
         $primaryKey = $scriptProperties[$this->recordPrimaryKey];
 
         //Check request for primary key
-        if (empty($primaryKey) || strlen($primaryKey) !== strlen((integer) $primaryKey)) {
-            $this->failure($this->modx->lexicon( $this->module->objectType . '.err_ns'));
+        if (empty($primaryKey) || strlen($primaryKey) !== strlen((integer)$primaryKey)) {
+            $this->failure($this->modx->lexicon($this->module->objectType . '.err_ns'));
         }
 
         //Check for record
         $this->record = $this->modx->getObject($this->recordClassKey, [
-            $this->recordPrimaryKey => $primaryKey
+            $this->recordPrimaryKey => $primaryKey,
         ]);
         if (!$this->record) {
             $this->failure($this->modx->lexicon($this->module->objectType . '.err_nf'));
@@ -79,18 +78,36 @@ abstract class amManagerController extends modExtraManagerController
     /**
      * @return bool
      */
-    protected function loadRichTextEditor() {
+    protected function loadRichTextEditor()
+    {
         $richTextEditor = $this->modx->getOption('which_editor');
         if (!$this->modx->getOption('use_editor') || empty($richTextEditor)) {
             return false;
         }
         $onRichTextEditorInit = $this->modx->invokeEvent('OnRichTextEditorInit', [
-            'editor' => $richTextEditor
+            'editor' => $richTextEditor,
         ]);
-        if(!is_array($onRichTextEditorInit)) {
+        if (!is_array($onRichTextEditorInit)) {
             return false;
         }
         $onRichTextEditorInit = implode('', $onRichTextEditorInit);
         $this->addHtml($onRichTextEditorInit);
+    }
+
+    /**
+     * @return void
+     */
+    protected function loadCodeEditor()
+    {
+        $config = [
+            'id' => 0,
+            'record' => &$this->record,
+            'mode' => $this->record ? modSystemEvent::MODE_UPD : modSystemEvent::MODE_NEW,
+        ];
+        $onTempFormPrerender = $this->modx->invokeEvent('OnTempFormPrerender', $config);
+        if (is_array($onTempFormPrerender)) {
+            $onTempFormPrerender = implode('', $onTempFormPrerender);
+        }
+        $this->setPlaceholder('onTempFormPrerender', $onTempFormPrerender);
     }
 }

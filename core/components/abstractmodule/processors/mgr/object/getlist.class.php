@@ -14,6 +14,8 @@ abstract class amObjectGetListProcessor extends modObjectGetListProcessor
      */
     public function prepareQueryBeforeCount(xPDOQuery $c)
     {
+        $c = parent::prepareQueryBeforeCount($c);
+
         $query = $this->getProperty('query');
         $valuesqry = $this->getProperty('valuesqry');
         if (!empty($query) && empty($valuesqry)) {
@@ -32,6 +34,7 @@ abstract class amObjectGetListProcessor extends modObjectGetListProcessor
      * @return xPDOQuery
      */
     public function prepareQueryAfterCount(xPDOQuery $c) {
+        $c = parent::prepareQueryAfterCount($c);
         $c->select($this->modx->getSelectColumns($this->classKey, $this->classKey));
         return $c;
     }

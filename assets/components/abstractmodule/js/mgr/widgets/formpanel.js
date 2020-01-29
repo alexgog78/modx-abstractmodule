@@ -62,11 +62,13 @@ Ext.extend(abstractModule.formPanel.abstract, MODx.FormPanel, {
     },
 
     setup: function () {
-        if (this.initialized) { this.clearDirty(); return true; }
+        //if (this.initialized) { this.clearDirty(); return true; }
+        console.log(this.record);
         this.setValues(this.record);
-        console.log(this)
+        //console.log(this)
         this.fireEvent('ready');
         this.initialized = true;
+
         /*if (!this.recordId) {
             this.fireEvent('ready');
             return true;
@@ -101,11 +103,15 @@ Ext.extend(abstractModule.formPanel.abstract, MODx.FormPanel, {
     },
 
     success: function (o) {
-        this.getForm().setValues(o.result.object);
+        this.record = o.result.object;
+        //this.getForm().setValues(o.result.object);
+        //console.log(this.record);
         return true;
     },
 
     beforeSubmit: function (o) {
         return true;
     },
+
+    //TODO renderFormInput
 });

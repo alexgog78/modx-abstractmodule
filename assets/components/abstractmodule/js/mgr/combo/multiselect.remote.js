@@ -24,6 +24,7 @@ abstractModule.combo.multiSelectRemote = function (config) {
 
         //Core settings
         name: config.name || 'multiselect-remote',
+        //hiddenName: config.name || 'multiselect-remote',
         mode: 'remote',
         pageSize: 10,
         minChars: 1,
@@ -70,6 +71,9 @@ abstractModule.combo.multiSelectRemote = function (config) {
             return true;
         },
     });
+    if (!config.hiddenName) {
+        config.hiddenName = config.name;
+    }
     config.name += '[]';
     config.hiddenName += '[]';
     abstractModule.combo.multiSelectRemote.superclass.constructor.call(this, config);

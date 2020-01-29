@@ -22,6 +22,9 @@ abstractModule.combo.selectRemote = function (config) {
         pageSize: 20,
         //TODO check hideMode: 'offsets',
     });
+    if (!config.hiddenName) {
+        config.hiddenName = config.name;
+    }
     abstractModule.combo.selectRemote.superclass.constructor.call(this, config);
 };
 Ext.extend(abstractModule.combo.selectRemote, MODx.combo.ComboBox);

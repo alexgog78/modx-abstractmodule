@@ -1,16 +1,12 @@
 <?php
 
-//TODO Refactor traits
+if (!trait_exists('amHelper')) {
+    require_once MODX_CORE_PATH . 'components/abstractmodule/helpers/amhelper.trait.php';
+}
+
 abstract class abstractModule
 {
-    /** @var string */
-    public $objectType = null;
-
-    /** @var array */
-    public $handlers = [
-        'mgr' => [],
-        'default' => []
-    ];
+    use amHelper;
 
     /** @var modX */
     public $modx;
@@ -18,11 +14,21 @@ abstract class abstractModule
     /** @var array */
     public $config = [];
 
+    /** @var string */
+    public $objectType = null;
+
     /** @var array */
-    public $initialized = [];
+    protected $handlers = [
+        'default' => [],
+        'mgr' => [],
+        'web' => [],
+    ];
 
     /** @var string|null */
     protected $tablePrefix = null;
+
+    /** @var array */
+    private $initialized = [];
 
     /**
      * abstractModule constructor.
@@ -32,219 +38,87 @@ abstract class abstractModule
     public function __construct(modX &$modx, array $config = [])
     {
         $this->modx = &$modx;
-
         $this->objectType = strtolower(get_class($this));
-
-        //TODO check
-        //$abstractBasePath = $this->modx->getOption('abstractmodule.core_path', $config, $this->modx->getOption('core_path') . 'components/abstractmodule/');
-        $abstractAssetsUrl = $this->modx->getOption('abstractmodule.assets_url', $config, $this->modx->getOption('assets_url') . 'components/abstractmodule/');
-
-        $basePath = $this->modx->getOption($this->objectType . '.core_path', $config, $this->modx->getOption('core_path') . 'components/' . $this->objectType . '/');
-        $assetsUrl = $this->modx->getOption($this->objectType . '.assets_url', $config, $this->modx->getOption('assets_url') . 'components/' . $this->objectType . '/');
-
-        $this->config = array_merge([
-            //'abstractBasePath' => $abstractBasePath,
-            //'abstractCorePath' => $abstractBasePath,
-            //'abstractModelPath' => $abstractBasePath . 'model/',
-            //'abstractHandlersPath' => $abstractBasePath . 'handlers/',
-            //'abstractProcessorsPath' => $abstractBasePath . 'processors/',
-            //'abstractAssetsUrl' => $abstractAssetsUrl,
-            'abstractJsUrl' => $abstractAssetsUrl . 'js/',
-            'abstractСssUrl' => $abstractAssetsUrl . 'css/',
-            //'connectorUrl' => $assetsUrl . 'connector.php',
-            //'actionUrl' => $assetsUrl . 'action.php'
-        ], [
-            'basePath' => $basePath,
-            'corePath' => $basePath,
-            'modelPath' => $basePath . 'model/',
-            'handlersPath' => $basePath . 'handlers/',
-            'processorsPath' => $basePath . 'processors/',
-            'assetsUrl' => $assetsUrl,
-            'jsUrl' => $assetsUrl . 'js/',
-            'cssUrl' => $assetsUrl . 'css/',
-            'connectorUrl' => $assetsUrl . 'connector.php',
-            'actionUrl' => $assetsUrl . 'action.php'
-        ], $config);
+        $this->config = $this->getConfig($config);
 
         $this->modx->addPackage($this->objectType, $this->config['modelPath'], $this->tablePrefix);
         $this->modx->lexicon->load($this->objectType . ':default');
-    }
 
-    /**
-     * @param string $ctx
-     * @param array $scriptProperties
-     * @return bool
-     */
-    public function initialize($ctx = 'web', $scriptProperties = [])
-    {
-        if (isset($this->initialized[$ctx])) {
-            return $this->initialized[$ctx];
+        $ctx = $this->config['ctx'];
+        if (!$ctx || $this->initialized[$ctx]) {
+            return;
         }
-        $this->config = array_merge($this->config, $scriptProperties);
-        $this->config['ctx'] = $ctx;
-
-        $this->addHandlers($ctx);
-        switch ($ctx) {
-            case 'mgr':
-                $this->initializeBackend();
-                break;
-            default:
-                $this->initializeFrontend();
-                break;
-        }
-
+        $this->loadHandlers('default');
+        $this->loadHandlers(($ctx != 'mgr') ? 'web' : $ctx);
         $this->initialized[$ctx] = true;
     }
 
     /**
-     * @param modManagerController $controller
-     */
-    public function addLexicon(modManagerController $controller)
-    {
-        $controller->addLexiconTopic($this->objectType . ':default');
-    }
-
-    /**
-     * @param string $key
-     * @param array $placeholders
-     * @return string
-     */
-    public function getLexiconTopic($key = '', $placeholders = [])
-    {
-        return $this->modx->lexicon($this->objectType . '.' . $key, $placeholders);
-    }
-
-    /**
-     * @param mixed $data
-     * @param string $level
-     */
-    public function log($data, $level = 'LOG_LEVEL_ERROR')
-    {
-        if ($data instanceof xPDOObject) {
-            $data = $data->toArray('', false, true, true);
-        }
-        if (is_array($data)) {
-            $data = print_r($data, true);
-        }
-
-        $trace = debug_backtrace();
-        $file = $trace[0]['file'];
-        $line = $trace[0]['line'];
-        $this->modx->log(constant('modX::'. $level), $data, '', get_class($this), $file, $line);
-    }
-
-    /**
-     * @param $eventName
-     * @param array $data
+     * @param array $config
      * @return array
      */
-    public function invokeEvent($eventName, $data = [])
+    protected function getConfig($config = [])
     {
-        $this->modx->event->returnedValues = null;
-        $response = [
-            'eventOutput' => $this->modx->invokeEvent($eventName, $data),
-            'returnedValues' => $this->modx->event->returnedValues
+        $abstractBasePath = $this->modx->getOption('abstractmodule.core_path', $config, MODX_CORE_PATH . 'components/abstractmodule/');
+        $abstractAssetsUrl = $this->modx->getOption('abstractmodule.assets_url', $config, MODX_ASSETS_URL . 'components/abstractmodule/');
+        $abstractConfig = [
+            'abstractJsUrl' => $abstractAssetsUrl . 'js/',
+            'abstractСssUrl' => $abstractAssetsUrl . 'css/',
         ];
-        return $response;
+        $corePath = $this->modx->getOption($this->objectType . '.core_path', $config, MODX_CORE_PATH . 'components/' . $this->objectType . '/');
+        $assetsPath = $this->modx->getOption($this->objectType . '.assets_path', $config, MODX_ASSETS_PATH . 'components/' . $this->objectType . '/');
+        $assetsUrl = $this->modx->getOption($this->objectType . '.assets_url', $config, MODX_ASSETS_URL . 'components/' . $this->objectType . '/');
+        $moduleConfig = [
+            'corePath' => $corePath,
+            'assetsPath' => $assetsPath,
+            'modelPath' => $corePath . 'model/',
+            'handlersPath' => $corePath . 'handlers/',
+            'processorsPath' => $corePath . 'processors/',
+
+            'assetsUrl' => $assetsUrl,
+            'jsUrl' => $assetsUrl . 'js/',
+            'cssUrl' => $assetsUrl . 'css/',
+            'connectorUrl' => $assetsUrl . 'connector.php',
+            'actionUrl' => $assetsUrl . 'action.php',
+        ];
+        return array_merge($abstractConfig, $moduleConfig, $config);
     }
 
     /**
-     * @return bool
+     * @param $folder
      */
-    public function initializeBackend()
+    private function loadHandlers($folder)
     {
-        if ($this->modx->controller) {
-            $this->addBackendAssets($this->modx->controller);
+        $handlers = $this->handlers[$folder];
+        if (!$handlers) {
+            return;
         }
-        return true;
+        foreach ($handlers as $handler) {
+            $this->loadHandler($handler, $folder);
+        }
     }
 
     /**
-     * @param modManagerController $controller
+     * @param $handler
+     * @param $folder
      * @return bool
      */
-    public function addBackendAssets(modManagerController $controller)
+    private function loadHandler($handler, $folder)
     {
-        $controller->addCss($this->config['abstractСssUrl'] . 'mgr/default.css');
-
-        $controller->addJavascript($this->config['abstractJsUrl'] . 'mgr/abstractmodule.js');
-
-        $controller->addJavascript($this->config['abstractJsUrl'] . 'mgr/widgets/panel.js');
-        //$controller->addJavascript($this->config['abstractJsUrl'] . 'mgr/widgets/panel.tabs.js');
-
-        $controller->addJavascript($this->config['abstractJsUrl'] . 'mgr/widgets/formpanel.js');
-        //$controller->addJavascript($this->config['abstractJsUrl'] . 'mgr/widgets/formpanel.tabs.js');
-
-        $controller->addJavascript($this->config['abstractJsUrl'] . 'mgr/widgets/grid.js');
-        $controller->addJavascript($this->config['abstractJsUrl'] . 'mgr/widgets/window.js');
-        $controller->addJavascript($this->config['abstractJsUrl'] . 'mgr/widgets/page.js');
-
-        $controller->addJavascript($this->config['abstractJsUrl'] . 'mgr/combo/select.local.js');
-        $controller->addJavascript($this->config['abstractJsUrl'] . 'mgr/combo/multiselect.local.js');
-        $controller->addJavascript($this->config['abstractJsUrl'] . 'mgr/combo/select.remote.js');
-        $controller->addJavascript($this->config['abstractJsUrl'] . 'mgr/combo/multiselect.remote.js');
-        $controller->addJavascript($this->config['abstractJsUrl'] . 'mgr/combo/browser.js');
-
-        $controller->addJavascript($this->config['abstractJsUrl'] . 'mgr/utils/notice.js');
-
-        $controller->addJavascript($this->config['abstractJsUrl'] . 'mgr/misc/renderer.list.js');
-        $controller->addJavascript($this->config['abstractJsUrl'] . 'mgr/misc/function.list.js');
-
-        $configJs = $this->modx->toJSON($this->config ?? []);
-        $controller->addHtml(
-            '<script type="text/javascript">' . get_class($this) . '.config = ' . $configJs . ';</script>'
-        );
-        return true;
-    }
-
-    /**
-     * @return bool
-     */
-    public function initializeFrontend()
-    {
-        $this->addFrontendAssets();
-        return true;
-    }
-
-    /**
-     * @return bool
-     */
-    public function addFrontendAssets()
-    {
-        $configJs = $this->modx->toJSON(array(
-            'cssUrl' => $this->config['cssUrl'] . 'web/',
-            'jsUrl' => $this->config['jsUrl'] . 'web/',
-            'actionUrl' => $this->config['actionUrl']
-        ));
-        $this->modx->regClientStartupScript(
-            '<script type="text/javascript">' . get_class($this) . 'Config = ' . $configJs . ';</script>',
-            true
-        );
-        return true;
-    }
-
-    /**
-     * @param string $ctx
-     * @return bool
-     */
-    private function addHandlers($ctx = 'default')
-    {
-        $handlers = $this->handlers[$ctx] ?? $this->handlers['default'];
-        foreach ($handlers as $key => $className) {
-            if (!class_exists($className)) {
-                $file = $this->config['handlersPath'] . mb_strtolower($key) . '.class.php';
-                if (!is_readable($file)) {
-                    $this->log('Could not load ' . $file);
-                    return false;
-                }
-                require_once $file;
-            }
-            $this->$key = new $className($this, $this->config);
-            if (!($this->$key instanceof $className)) {
-                $this->log('Could not initialize ' . $className . ' class');
+        $handlerName = $folder . $handler;
+        $className = get_class($this) . ucfirst($folder) . $handler . 'Handler';
+        $file = $this->config['handlersPath'] . $folder . '/' . mb_strtolower($handler) . '.class.php';
+        if (!class_exists($className)) {
+            if (!is_readable($file)) {
+                $this->log('Could not load handler class: ' . $handler);
                 return false;
             }
+            require_once $file;
         }
-        return true;
+        $this->$handlerName = new $className($this, $this->config);
+        if (!($this->$handlerName instanceof $className)) {
+            $this->log('Could not initialize handler class: ' . $className);
+            return false;
+        }
     }
 }

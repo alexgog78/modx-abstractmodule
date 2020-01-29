@@ -9,7 +9,7 @@ abstract class amHandler
     protected $modx;
 
     /** @var array */
-    protected $config;
+    public $config;
 
     /**
      * abstractHandler constructor.

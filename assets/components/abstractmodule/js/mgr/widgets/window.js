@@ -11,7 +11,7 @@ abstractModule.window.abstract = function (config) {
 
         //Core settings
         width: config.width || 600,
-        autoHeight: true,
+        //autoHeight: true,
         //TODO
         //allowDrop: false,
         //resizable: false,
@@ -41,22 +41,19 @@ Ext.extend(abstractModule.window.abstract, MODx.Window, {
     renderFormPanel: function (formInputs) {
         var form = [];
         Ext.iterate(formInputs, function (name, config) {
-            var formInput = this.renderFormInput(name, config);
+            var formInput = abstractModule.function.getFormInput(name, config);
             form.push(formInput);
         }, this);
         return form;
     },
 
-    renderFormInput: function (name, config = {}) {
-        var formInput = {
-            xtype: 'textfield',
-            name: name,
-            hiddenName: name,
-            fieldLabel: name,
-            anchor: '100%'
-        };
-        Ext.apply(formInput, config);
-        return formInput;
+    renderFormFieldset: function (fields = {}) {
+        var fieldset = [];
+        Ext.each(fields, function (name) {
+            var formInput = abstractModule.function.getFormInput(name, this.formInputs[name]);
+            fieldset.push(formInput);
+        }, this);
+        return fieldset;
     },
 
     beforeSubmit: function (record) {
