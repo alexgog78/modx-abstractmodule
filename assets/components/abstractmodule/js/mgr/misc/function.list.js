@@ -55,8 +55,8 @@ abstractModule.function = {
     //TODO save state
     getTabs: function (tabs) {
         var html = [];
-        Ext.iterate(tabs, function (tab) {
-            var tab = this.getTab(tab.title, tab.items);
+        Ext.iterate(tabs, function (tabData) {
+            var tab = this.getTab(tabData.title, tabData.items);
             html.push(tab);
         }, this);
         return {
@@ -87,8 +87,8 @@ abstractModule.function = {
 
     getVerticalTabs: function (tabs) {
         var html = [];
-        Ext.iterate(tabs, function (tab) {
-            var tab = this.getTab(tab.title, tab.items);
+        Ext.iterate(tabs, function (tabData) {
+            var tab = this.getTab(tabData.title, tabData.items);
             html.push(tab);
         }, this);
         return {

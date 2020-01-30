@@ -20,6 +20,7 @@ abstract class abstractValidatorUnique extends xPDOValidationRule
     {
         parent::isValid($value, $options);
 
+        /** @noinspection PhpUndefinedFieldInspection */
         $this->xpdo = &$this->validator->object->xpdo;
         $this->object = $this->validator->object;
         $this->query[$this->field] = $value;

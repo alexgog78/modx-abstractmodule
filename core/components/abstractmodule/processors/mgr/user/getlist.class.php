@@ -1,6 +1,7 @@
 <?php
 
 //TODO
+/** @noinspection PhpUndefinedConstantInspection */
 if (!$this->loadClass('getlist', MODX_PROCESSORS_PATH . 'security/user/', true, true)) {
     return false;
 }

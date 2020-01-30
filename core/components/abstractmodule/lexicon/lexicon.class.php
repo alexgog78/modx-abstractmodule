@@ -38,12 +38,15 @@ class amLexicon
      */
     private function includeFiles()
     {
+        /** @noinspection PhpIncludeInspection */
         require_once dirname(__FILE__) . '/' . $this->cultureKey . '/manager.class.php';
         $this->languageTopics = array_merge($this->languageTopics, amLexiconManager::$languageTopics);
 
+        /** @noinspection PhpIncludeInspection */
         require_once dirname(__FILE__) . '/' . $this->cultureKey . '/field.class.php';
         $this->languageTopics = array_merge($this->languageTopics, amLexiconField::$languageTopics);
 
+        /** @noinspection PhpIncludeInspection */
         require_once dirname(__FILE__) . '/' . $this->cultureKey . '/status.class.php';
         $this->languageTopics = array_merge($this->languageTopics, amLexiconStatus::$languageTopics);
     }

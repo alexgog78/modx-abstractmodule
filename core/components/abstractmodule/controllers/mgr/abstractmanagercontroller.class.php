@@ -75,28 +75,22 @@ abstract class abstractManagerController extends modExtraManagerController
         }
     }
 
-    /**
-     * @return bool
-     */
     protected function loadRichTextEditor()
     {
         $richTextEditor = $this->modx->getOption('which_editor');
         if (!$this->modx->getOption('use_editor') || empty($richTextEditor)) {
-            return false;
+            return;
         }
         $onRichTextEditorInit = $this->modx->invokeEvent('OnRichTextEditorInit', [
             'editor' => $richTextEditor,
         ]);
         if (!is_array($onRichTextEditorInit)) {
-            return false;
+            return;
         }
         $onRichTextEditorInit = implode('', $onRichTextEditorInit);
         $this->addHtml($onRichTextEditorInit);
     }
 
-    /**
-     * @return void
-     */
     protected function loadCodeEditor()
     {
         $config = [

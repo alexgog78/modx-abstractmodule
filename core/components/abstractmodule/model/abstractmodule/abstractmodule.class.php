@@ -1,6 +1,7 @@
 <?php
 
 if (!trait_exists('abstractHelper')) {
+    /** @noinspection PhpIncludeInspection */
     require_once MODX_CORE_PATH . 'components/abstractmodule/helpers/abstracthelper.trait.php';
 }
 
@@ -128,5 +129,6 @@ abstract class abstractModule
             $this->log('Could not initialize handler class: ' . $className);
             return false;
         }
+        return true;
     }
 }
