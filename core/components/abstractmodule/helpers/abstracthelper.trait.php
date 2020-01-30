@@ -1,6 +1,6 @@
 <?php
 
-trait amHelper
+trait abstractHelper
 {
     /**
      * @param mixed $data

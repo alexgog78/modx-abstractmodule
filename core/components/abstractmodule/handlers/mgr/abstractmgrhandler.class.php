@@ -1,10 +1,10 @@
 <?php
 
-if (!class_exists('amHandler')) {
-    require_once dirname(__FILE__) . '/handler.class.php';
+if (!class_exists('abstractHandler')) {
+    require_once dirname(dirname(__FILE__)) . '/abstracthandler.class.php';
 }
 
-abstract class amMgrHandler extends amHandler
+abstract class abstractMgrHandler extends abstractHandler
 {
     /**
      * @param modManagerController $controller

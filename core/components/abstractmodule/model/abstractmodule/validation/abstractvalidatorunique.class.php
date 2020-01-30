@@ -1,6 +1,6 @@
 <?php
 
-abstract class amValidatorUnique extends xPDOValidationRule
+abstract class abstractValidatorUnique extends xPDOValidationRule
 {
     /** @var array */
     private $query = [];

@@ -1,6 +1,6 @@
 <?php
 
-abstract class amManagerController extends modExtraManagerController
+abstract class abstractManagerController extends modExtraManagerController
 {
     /** @var abstractModule */
     protected $module;

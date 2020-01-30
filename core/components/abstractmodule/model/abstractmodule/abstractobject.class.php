@@ -1,6 +1,6 @@
 <?php
 
-abstract class amObject extends xPDOObject
+abstract class abstractObject extends xPDOObject
 {
     /** @var array */
     protected $booleanFields = [];

@@ -1,12 +1,12 @@
 <?php
 
-if (!trait_exists('amHelper')) {
-    require_once MODX_CORE_PATH . 'components/abstractmodule/helpers/amhelper.trait.php';
+if (!trait_exists('abstractHelper')) {
+    require_once MODX_CORE_PATH . 'components/abstractmodule/helpers/abstracthelper.trait.php';
 }
 
 abstract class abstractModule
 {
-    use amHelper;
+    use abstractHelper;
 
     /** @var modX */
     public $modx;
@@ -105,9 +105,31 @@ abstract class abstractModule
      */
     private function loadHandler($handler, $folder)
     {
+        $abstractHandler = 'abstract' . ucfirst($folder) . 'Handler';
+        if (!$this->modx->loadClass($abstractHandler, MODX_CORE_PATH . 'components/abstractmodule/handlers/' . $folder . '/', true, true)) {
+            $this->log('Could not load abstract handler class: ' . $abstractHandler);
+            return false;
+        }
+
+
         $handlerName = $folder . $handler;
         $className = get_class($this) . ucfirst($folder) . $handler . 'Handler';
-        $file = $this->config['handlersPath'] . $folder . '/' . mb_strtolower($handler) . '.class.php';
+        $this->log([
+            $abstractHandler,
+            $handlerName,
+            $className
+        ]);
+        if (!$this->modx->loadClass($className, $this->config['handlersPath'] . $folder . '/', true, true)) {
+            $this->log('Could not load handler class: ' . $className);
+            return false;
+        }
+        $this->$handlerName = new $className($this, $this->config);
+        if (!($this->$handlerName instanceof $className)) {
+            $this->log('Could not initialize handler class: ' . $className);
+            return false;
+        }
+
+        /*$file = $this->config['handlersPath'] . $folder . '/' . mb_strtolower($handler) . '.class.php';
         if (!class_exists($className)) {
             if (!is_readable($file)) {
                 $this->log('Could not load handler class: ' . $handler);
@@ -119,6 +141,6 @@ abstract class abstractModule
         if (!($this->$handlerName instanceof $className)) {
             $this->log('Could not initialize handler class: ' . $className);
             return false;
-        }
+        }*/
     }
 }

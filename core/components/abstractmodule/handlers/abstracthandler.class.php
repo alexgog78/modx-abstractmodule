@@ -1,6 +1,6 @@
 <?php
 
-abstract class amHandler
+abstract class abstractHandler
 {
     /** @var abstractModule */
     protected $module;
