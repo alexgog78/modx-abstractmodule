@@ -27,7 +27,8 @@ abstract class abstractObjectCreateProcessor extends modObjectCreateProcessor
         }
     }
 
-    private function validateElement() {
+    private function validateElement()
+    {
         if (!$this->object->validate()) {
             /** @var modValidator $validator */
             $validator = $this->object->getValidator();

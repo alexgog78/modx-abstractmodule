@@ -117,7 +117,7 @@ abstract class abstractModule
         $this->log([
             $abstractHandler,
             $handlerName,
-            $className
+            $className,
         ]);
         if (!$this->modx->loadClass($className, $this->config['handlersPath'] . $folder . '/', true, true)) {
             $this->log('Could not load handler class: ' . $className);
@@ -128,19 +128,5 @@ abstract class abstractModule
             $this->log('Could not initialize handler class: ' . $className);
             return false;
         }
-
-        /*$file = $this->config['handlersPath'] . $folder . '/' . mb_strtolower($handler) . '.class.php';
-        if (!class_exists($className)) {
-            if (!is_readable($file)) {
-                $this->log('Could not load handler class: ' . $handler);
-                return false;
-            }
-            require_once $file;
-        }
-        $this->$handlerName = new $className($this, $this->config);
-        if (!($this->$handlerName instanceof $className)) {
-            $this->log('Could not initialize handler class: ' . $className);
-            return false;
-        }*/
     }
 }

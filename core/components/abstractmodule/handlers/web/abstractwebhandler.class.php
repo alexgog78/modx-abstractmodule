@@ -8,15 +8,12 @@ abstract class abstractWebHandler extends abstractHandler
 {
     public function loadAssets()
     {
-        $configJs = $this->modx->toJSON(array(
+        $configJs = $this->modx->toJSON([
             'cssUrl' => $this->config['cssUrl'] . 'web/',
             'jsUrl' => $this->config['jsUrl'] . 'web/',
-            'actionUrl' => $this->config['actionUrl']
-        ));
+            'actionUrl' => $this->config['actionUrl'],
+        ]);
 
-        $this->modx->regClientStartupScript(
-            '<script type="text/javascript">' . get_class($this->module) . 'Config = ' . $configJs . ';</script>',
-            true
-        );
+        $this->modx->regClientStartupScript('<script type="text/javascript">' . get_class($this->module) . 'Config = ' . $configJs . ';</script>', true);
     }
 }

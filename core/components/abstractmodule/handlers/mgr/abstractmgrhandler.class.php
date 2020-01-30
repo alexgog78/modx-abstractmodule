@@ -33,9 +33,7 @@ abstract class abstractMgrHandler extends abstractHandler
         $controller->addJavascript($this->config['jsUrl'] . 'mgr/' . $this->module->objectType . '.js');
 
         $configJs = $this->modx->toJSON($this->config ?? []);
-        $controller->addHtml(
-            '<script type="text/javascript">' . get_class($this->module) . '.config = ' . $configJs . ';</script>'
-        );
+        $controller->addHtml('<script type="text/javascript">' . get_class($this->module) . '.config = ' . $configJs . ';</script>');
     }
 
     /**

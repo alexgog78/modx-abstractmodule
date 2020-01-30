@@ -27,7 +27,8 @@ abstract class abstractObjectUpdateProcessor extends modObjectUpdateProcessor
         }
     }
 
-    private function validateElement() {
+    private function validateElement()
+    {
         if (!$this->object->validate()) {
             /** @var modValidator $validator */
             $validator = $this->object->getValidator();

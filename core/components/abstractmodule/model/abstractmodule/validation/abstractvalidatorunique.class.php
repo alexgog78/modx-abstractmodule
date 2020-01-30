@@ -16,7 +16,8 @@ abstract class abstractValidatorUnique extends xPDOValidationRule
      * @param array $options
      * @return bool
      */
-    public function isValid($value, array $options = array()) {
+    public function isValid($value, array $options = [])
+    {
         parent::isValid($value, $options);
 
         $this->xpdo = &$this->validator->object->xpdo;
@@ -35,7 +36,7 @@ abstract class abstractValidatorUnique extends xPDOValidationRule
 
         $this->xpdo->log(xPDO::LOG_LEVEL_ERROR, print_r($this->query, true));
 
-        $result= ($count == 0);
+        $result = ($count == 0);
         if ($result === false) {
             $this->validator->addMessage($this->field, $this->name, $this->message);
         }
