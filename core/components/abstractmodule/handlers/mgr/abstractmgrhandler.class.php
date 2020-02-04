@@ -11,8 +11,6 @@ abstract class abstractMgrHandler extends abstractHandler
      */
     public function loadAssets(modManagerController $controller)
     {
-        $this->module->log('addBackendAssets');
-
         $controller->addCss($this->config['abstractСssUrl'] . 'mgr/default.css');
         $controller->addJavascript($this->config['abstractJsUrl'] . 'mgr/abstractmodule.js');
         $controller->addJavascript($this->config['abstractJsUrl'] . 'mgr/widgets/panel.js');
@@ -31,7 +29,6 @@ abstract class abstractMgrHandler extends abstractHandler
 
         $controller->addCss($this->config['cssUrl'] . 'mgr/default.css');
         $controller->addJavascript($this->config['jsUrl'] . 'mgr/' . $this->module->objectType . '.js');
-
         $configJs = $this->modx->toJSON($this->config ?? []);
         $controller->addHtml('<script type="text/javascript">' . get_class($this->module) . '.config = ' . $configJs . ';</script>');
     }

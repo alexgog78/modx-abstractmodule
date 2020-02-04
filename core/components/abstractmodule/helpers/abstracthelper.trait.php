@@ -3,10 +3,10 @@
 trait abstractHelper
 {
     /**
-     * @param mixed $data
-     * @param string $level
+     * @param $data
+     * @param int $level
      */
-    public function log($data, $level = 'LOG_LEVEL_ERROR')
+    public function log($data, $level = modX::LOG_LEVEL_ERROR)
     {
         if ($data instanceof xPDOObject) {
             $data = $data->toArray('', false, true, true);
@@ -18,7 +18,7 @@ trait abstractHelper
         $trace = debug_backtrace();
         $file = $trace[1]['file'];
         $line = $trace[1]['line'];
-        $this->modx->log(constant('modX::' . $level), $data, '', get_class($this), $file, $line);
+        $this->modx->log($level, $data, '', get_class($this), $file, $line);
     }
 
     /**

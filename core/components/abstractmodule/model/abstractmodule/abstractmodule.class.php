@@ -111,15 +111,8 @@ abstract class abstractModule
             $this->log('Could not load abstract handler class: ' . $abstractHandler);
             return false;
         }
-
-
         $handlerName = $folder . $handler;
         $className = get_class($this) . ucfirst($folder) . $handler . 'Handler';
-        $this->log([
-            $abstractHandler,
-            $handlerName,
-            $className,
-        ]);
         if (!$this->modx->loadClass($className, $this->config['handlersPath'] . $folder . '/', true, true)) {
             $this->log('Could not load handler class: ' . $className);
             return false;

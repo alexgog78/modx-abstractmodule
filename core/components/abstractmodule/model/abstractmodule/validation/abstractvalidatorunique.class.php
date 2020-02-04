@@ -34,9 +34,6 @@ abstract class abstractValidatorUnique extends xPDOValidationRule
         }
 
         $count = $this->xpdo->getCount($this->object->_class, $this->query);
-
-        $this->xpdo->log(xPDO::LOG_LEVEL_ERROR, print_r($this->query, true));
-
         $result = ($count == 0);
         if ($result === false) {
             $this->validator->addMessage($this->field, $this->name, $this->message);
