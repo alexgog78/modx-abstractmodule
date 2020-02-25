@@ -32,8 +32,8 @@ class Run
     private function loadAbstractCommands()
     {
 
-        $this->modx->loadClass('abstractmodule.abstractcommand', dirname(__FILE__) . '/', true, true);
-        $this->modx->loadClass('abstractmodule.abstractbuildmodel', dirname(__FILE__) . '/', true, true);
+        $this->modx->loadClass('commands.abstractcommand', dirname(__FILE__) . '/', true, true);
+        $this->modx->loadClass('commands.abstractbuildmodel', dirname(__FILE__) . '/', true, true);
     }
 
     /**
