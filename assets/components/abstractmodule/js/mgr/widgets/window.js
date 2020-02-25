@@ -32,7 +32,6 @@ Ext.extend(abstractModule.window.abstract, MODx.Window, {
     },
 
     renderForm: function () {
-        console.log(this.record);
         this.setValues(this.defaultValues);
         this.setValues(this.record);
         abstractModule.window.abstract.superclass.renderForm.call(this);
