@@ -11,13 +11,13 @@ abstract class abstractCommand
     public function __construct(modX &$modx, $config = [])
     {
         $this->modx = &$modx;
-        $this->config = array_merge($this->config, $config);
+        $this->config = $config;
     }
 
     abstract public function run();
 
     /**
-     * @param $data
+     * @param mixed $data
      * @param int $level
      */
     public function log($data, $level = modX::LOG_LEVEL_INFO)
