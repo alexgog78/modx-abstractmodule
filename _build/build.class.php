@@ -1,6 +1,6 @@
 <?php
 
-class Run
+class Build
 {
     /** @var modX */
     private $modx;
@@ -34,6 +34,7 @@ class Run
 
         $this->modx->loadClass('commands.abstractcommand', dirname(__FILE__) . '/', true, true);
         $this->modx->loadClass('commands.abstractbuildmodel', dirname(__FILE__) . '/', true, true);
+        $this->modx->loadClass('commands.abstractbuildtransport', dirname(__FILE__) . '/', true, true);
     }
 
     /**
