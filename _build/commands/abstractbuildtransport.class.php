@@ -2,6 +2,11 @@
 
 abstract class abstractBuildTransport extends abstractCommand
 {
+    /** @var string|bool */
+    protected $dataFolder = false;
+
+    protected $resolversFolder = false;
+
     /** @var bool */
     protected $namespace = false;
 
@@ -21,7 +26,9 @@ abstract class abstractBuildTransport extends abstractCommand
     protected $plugins = false;
 
     /** @var modPackageBuilder */
-    protected $builder;
+    private $builder;
+
+    private $vehicles = [];
 
     /**
      * BuildTransport constructor.
@@ -31,9 +38,11 @@ abstract class abstractBuildTransport extends abstractCommand
     public function __construct(modX &$modx, $config = [])
     {
         parent::__construct($modx, $config);
-        $this->modx->loadClass('transport.modPackageBuilder','',false, true);
+        $this->modx->loadClass('transport.modPackageBuilder', '', false, true);
         $this->builder = new modPackageBuilder($this->modx);
-        $this->getData();
+        if ($this->dataFolder) {
+            $this->getData();
+        }
     }
 
     public function run()
@@ -43,102 +52,191 @@ abstract class abstractBuildTransport extends abstractCommand
         if ($this->namespace) {
             $this->addNamespace();
         }
+
         if ($this->coreFiles) {
-            $this->addCore();
+            $this->vehicles['coreFiles'] = $this->addCoreFiles();
         }
         if ($this->assetsFiles) {
-            $this->addAssets();
+            $this->vehicles['assetsFiles'] = $this->addAssetsFiles();
         }
         if ($this->menus) {
-            $this->addMenus();
+            $this->vehicles['menus'] = $this->addMenus();
         }
         if ($this->events) {
-            $this->addEvents();
+            $this->vehicles['events'] = $this->addEvents();
         }
+        if ($this->plugins) {
+            $this->vehicles['plugins'] = $this->addPlugins();
+        }
+
+        if ($this->resolversFolder) {
+            $this->log('DataBase');
+            $this->vehicles['coreFiles']->resolve('php', ['source' => $this->resolversFolder . 'resolve.tables.php']);
+        }
+
+        foreach ($this->vehicles as $vehicle) {
+            if (is_array($vehicle)) {
+                foreach ($vehicle as $subVehicle) {
+                    $this->builder->putVehicle($subVehicle);
+                }
+                continue;
+            }
+            $this->builder->putVehicle($vehicle);
+        }
+
+
+
 
         $this->builder->pack();
     }
 
-    protected function getData()
+    private function getData()
     {
-        return;
+        $files = scandir($this->dataFolder);
+        foreach ($files as $file) {
+            if (preg_match('/transport.*?\.php$/i', $file)) {
+                $property = str_replace([
+                    'transport.',
+                    '.php',
+                ], '', $file);
+                /** @noinspection PhpIncludeInspection */
+                $this->$property = include $this->dataFolder . $file;
+            }
+        }
     }
 
     private function addNamespace()
     {
-        $this->builder->registerNamespace(
-            PKG_NAME_LOWER,
-            false,
-            true,
-            '{core_path}components/' . PKG_NAME_LOWER . '/',
-            '{assets_path}components/' . PKG_NAME_LOWER . '/'
-        );
+        $this->builder->registerNamespace(PKG_NAME_LOWER, false, true, '{core_path}components/' . PKG_NAME_LOWER . '/', '{assets_path}components/' . PKG_NAME_LOWER . '/');
     }
 
-    private function addCore()
+    /**
+     * @return modTransportVehicle
+     */
+    private function addCoreFiles()
     {
-        $vehicle = $this->builder->createVehicle([
+        return $this->builder->createVehicle([
             'source' => MODX_CORE_PATH . 'components/' . PKG_NAME_LOWER,
             'target' => "return MODX_CORE_PATH . 'components/';",
         ], [
             'vehicle_class' => 'xPDOFileVehicle',
         ]);
-        $this->builder->putVehicle($vehicle);
-        unset($vehicle);
     }
 
-    private function addAssets()
+    /**
+     * @return modTransportVehicle
+     */
+    private function addAssetsFiles()
     {
-        $vehicle = $this->builder->createVehicle([
+        return $this->builder->createVehicle([
             'source' => MODX_ASSETS_PATH . 'components/' . PKG_NAME_LOWER,
             'target' => "return MODX_ASSETS_PATH . 'components/';",
         ], [
             'vehicle_class' => 'xPDOFileVehicle',
         ]);
-        $this->builder->putVehicle($vehicle);
-        unset($vehicle);
     }
 
+    /**
+     * @return array
+     */
     private function addMenus()
     {
-        foreach ($this->menus as $menuKey => $menuItem) {
+        $menus = [];
+        foreach ($this->menus as $menuData) {
             $menu = $this->modx->newObject('modMenu');
             $menu->fromArray(array_merge([
-                'text' => $menuKey,
                 'parent' => 'components',
                 'namespace' => PKG_NAME_LOWER,
-            ], $menuItem), '', true, true);
+            ], $menuData), '', true, true);
             $vehicle = $this->builder->createVehicle($menu, [
                 xPDOTransport::PRESERVE_KEYS => true,
                 xPDOTransport::UPDATE_OBJECT => true,
                 xPDOTransport::UNIQUE_KEY => 'text',
             ]);
-            $this->builder->putVehicle($vehicle);
+            $menus[] = $vehicle;
         }
-        unset($vehicle, $menu);
+        return $menus;
     }
 
+    /**
+     * @return array
+     */
     private function addEvents()
     {
-        foreach ($this->events as $eventName) {
+        $events = [];
+        foreach ($this->events as $eventData) {
             $event = $this->modx->newObject('modEvent');
-            $event->fromArray([
-                'name' => $eventName,
+            $event->fromArray(array_merge([
                 'service' => 6,
                 'groupname' => PKG_NAME,
-            ], '', true, true);
+            ], $eventData), '', true, true);
             $vehicle = $this->builder->createVehicle($event, [
                 xPDOTransport::PRESERVE_KEYS => true,
                 xPDOTransport::UPDATE_OBJECT => true,
                 xPDOTransport::UNIQUE_KEY => 'name',
             ]);
-            $this->builder->putVehicle($vehicle);
+            $events[] = $vehicle;
         }
+        return $events;
     }
 
-    //TODO
     private function addPlugins()
     {
+        $plugins = [];
+        foreach ($this->plugins as $pluginData) {
+            $plugin = $this->modx->newObject('modPlugin');
+            if ($pluginData['static_file']) {
+                $pluginData['plugincode'] = $this->getFileContent($pluginData['static_file']);
+            }
+            $plugin->fromArray(array_merge([
+                'id' => 0,
+                'category' => 0,
+            ], $pluginData), '', true, true);
 
+            $events = [];
+            if (!empty($pluginData['events'])) {
+                foreach ($pluginData['events'] as $pluginEvent) {
+                    $event = $this->modx->newObject('modPluginEvent');
+                    $event->fromArray([
+                        'event' => $pluginEvent,
+                        'priority' => 0,
+                        'propertyset' => 0,
+                    ], '', true, true);
+                    $events[] = $event;
+                }
+                $plugin->addMany($events);
+            }
+
+            $vehicle = $this->builder->createVehicle($plugin, [
+                xPDOTransport::PRESERVE_KEYS => true,
+                xPDOTransport::UPDATE_OBJECT => true,
+                xPDOTransport::UNIQUE_KEY => 'name',
+                xPDOTransport::RELATED_OBJECTS => true,
+                xPDOTransport::RELATED_OBJECT_ATTRIBUTES => [
+                    'PluginEvents' => [
+                        xPDOTransport::PRESERVE_KEYS => true,
+                        xPDOTransport::UPDATE_OBJECT => false,
+                        xPDOTransport::UNIQUE_KEY => [
+                            'pluginid',
+                            'event',
+                        ],
+                    ],
+                ],
+            ]);
+            $plugins[] = $vehicle;
+        }
+        return $plugins;
+    }
+
+
+    /**
+     * @param string $filePath
+     * @return string
+     */
+    private function getFileContent(string $filePath)
+    {
+        $file = trim(file_get_contents($filePath));
+        preg_match('#\<\?php(.*)#is', $file, $data);
+        return rtrim(rtrim(trim($data[1]), '?>'));
     }
 }
