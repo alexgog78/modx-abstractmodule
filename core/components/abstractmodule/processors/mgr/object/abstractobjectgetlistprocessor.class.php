@@ -1,6 +1,6 @@
 <?php
 
-abstract class abstractObjectGetListProcessor extends modObjectGetListProcessor
+abstract class AbstractObjectGetListProcessor extends modObjectGetListProcessor
 {
     /** @var string */
     public $defaultSortField = 'id';

@@ -1,10 +1,10 @@
 <?php
 
-if (!class_exists('abstractCLI')) {
+if (!class_exists('AbstractCLI')) {
     require_once dirname(__FILE__) . '/abstractcli.class.php';
 }
 
-abstract class abstractBuildModel extends abstractCLI
+abstract class AbstractBuildModel extends AbstractCLI
 {
     /** @var xPDOManager|null */
     protected $manager;
@@ -19,7 +19,7 @@ abstract class abstractBuildModel extends abstractCLI
     protected $modelPath = '';
 
     /**
-     * abstractBuildModel constructor.
+     * AbstractBuildModel constructor.
      * @param array $config
      */
     public function __construct($config = [])

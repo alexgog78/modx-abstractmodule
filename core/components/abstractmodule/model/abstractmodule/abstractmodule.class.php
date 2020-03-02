@@ -1,13 +1,13 @@
 <?php
 
-if (!trait_exists('abstractHelper')) {
+if (!trait_exists('AbstractHelper')) {
     /** @noinspection PhpIncludeInspection */
     require_once MODX_CORE_PATH . 'components/abstractmodule/helpers/abstracthelper.trait.php';
 }
 
-abstract class abstractModule
+abstract class AbstractModule
 {
-    use abstractHelper;
+    use AbstractHelper;
 
     /** @var modX */
     public $modx;
@@ -32,7 +32,7 @@ abstract class abstractModule
     private $initialized = [];
 
     /**
-     * abstractModule constructor.
+     * AbstractModule constructor.
      * @param modX $modx
      * @param array $config
      */
@@ -45,13 +45,15 @@ abstract class abstractModule
         $this->modx->addPackage($this->objectType, $this->config['modelPath'], $this->tablePrefix);
         $this->modx->lexicon->load($this->objectType . ':default');
 
-        $ctx = $this->config['ctx'];
-        if (!$ctx || $this->initialized[$ctx]) {
-            return;
+        if (!empty($this->config['ctx'])) {
+            $ctx = $this->config['ctx'];
+            if (!$ctx || $this->initialized[$ctx]) {
+                return;
+            }
+            $this->loadHandlers('default');
+            $this->loadHandlers(($ctx != 'mgr') ? 'web' : $ctx);
+            $this->initialized[$ctx] = true;
         }
-        $this->loadHandlers('default');
-        $this->loadHandlers(($ctx != 'mgr') ? 'web' : $ctx);
-        $this->initialized[$ctx] = true;
     }
 
     /**

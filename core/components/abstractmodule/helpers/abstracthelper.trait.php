@@ -1,6 +1,6 @@
 <?php
 
-trait abstractHelper
+trait AbstractHelper
 {
     /**
      * @param $data

@@ -1,5 +1,5 @@
 <?php
 
-abstract class abstractObjectGetProcessor extends modObjectGetProcessor
+abstract class AbstractObjectGetProcessor extends modObjectGetProcessor
 {
 }

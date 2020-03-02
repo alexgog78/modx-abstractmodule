@@ -1,10 +1,10 @@
 <?php
 
-if (!class_exists('abstractCLI')) {
+if (!class_exists('AbstractCLI')) {
     require_once dirname(__FILE__) . '/abstractcli.class.php';
 }
 
-abstract class abstractBuildTransport extends abstractCLI
+abstract class AbstractBuildTransport extends AbstractCLI
 {
     /** @var string */
     protected $buildPath = '';
@@ -34,7 +34,7 @@ abstract class abstractBuildTransport extends abstractCLI
     private $category = NULL;
 
     /**
-     * abstractBuildTransport constructor.
+     * AbstractBuildTransport constructor.
      * @param array $config
      */
     public function __construct($config = [])
@@ -43,9 +43,7 @@ abstract class abstractBuildTransport extends abstractCLI
 
         $this->modx->loadClass('transport.modPackageBuilder', '', false, true);
         $this->builder = new modPackageBuilder($this->modx);
-
-        $this->buildPath = dirname(dirname(__FILE__)) . '/' . PKG_NAME_LOWER . '/';
-
+        $this->buildPath = BUILD_PATH . PKG_NAME_LOWER . '/';
         $corePath = MODX_CORE_PATH . 'components/' . PKG_NAME_LOWER . '/';
         $this->config = array_merge([
             'pluginsPath' => $corePath . 'elements/plugins/',
@@ -84,16 +82,7 @@ abstract class abstractBuildTransport extends abstractCLI
         }
 
         $this->addAttributes();
-
-        foreach ($this->resolvers as $key => $resolver) {
-            $this->log($key);
-            $vehicle = $this->builder->createVehicle([
-                'source' => $resolver,
-            ], [
-                'vehicle_class' => 'xPDOScriptVehicle',
-            ]);
-            $this->builder->putVehicle($vehicle);
-        }
+        $this->addResolvers();
 
         $this->builder->pack();
     }
@@ -192,6 +181,22 @@ abstract class abstractBuildTransport extends abstractCLI
                 xPDOTransport::PRESERVE_KEYS => true,
                 xPDOTransport::UPDATE_OBJECT => true,
                 xPDOTransport::UNIQUE_KEY => 'name',
+            ]);
+            $this->builder->putVehicle($vehicle);
+        }
+    }
+
+    private function addSettings($settings)
+    {
+        foreach ($settings as $settingData) {
+            $setting = $this->modx->newObject('modSystemSetting');
+            $setting->fromArray(array_merge([
+                'namespace' => PKG_NAME_LOWER,
+            ], $settingData), '', true, true);
+            $vehicle = $this->builder->createVehicle($setting, [
+                xPDOTransport::PRESERVE_KEYS => true,
+                xPDOTransport::UPDATE_OBJECT => false,
+                xPDOTransport::UNIQUE_KEY => 'key',
             ]);
             $this->builder->putVehicle($vehicle);
         }
@@ -321,6 +326,18 @@ abstract class abstractBuildTransport extends abstractCLI
             $this->attributes['readme'] = file_get_contents($this->config['readmePath']);
         }
         $this->builder->setPackageAttributes($this->attributes);
+    }
+
+    private function addResolvers()
+    {
+        foreach ($this->resolvers as $key => $resolver) {
+            $vehicle = $this->builder->createVehicle([
+                'source' => $resolver,
+            ], [
+                'vehicle_class' => 'xPDOScriptVehicle',
+            ]);
+            $this->builder->putVehicle($vehicle);
+        }
     }
 
     /**

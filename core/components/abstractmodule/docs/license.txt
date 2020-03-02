@@ -1,5 +1,5 @@
 --------------------
-ms2Extend
+AbstractModule
 --------------------
 Author: GrimWeb <a.goguev@alexgog.ru>
 --------------------

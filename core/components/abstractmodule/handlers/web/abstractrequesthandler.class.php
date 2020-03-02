@@ -1,10 +1,10 @@
 <?php
 
-if (!class_exists('abstractHandler')) {
+if (!class_exists('AbstractHandler')) {
     require_once dirname(dirname(__FILE__)) . '/abstracthandler.class.php';
 }
 
-abstract class abstractRequestHandler extends abstractHandler
+abstract class AbstractRequestHandler extends AbstractHandler
 {
 
 }

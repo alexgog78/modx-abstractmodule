@@ -1,6 +1,6 @@
 <?php
 
-abstract class abstractObjectUpdateProcessor extends modObjectUpdateProcessor
+abstract class AbstractObjectUpdateProcessor extends modObjectUpdateProcessor
 {
     /**
      * @return mixed

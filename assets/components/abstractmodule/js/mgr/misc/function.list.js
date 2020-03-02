@@ -42,13 +42,21 @@ abstractModule.function = {
     },
 
     getFormInput: function (name, config = {}) {
-        return Ext.apply({
+        return Ext.applyIf(config, {
             xtype: 'textfield',
             name: name,
             hiddenName: name,
             fieldLabel: name,
             anchor: '100%'
-        }, config);
+        });
+
+        /*return Ext.apply({
+            xtype: 'textfield',
+            name: name,
+            hiddenName: name,
+            fieldLabel: name,
+            anchor: '100%'
+        }, config);*/
     },
 
     //TODO check

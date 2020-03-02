@@ -4,7 +4,7 @@ if (php_sapi_name() !== 'cli') {
     die('Only console input');
 }
 
-abstract class abstractCLI
+abstract class AbstractCLI
 {
     /** @var modX */
     protected $modx;
@@ -13,7 +13,7 @@ abstract class abstractCLI
     protected $config = [];
 
     /**
-     * abstractCLI constructor.
+     * AbstractCLI constructor.
      * @param array $config
      */
     public function __construct($config = [])

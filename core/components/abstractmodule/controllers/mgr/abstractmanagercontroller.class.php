@@ -1,8 +1,11 @@
 <?php
 
-abstract class abstractManagerController extends modExtraManagerController
+abstract class AbstractManagerController extends modExtraManagerController
 {
-    /** @var abstractModule */
+    /** @var string\bool */
+    protected $moduleClass = false;
+
+    /** @var AbstractModule */
     protected $module;
 
     /** @var array */
@@ -26,14 +29,14 @@ abstract class abstractManagerController extends modExtraManagerController
         parent::initialize();
     }
 
-    abstract protected function getService();
-
     /**
      * @return array
      */
     public function getLanguageTopics()
     {
-        return $this->languageTopics;
+        return array_merge([
+            $this->module->objectType . ':default'
+        ], $this->languageTopics);
     }
 
     /**
@@ -41,6 +44,14 @@ abstract class abstractManagerController extends modExtraManagerController
      */
     public function loadCustomCssJs()
     {
+    }
+
+    protected function getService()
+    {
+        $namespace = strtolower($this->moduleClass);
+        $this->module = $this->modx->getService($namespace, $this->moduleClass, MODX_CORE_PATH . 'components/' . $namespace . '/model/' . $namespace . '/', [
+            'ctx' => $this->modx->context->key,
+        ]);
     }
 
     /**

@@ -1,8 +1,8 @@
 <?php
 
-abstract class abstractHandler
+abstract class AbstractHandler
 {
-    /** @var abstractModule */
+    /** @var AbstractModule */
     protected $module;
 
     /** @var modX */
@@ -12,8 +12,8 @@ abstract class abstractHandler
     public $config;
 
     /**
-     * abstractHandler constructor.
-     * @param abstractModule $module
+     * AbstractHandler constructor.
+     * @param AbstractModule $module
      * @param array $config
      */
     public function __construct(& $module, array $config = [])
