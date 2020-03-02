@@ -24,6 +24,9 @@ abstractModule.formPanel.abstract = function (config) {
     abstractModule.formPanel.abstract.superclass.constructor.call(this, config);
 };
 Ext.extend(abstractModule.formPanel.abstract, MODx.FormPanel, {
+    formInputs: {},
+    defaultValues: {},
+
     initComponent: function () {
         this.panelContent = this.getContent();
         var content = this.renderMainPlain(this.panelContent);
@@ -38,7 +41,27 @@ Ext.extend(abstractModule.formPanel.abstract, MODx.FormPanel, {
     },
 
     getContent: function () {
-        return this.panelContent;
+        return this.renderFormPanel(this.formInputs);
+    },
+
+    renderFormPanel: function (formInputs) {
+        var form = [];
+        Ext.iterate(formInputs, function (name, config) {
+            var formInput = abstractModule.function.getFormInput(name, config);
+            form.push(formInput);
+        }, this);
+        return [{
+            layout: 'form',
+            labelAlign: 'top',
+            labelSeparator: '',
+            border: false,
+            defaults: {
+                msgTarget: 'under',
+                anchor: '100%'
+            },
+            items: form
+        }];
+        //return form;
     },
 
     renderMainPlain: function (html) {
@@ -64,6 +87,7 @@ Ext.extend(abstractModule.formPanel.abstract, MODx.FormPanel, {
     setup: function () {
         //if (this.initialized) { this.clearDirty(); return true; }
         console.log(this.record);
+        this.setValues(this.defaultValues);
         this.setValues(this.record);
         //console.log(this)
         this.fireEvent('ready');

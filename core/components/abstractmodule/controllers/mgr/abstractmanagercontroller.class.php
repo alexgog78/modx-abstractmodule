@@ -20,9 +20,6 @@ abstract class AbstractManagerController extends modExtraManagerController
     /** @var xPDOObject|null */
     protected $record = null;
 
-    /**
-     * @return void
-     */
     public function initialize()
     {
         $this->getService();
@@ -35,13 +32,21 @@ abstract class AbstractManagerController extends modExtraManagerController
     public function getLanguageTopics()
     {
         return array_merge([
-            $this->module->objectType . ':default'
+            $this->module->objectType . ':default',
         ], $this->languageTopics);
     }
 
     /**
-     * @return void
+     * @param array $scriptProperties
+     * @return mixed
      */
+    public function process(array $scriptProperties = [])
+    {
+        if ($this->recordClassKey) {
+            $this->getRecord($scriptProperties);
+        }
+    }
+
     public function loadCustomCssJs()
     {
     }
@@ -66,7 +71,7 @@ abstract class AbstractManagerController extends modExtraManagerController
 
     /**
      * @param array $scriptProperties
-     * @return void
+     * @return bool
      */
     protected function getRecord($scriptProperties = [])
     {
@@ -75,6 +80,7 @@ abstract class AbstractManagerController extends modExtraManagerController
         //Check request for primary key
         if (empty($primaryKey) || strlen($primaryKey) !== strlen((integer)$primaryKey)) {
             $this->failure($this->modx->lexicon($this->module->objectType . '.err_ns'));
+            return false;
         }
 
         //Check for record
@@ -83,9 +89,11 @@ abstract class AbstractManagerController extends modExtraManagerController
         ]);
         if (!$this->record) {
             $this->failure($this->modx->lexicon($this->module->objectType . '.err_nf'));
+            return false;
         }
     }
 
+    //TODO check
     protected function loadRichTextEditor()
     {
         $richTextEditor = $this->modx->getOption('which_editor');
@@ -102,17 +110,27 @@ abstract class AbstractManagerController extends modExtraManagerController
         $this->addHtml($onRichTextEditorInit);
     }
 
-    protected function loadCodeEditor()
+    //TODO check
+    protected function loadCodeEditor($fields = [])
     {
-        $config = [
-            'id' => 0,
-            'record' => &$this->record,
-            'mode' => $this->record ? modSystemEvent::MODE_UPD : modSystemEvent::MODE_NEW,
-        ];
-        $onTempFormPrerender = $this->modx->invokeEvent('OnTempFormPrerender', $config);
-        if (is_array($onTempFormPrerender)) {
-            $onTempFormPrerender = implode('', $onTempFormPrerender);
+        if (empty($fields)) {
+            return;
         }
-        $this->setPlaceholder('onTempFormPrerender', $onTempFormPrerender);
+        $ace = $this->modx->getService('ace', 'Ace', $this->modx->getOption('ace.core_path', null, $this->modx->getOption('core_path') . 'components/ace/') . 'model/ace/');
+        if (!$ace) {
+            return;
+        }
+        $ace->initialize();
+        $html_elements_mime=$this->modx->getOption('ace.html_elements_mime',null,false);
+
+        //$field = 'modx-template-content';
+        $modxTags = true;
+        $mimeType = 'text/x-smarty';
+
+        $script = [];
+        foreach ($fields as $field) {
+            $script[] = "MODx.ux.Ace.replaceComponent('$field', '$mimeType', $modxTags);";
+        }
+        $this->addHtml('<script>Ext.onReady(function() {' . implode(PHP_EOL, $script) . '});</script>');
     }
 }

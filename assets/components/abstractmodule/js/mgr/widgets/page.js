@@ -4,8 +4,8 @@ abstractModule.page.abstract = function (config) {
     config = config || {};
     Ext.applyIf(config, {
         //Custom settings
-        url: Mailing.config.connectorUrl,
-        formpanel: 'mailing-formpanel-template',
+        url: null,
+        formpanel: null,
         components: []
     });
     abstractModule.page.abstract.superclass.constructor.call(this, config);

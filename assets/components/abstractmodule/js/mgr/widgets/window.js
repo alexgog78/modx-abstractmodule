@@ -46,6 +46,7 @@ Ext.extend(abstractModule.window.abstract, MODx.Window, {
         return form;
     },
 
+    //TODO check
     renderFormFieldset: function (fields = {}) {
         var fieldset = [];
         Ext.each(fields, function (name) {
