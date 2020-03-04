@@ -316,7 +316,9 @@ abstract class AbstractBuildTransport extends AbstractCLI
 
     private function addAttributes()
     {
+        $this->log(111);
         if (file_exists($this->config['changelogPath'])) {
+            $this->log(222);
             $this->attributes['changelog'] = file_get_contents($this->config['changelogPath']);
         }
         if (file_exists($this->config['licensePath'])) {
