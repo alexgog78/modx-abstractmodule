@@ -30,36 +30,36 @@ abstract class AbstractBuildTransport extends AbstractCLI
     /** @var modPackageBuilder */
     private $builder;
 
+    /** @var array */
+    private $config;
+
     /** @var modCategory|null */
     private $category = NULL;
 
     /**
      * AbstractBuildTransport constructor.
-     * @param array $config
      */
-    public function __construct($config = [])
+    public function __construct()
     {
-        parent::__construct($config);
-
+        parent::__construct();
         $this->modx->loadClass('transport.modPackageBuilder', '', false, true);
         $this->builder = new modPackageBuilder($this->modx);
-        $this->buildPath = BUILD_PATH . PKG_NAME_LOWER . '/';
         $corePath = MODX_CORE_PATH . 'components/' . PKG_NAME_LOWER . '/';
-        $this->config = array_merge([
+        $this->config = [
             'pluginsPath' => $corePath . 'elements/plugins/',
             'snippetsPath' => $corePath . 'elements/snippets/',
             'chunksPath' => $corePath . 'elements/chunks/',
             'changelogPath' => $corePath . 'docs/changelog.txt',
             'licensePath' => $corePath . 'docs/license.txt',
             'readmePath' => $corePath . 'docs/readme.txt',
-        ], $config);
-
-        $this->getData();
-        $this->getResolvers();
+        ];
     }
 
-    public function run()
+    public function setCode()
     {
+        $this->getData();
+        $this->getResolvers();
+
         $this->builder->createPackage(PKG_NAME_LOWER, PKG_VERSION, PKG_RELEASE);
 
         if ($this->namespace) {
@@ -85,10 +85,13 @@ abstract class AbstractBuildTransport extends AbstractCLI
         $this->addResolvers();
 
         $this->builder->pack();
+
+        $this->log(PKG_NAME . ' package generated');
     }
 
     protected function getData()
     {
+
         $dataFolder = $this->buildPath . 'data/';
         if (!is_dir($dataFolder)) {
             return;
@@ -261,7 +264,7 @@ abstract class AbstractBuildTransport extends AbstractCLI
         foreach ($chunks as $chunkData) {
             $chunk = $this->modx->newObject('modChunk');
             if ($chunkData['static_file']) {
-                $chunkData['snippet'] = $this->getFileContent($this->config['chunksPath'] . $chunkData['static_file']);
+                $chunkData['snippet'] = file_get_contents($this->config['chunksPath'] . $chunkData['static_file']);
             }
             $chunk->fromArray(array_merge([
                 'id' => 0,

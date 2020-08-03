@@ -1,15 +1,22 @@
 <?php
 
-abstract class AbstractManagerController extends modExtraManagerController
+abstract class AbstractMgrController extends modExtraManagerController
 {
-    /** @var string\bool */
-    protected $moduleClass = false;
+    /** @var bool */
+    protected $loadService = true;
+
+    /** @var bool */
+    protected $loadLexicon = true;
 
     /** @var AbstractModule */
-    protected $module;
+    protected $service;
 
     /** @var array */
     protected $languageTopics = [];
+
+
+
+
 
     /** @var string */
     protected $recordClassKey = null;
@@ -20,9 +27,28 @@ abstract class AbstractManagerController extends modExtraManagerController
     /** @var xPDOObject|null */
     protected $record = null;
 
+
+
+
+
+
+    /**
+     * @param $name
+     * @return mixed|null
+     */
+    public function __get($name)
+    {
+        if (isset($this->config[$name])) {
+            return $this->config[$name];
+        }
+        return null;
+    }
+
     public function initialize()
     {
-        $this->getService();
+        if ($this->loadService) {
+            $this->getService();
+        }
         parent::initialize();
     }
 
@@ -31,9 +57,10 @@ abstract class AbstractManagerController extends modExtraManagerController
      */
     public function getLanguageTopics()
     {
-        return array_merge([
-            $this->module->objectType . ':default',
-        ], $this->languageTopics);
+        if ($this->loadLexicon) {
+            $this->languageTopics[] = $this->namespace . ':default';
+        }
+        return $this->languageTopics;
     }
 
     /**
@@ -49,37 +76,43 @@ abstract class AbstractManagerController extends modExtraManagerController
 
     public function loadCustomCssJs()
     {
-    }
-
-    protected function getService()
-    {
-        $namespace = strtolower($this->moduleClass);
-        $this->module = $this->modx->getService($namespace, $this->moduleClass, MODX_CORE_PATH . 'components/' . $namespace . '/model/' . $namespace . '/', [
-            'ctx' => $this->modx->context->key,
-        ]);
+        if ($this->loadService) {
+            $this->service->loadDefaultMgrAssets($this);
+        }
     }
 
     /**
+     * TODO what for?
      * @param $key
      * @param array $placeholders
      * @return string|null
      */
     protected function getLexicon($key, $placeholders = [])
     {
-        return $this->modx->lexicon($this->module->objectType . '.' . $key, $placeholders);
+        return $this->modx->lexicon($this->namespace . '_' . $key, $placeholders);
     }
+
+    private function getService()
+    {
+        $this->service = $this->modx->getService($this->namespace, $this->namespace, $this->namespace_path . '/model/' . $this->namespace . '/');
+    }
+
+
+
+
+
 
     /**
      * @param array $scriptProperties
      * @return bool
      */
-    protected function getRecord($scriptProperties = [])
+    private function getRecord($scriptProperties = [])
     {
         $primaryKey = $scriptProperties[$this->recordPrimaryKey];
 
         //Check request for primary key
         if (empty($primaryKey) || strlen($primaryKey) !== strlen((integer)$primaryKey)) {
-            $this->failure($this->modx->lexicon($this->module->objectType . '.err_ns'));
+            $this->failure($this->modx->lexicon($this->namespace . '.err_ns'));
             return false;
         }
 
@@ -88,13 +121,13 @@ abstract class AbstractManagerController extends modExtraManagerController
             $this->recordPrimaryKey => $primaryKey,
         ]);
         if (!$this->record) {
-            $this->failure($this->modx->lexicon($this->module->objectType . '.err_nf'));
+            $this->failure($this->modx->lexicon($this->namespace . '.err_nf'));
             return false;
         }
     }
 
     //TODO check
-    protected function loadRichTextEditor()
+    /*protected function loadRichTextEditor()
     {
         $richTextEditor = $this->modx->getOption('which_editor');
         if (!$this->modx->getOption('use_editor') || empty($richTextEditor)) {
@@ -108,10 +141,10 @@ abstract class AbstractManagerController extends modExtraManagerController
         }
         $onRichTextEditorInit = implode('', $onRichTextEditorInit);
         $this->addHtml($onRichTextEditorInit);
-    }
+    }*/
 
     //TODO check
-    protected function loadCodeEditor($fields = [])
+    /*protected function loadCodeEditor($fields = [])
     {
         if (empty($fields)) {
             return;
@@ -121,7 +154,7 @@ abstract class AbstractManagerController extends modExtraManagerController
             return;
         }
         $ace->initialize();
-        $html_elements_mime=$this->modx->getOption('ace.html_elements_mime',null,false);
+        $html_elements_mime = $this->modx->getOption('ace.html_elements_mime', null, false);
 
         //$field = 'modx-template-content';
         $modxTags = true;
@@ -132,5 +165,5 @@ abstract class AbstractManagerController extends modExtraManagerController
             $script[] = "MODx.ux.Ace.replaceComponent('$field', '$mimeType', $modxTags);";
         }
         $this->addHtml('<script>Ext.onReady(function() {' . implode(PHP_EOL, $script) . '});</script>');
-    }
+    }*/
 }

@@ -4,32 +4,45 @@ abstractModule.panel.abstract = function (config) {
     config = config || {};
     Ext.applyIf(config, {
         //Custom settings
-        tabs: false,
-        pageHeader: '',
-        panelContent: [],
+        //tabs: false,
+        //header: true,
+        //title: 111,
+        components: [],
 
         //Core settings
-        cls: 'container'
+        cls: 'container',
+        items: []
     });
     abstractModule.panel.abstract.superclass.constructor.call(this, config);
 };
 Ext.extend(abstractModule.panel.abstract, MODx.Panel, {
     initComponent: function() {
-        this.panelContent = this.getContent();
-        var content = this.renderMainPlain(this.panelContent);
-        if (this.tabs) {
-            content = this.renderMainTabs(this.panelContent);
+        if (this.title) {
+
+            //this.header = false;
+            this.items.push(this.renderHeader(this.title));
+            this.title = '';
         }
-        this.items = [
-            this.renderHeader(this.pageHeader),
-            content,
-        ];
+
+        var content = this.getContent();
+        var panel = '';
+        if (content.length > 1) {
+            panel = this.renderMainTabs(content);
+        } else {
+            panel = this.renderMainPlain(content);
+        }
+        this.items.push(panel);
+
         abstractModule.panel.abstract.superclass.initComponent.call(this);
     },
 
     getContent: function () {
-        return this.panelContent;
+        return this.components;
     },
+
+
+
+
 
     renderMainPlain: function (html) {
         return abstractModule.function.getPanelMainPart(html);

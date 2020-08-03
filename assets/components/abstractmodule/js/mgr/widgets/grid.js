@@ -2,9 +2,6 @@
 
 abstractModule.grid.abstract = function (config) {
     config = config || {};
-    if (!config.id) {
-        config.id = 'abstractmodule-grid';
-    }
     Ext.applyIf(config, {
         //Custom settings
         url: null,
@@ -15,7 +12,7 @@ abstractModule.grid.abstract = function (config) {
         save_action: null,
         saveParams: {},
         fields: [],
-        gridColumns: null,
+        columns: [],
         recordActions: {
             xtype: null,
             action: {
@@ -29,105 +26,86 @@ abstractModule.grid.abstract = function (config) {
         paging: true,
         remoteSort: true,
         anchor: '100%',
-        viewConfig: {
-            forceFit: true,
-            enableRowBody: true,
-            autoFill: true,
-            showPreview: true,
-            scrollOffset: 0,
-            emptyText: config.emptyText || _('ext_emptymsg'),
-            getRowClass: this.getRowClass,
-            //TODO
-            cssClasses: {
-                'grid-row-inactive': {
-                    'is_active': 0
-                }
-            }
-        }
     });
     abstractModule.grid.abstract.superclass.constructor.call(this, config)
 };
 Ext.extend(abstractModule.grid.abstract, MODx.grid.Grid, {
+    _recordEditWindow: null,
+    _updateWindow: null,
+
     initComponent: function() {
-        this.columns = this.renderGridColumns();
-        this.tbar = this.renderToolbar();
+        this.columns = this._getGridColumns();
+        this.tbar = this.getToolbar();
+        this.viewConfig = Ext.applyIf(this.config.viewConfig, {
+            getRowClass: this.getRowClass
+        });
         abstractModule.grid.abstract.superclass.initComponent.call(this);
+    },
+
+    getToolbar: function () {
+        return [
+            this.getQuickCreateButton(),
+            '->',
+            this.getSearchPanel()
+        ];
+    },
+
+    getRowClass: function(record) {
+        return record.data.is_active ? 'grid-row-active' : 'grid-row-inactive';
     },
 
     getMenu: function () {
         return [{
             text: _('edit'),
-            handler: this.updateRecord,
+            handler: this._quickUpdateRecord,
             scope: this
         }, '-', {
             text: _('delete'),
-            handler: this.removeRecord,
+            handler: this._removeRecord,
             scope: this
         }];
     },
 
-    //TODO
-    getRowClass: function (record, index, rowParams, store) {
-        var rowCssClasses = [];
-        Ext.iterate(this.cssClasses, function (cssClass, conditions) {
-            Ext.iterate(conditions, function (field, value) {
-                if (record.get(field) == value) {
-                    rowCssClasses.push(cssClass);
-                }
-            });
-        });
-        return rowCssClasses.join(' ');
-    },
-
-    renderGridColumns: function () {
-        var columns = [];
-        if (!this.gridColumns) {
-            this.gridColumns = {};
-            Ext.each(this.config.fields, function (field) {
-                this.gridColumns[field] = {};
-            }, this);
-        }
-        Ext.iterate(this.gridColumns, function (name, config) {
-            var column = this.renderGridColumn(name, config);
-            columns.push(column);
-        }, this);
-        return columns;
-    },
-
-    renderGridColumn: function (name, config = {}) {
-        var column = Ext.applyIf(config, {
-            header: name,
-            dataIndex: name,
-            sortable: true
-        });
-        return column;
-    },
-
-    renderToolbar: function () {
-        return [
-            this.renderCreateButton(),
-            '->',
-            this.renderSearchPanel()
-        ];
-    },
-
-    renderCreateButton: function () {
+    getQuickCreateButton: function () {
         return {
             text: _('add'),
             cls: 'primary-button',
-            handler: this.createRecord,
+            handler: this._quickCreateRecord,
             scope: this
         };
     },
 
-    renderSearchPanel: function () {
+    getCreateButton: function () {
+        return {
+            text: _('add'),
+            cls: 'primary-button',
+            handler: this._createRecord,
+            scope: this
+        };
+    },
+
+    getSearchPanel: function () {
         return [
-            this.renderSearchField(),
-            this.renderClearSearchButton()
+            this._getSearchField(),
+            this._getClearSearchButton()
         ];
     },
 
-    renderSearchField: function () {
+    _getGridColumns: function () {
+        if (this.config.columns.length > 0) {
+            return this.config.columns;
+        }
+        Ext.each(this.config.fields, function (field) {
+            this.config.columns.push({
+                header: field,
+                dataIndex: field,
+                sortable: true
+            });
+        }, this);
+        return this.config.columns;
+    },
+
+    _getSearchField: function () {
         return {
             xtype: 'textfield',
             name: 'search',
@@ -135,7 +113,7 @@ Ext.extend(abstractModule.grid.abstract, MODx.grid.Grid, {
             cls: 'x-form-filter',
             emptyText: _('search_ellipsis'),
             listeners: {
-                'change': {fn: this.searchFilter, scope: this},
+                'change': {fn: this._filterSearch, scope: this},
                 'render': {
                     fn: function (cmp) {
                         new Ext.KeyMap(cmp.getEl(), {
@@ -149,14 +127,14 @@ Ext.extend(abstractModule.grid.abstract, MODx.grid.Grid, {
         };
     },
 
-    renderClearSearchButton: function () {
+    _getClearSearchButton: function () {
         return {
             xtype: 'button',
             id: this.config.id + '-filter-clear',
             cls: 'x-form-filter-clear',
             text: _('filter_clear'),
             listeners: {
-                'click': {fn: this.clearFilter, scope: this},
+                'click': {fn: this._filterClear, scope: this},
                 'mouseout': {
                     fn: function (evt) {
                         this.removeClass('x-btn-focus');
@@ -166,63 +144,66 @@ Ext.extend(abstractModule.grid.abstract, MODx.grid.Grid, {
         };
     },
 
-    searchFilter: function (tf, newValue, oldValue) {
+    _filterSearch: function (tf, newValue, oldValue) {
         var query = newValue || tf.getValue();
         this.getStore().baseParams.query = query;
         this.getBottomToolbar().changePage(1);
     },
 
-    clearFilter: function() {
+    _filterClear: function() {
         this.getStore().baseParams.query = null;
         Ext.getCmp(this.config.id + '-filter-search').reset();
         this.getBottomToolbar().changePage(1);
     },
 
-    createRecord: function (btn, e) {
-        var window = Ext.getCmp(this.recordActions.xtype);
-        if (window) {
-            window.close();
-        }
-        window = MODx.load({
-            xtype: this.recordActions.xtype,
+    _quickCreateRecord: function (btn, e) {
+        this._createWindow = new MODx.load({
+            xtype: this.recordActions.create.xtype,
             title: _('create'),
-            parent: this,
-            blankValues: true,
-            baseParams: {
-                action: this.recordActions.action.create
+            action: this.recordActions.create.action,
+            listeners: {
+                success: {
+                    fn: this.refresh
+                    ,scope: this
+                }
             }
         });
-        if (window) {
-            window.show(e.target);
-        }
+        this._createWindow.reset();
+        this._createWindow.show(e.target);
     },
 
-    updateRecord: function (btn, e) {
-        var window = Ext.getCmp(this.recordActions.xtype);
-        if (window) {
-            window.close();
-        }
-        window = MODx.load({
-            xtype: this.recordActions.xtype,
+    _createRecord: function (btn, e) {
+        this.recordActions.create.loadPage.call(this);
+    },
+
+    _quickUpdateRecord: function (btn, e) {
+        this._updateWindow = new MODx.load({
+            xtype: this.recordActions.update.xtype,
             title: _('update'),
-            parent: this,
-            record: this.menu.record,
-            baseParams: {
-                action: this.recordActions.action.update
+            action: this.recordActions.update.action,
+            listeners: {
+                success: {
+                    fn: this.refresh
+                    ,scope: this
+                }
             }
         });
-        if (window) {
-            window.show(e.target);
-        }
+        this._updateWindow.reset();
+        this._updateWindow.setValues(this.menu.record);
+        this._updateWindow.show(e.target);
     },
 
-    removeRecord: function (btn, e) {
+    _updateRecord: function (btn, e) {
+        this.recordActions.update.loadPage.call(this);
+    },
+
+    _removeRecord: function (btn, e) {
         MODx.msg.confirm({
             title: _('delete'),
             text: _('confirm_remove'),
             url: this.config.url,
             params: {
-                action: this.recordActions.action.remove,
+                action: this.recordActions.remove.action,
                 id: this.menu.record.id
             },
             listeners: {

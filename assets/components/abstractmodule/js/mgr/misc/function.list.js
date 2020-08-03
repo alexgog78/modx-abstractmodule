@@ -6,6 +6,7 @@ abstractModule.function = {
             this.header = true;
             return {};
         }
+        this.header = false;
         return {
             xtype: 'modx-header',
             //id: this.id ? this.id + '-header' : '',

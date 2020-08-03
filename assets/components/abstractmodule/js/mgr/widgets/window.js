@@ -2,12 +2,11 @@
 
 abstractModule.window.abstract = function (config) {
     config = config || {};
-    if (!config.id) {
-        config.id = 'abstractmodule-window';
-    }
     Ext.applyIf(config, {
         //Custom settings
         url: null,
+        action: null,
+        record: [],
 
         //Core settings
         width: config.width || 600,
@@ -15,10 +14,10 @@ abstractModule.window.abstract = function (config) {
         //TODO
         //allowDrop: false,
         //resizable: false,
-        listeners: {
+        /*listeners: {
             beforeSubmit: {fn: this.beforeSubmit, scope: this},
             success: {fn: this.success, scope: this},
-        }
+        }*/
     });
     abstractModule.window.abstract.superclass.constructor.call(this, config);
 };
@@ -26,7 +25,7 @@ Ext.extend(abstractModule.window.abstract, MODx.Window, {
     formInputs: {},
     defaultValues: {},
 
-    _loadForm: function() {
+    /*_loadForm: function() {
         this.config.fields = this.renderFormPanel(this.formInputs);
         abstractModule.window.abstract.superclass._loadForm.call(this);
     },
@@ -54,13 +53,13 @@ Ext.extend(abstractModule.window.abstract, MODx.Window, {
             fieldset.push(formInput);
         }, this);
         return fieldset;
-    },
+    },*/
 
-    beforeSubmit: function (record) {
+    /*beforeSubmit: function (record) {
         return true;
-    },
+    },*/
 
-    success: function () {
+    /*success: function () {
         this.config.parent.refresh();
-    },
+    },*/
 });
