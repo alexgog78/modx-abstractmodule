@@ -103,6 +103,7 @@ abstract class AbstractModule
         $controller->addJavascript($this->abstractJsUrl . 'mgr/utils/notice.js');
         $controller->addJavascript($this->abstractJsUrl . 'mgr/misc/renderer.list.js');
         $controller->addJavascript($this->abstractJsUrl . 'mgr/misc/function.list.js');
+        $controller->addJavascript($this->abstractJsUrl . 'mgr/misc/components.js');
 
         $controller->addCss($this->cssUrl . 'mgr/default.css');
         $controller->addJavascript($this->jsUrl . 'mgr/' . $this->namespace . '.js');
