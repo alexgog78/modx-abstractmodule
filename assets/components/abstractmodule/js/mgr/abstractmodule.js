@@ -1,5 +1,6 @@
 'use strict';
 
+//TODO check
 var abstractModule = {
     page: {},
     window: {},
@@ -8,10 +9,9 @@ var abstractModule = {
     tree: {},
     panel: {},
     formPanel: {},
-    tabs: {},
     combo: {},
-    notice: {},
     config: {},
+    component: {},
     renderer: {},
     function: {},
 };

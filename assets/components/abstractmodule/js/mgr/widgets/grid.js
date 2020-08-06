@@ -14,11 +14,22 @@ abstractModule.grid.abstract = function (config) {
         fields: [],
         columns: [],
         recordActions: {
-            xtype: null,
-            action: {
-                create: null,
-                update: null,
-                remove: null
+            create: {
+                xtype: null,
+                action: null,
+                loadPage: function () {
+                    MODx.loadPage('', '');
+                }
+            },
+            update: {
+                xtype: null,
+                action: null,
+                loadPage: function () {
+                    MODx.loadPage('', '');
+                }
+            },
+            remove: {
+                action: null
             }
         },
 
@@ -91,16 +102,16 @@ Ext.extend(abstractModule.grid.abstract, MODx.grid.Grid, {
         ];
     },
 
+    getGridColumn: function (name, config = {}) {
+        return abstractModule.component.gridColumn(name, config);
+    },
+
     _getGridColumns: function () {
         if (this.config.columns.length > 0) {
             return this.config.columns;
         }
         Ext.each(this.config.fields, function (field) {
-            this.config.columns.push({
-                header: field,
-                dataIndex: field,
-                sortable: true
-            });
+            this.config.columns.push(this.getGridColumn(field));
         }, this);
         return this.config.columns;
     },
@@ -168,7 +179,6 @@ Ext.extend(abstractModule.grid.abstract, MODx.grid.Grid, {
                 }
             }
         });
-        this._createWindow.reset();
         this._createWindow.show(e.target);
     },
 
@@ -181,6 +191,7 @@ Ext.extend(abstractModule.grid.abstract, MODx.grid.Grid, {
             xtype: this.recordActions.update.xtype,
             title: _('update'),
             action: this.recordActions.update.action,
+            record: this.menu.record,
             listeners: {
                 success: {
                     fn: this.refresh
@@ -188,8 +199,6 @@ Ext.extend(abstractModule.grid.abstract, MODx.grid.Grid, {
                 }
             }
         });
-        this._updateWindow.reset();
-        this._updateWindow.setValues(this.menu.record);
         this._updateWindow.show(e.target);
     },
 

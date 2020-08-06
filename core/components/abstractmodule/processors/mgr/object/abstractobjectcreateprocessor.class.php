@@ -16,14 +16,31 @@ abstract class AbstractObjectCreateProcessor extends modObjectCreateProcessor
      */
     public function beforeSave()
     {
+        $this->setCreatedOn();
+        $this->setCreatedBy();
         $this->validateElement();
         return parent::beforeSave();
     }
 
     private function setBoolean()
     {
-        foreach ($this->object->getBooleanFields() as $field) {
+        $booleanFields = $this->object->getBooleanFields();
+        foreach ($booleanFields as $field) {
             $this->setCheckbox($field);
+        }
+    }
+
+    private function setCreatedOn()
+    {
+        if (key_exists('created_on', $this->object->_fields)) {
+            $this->setProperty('created_on', date('Y-m-d H:i:s'));
+        }
+    }
+
+    private function setCreatedBy()
+    {
+        if (key_exists('created_by', $this->object->_fields)) {
+            $this->setProperty('created_by', $this->modx->user->id);
         }
     }
 

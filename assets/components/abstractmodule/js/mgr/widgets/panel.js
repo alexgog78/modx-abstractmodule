@@ -3,64 +3,54 @@
 abstractModule.panel.abstract = function (config) {
     config = config || {};
     Ext.applyIf(config, {
-        //Custom settings
-        //tabs: false,
-        //header: true,
-        //title: 111,
+        title: null,
         components: [],
 
         //Core settings
         cls: 'container',
-        items: []
+        items: [],
     });
     abstractModule.panel.abstract.superclass.constructor.call(this, config);
 };
 Ext.extend(abstractModule.panel.abstract, MODx.Panel, {
     initComponent: function() {
         if (this.title) {
-
-            //this.header = false;
-            this.items.push(this.renderHeader(this.title));
+            this.items.push(this._getHeader(this.title));
             this.title = '';
         }
-
-        var content = this.getContent();
-        var panel = '';
-        if (content.length > 1) {
-            panel = this.renderMainTabs(content);
+        this.components = this.getComponents();
+        if (this.components.length > 1) {
+            this.items.push(this._renderTabsPanel());
         } else {
-            panel = this.renderMainPlain(content);
+            this.items.push(this._renderPlainPanel());
         }
-        this.items.push(panel);
-
         abstractModule.panel.abstract.superclass.initComponent.call(this);
     },
 
-    getContent: function () {
-        return this.components;
+    getComponents: function () {
+        return this.getContent(this.components);
     },
 
-
-
-
-
-    renderMainPlain: function (html) {
-        return abstractModule.function.getPanelMainPart(html);
+    getDescription: function (html) {
+        return abstractModule.component.panelDescription(html);
     },
 
-    renderMainTabs: function (tabs) {
-        return abstractModule.function.getTabs(tabs);
+    getContent: function (items) {
+        return abstractModule.component.panelContent(items);
     },
 
-    renderHeader: function (html) {
-        return abstractModule.function.getPanelHeader(html);
+    _getHeader: function (html) {
+        return abstractModule.component.panelHeader(html);
     },
 
-    renderDescription: function (html) {
-        return abstractModule.function.getPanelDescription(html);
+    _renderPlainPanel: function () {
+        return {
+            cls: 'x-form-label-left',
+            items: this.components,
+        };
     },
 
-    renderContent: function (html) {
-        return abstractModule.function.getPanelContent(html);
-    }
+    _renderTabsPanel: function () {
+        return abstractModule.component.tabs(this.components);
+    },
 });

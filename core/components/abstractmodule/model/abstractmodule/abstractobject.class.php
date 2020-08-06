@@ -3,6 +3,9 @@
 abstract class AbstractObject extends xPDOObject
 {
     /** @var array */
+    protected $searchableFields = [];
+
+    /** @var array */
     private $booleanFields = [];
 
     /**
@@ -28,5 +31,13 @@ abstract class AbstractObject extends xPDOObject
     public function getBooleanFields()
     {
         return $this->booleanFields;
+    }
+
+    /**
+     * @return array
+     */
+    public function getSearchableFields()
+    {
+        return $this->searchableFields;
     }
 }

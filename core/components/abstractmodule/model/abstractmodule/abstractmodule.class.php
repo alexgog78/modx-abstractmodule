@@ -93,6 +93,7 @@ abstract class AbstractModule
         $controller->addJavascript($this->abstractJsUrl . 'mgr/widgets/panel.js');
         $controller->addJavascript($this->abstractJsUrl . 'mgr/widgets/formpanel.js');
         $controller->addJavascript($this->abstractJsUrl . 'mgr/widgets/grid.js');
+        $controller->addJavascript($this->abstractJsUrl . 'mgr/widgets/localgrid.js');
         $controller->addJavascript($this->abstractJsUrl . 'mgr/widgets/window.js');
         $controller->addJavascript($this->abstractJsUrl . 'mgr/widgets/page.js');
         $controller->addJavascript($this->abstractJsUrl . 'mgr/combo/select.local.js');
@@ -100,10 +101,9 @@ abstract class AbstractModule
         $controller->addJavascript($this->abstractJsUrl . 'mgr/combo/select.remote.js');
         $controller->addJavascript($this->abstractJsUrl . 'mgr/combo/multiselect.remote.js');
         $controller->addJavascript($this->abstractJsUrl . 'mgr/combo/browser.js');
-        $controller->addJavascript($this->abstractJsUrl . 'mgr/utils/notice.js');
         $controller->addJavascript($this->abstractJsUrl . 'mgr/misc/renderer.list.js');
         $controller->addJavascript($this->abstractJsUrl . 'mgr/misc/function.list.js');
-        $controller->addJavascript($this->abstractJsUrl . 'mgr/misc/components.js');
+        $controller->addJavascript($this->abstractJsUrl . 'mgr/misc/component.list.js');
 
         $controller->addCss($this->cssUrl . 'mgr/default.css');
         $controller->addJavascript($this->jsUrl . 'mgr/' . $this->namespace . '.js');

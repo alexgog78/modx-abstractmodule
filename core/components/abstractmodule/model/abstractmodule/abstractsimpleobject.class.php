@@ -3,6 +3,9 @@
 abstract class AbstractSimpleObject extends xPDOSimpleObject
 {
     /** @var array */
+    protected $searchableFields = [];
+
+    /** @var array */
     private $booleanFields = [];
 
     /**
@@ -30,6 +33,14 @@ abstract class AbstractSimpleObject extends xPDOSimpleObject
     public function getBooleanFields()
     {
         return $this->booleanFields;
+    }
+
+    /**
+     * @return array
+     */
+    public function getSearchableFields()
+    {
+        return $this->searchableFields;
     }
 
     public function myCallable()

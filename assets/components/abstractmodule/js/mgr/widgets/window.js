@@ -7,59 +7,50 @@ abstractModule.window.abstract = function (config) {
         url: null,
         action: null,
         record: [],
+        fields: [],
 
         //Core settings
         width: config.width || 600,
         //autoHeight: true,
-        //TODO
-        //allowDrop: false,
-        //resizable: false,
-        /*listeners: {
-            beforeSubmit: {fn: this.beforeSubmit, scope: this},
-            success: {fn: this.success, scope: this},
-        }*/
     });
+
     abstractModule.window.abstract.superclass.constructor.call(this, config);
+    this.on('beforeSubmit', this.beforeSubmit, this);
+    this.on('success', this.success, this);
+    this.on('failure', this.failure, this);
 };
 Ext.extend(abstractModule.window.abstract, MODx.Window, {
-    formInputs: {},
     defaultValues: {},
 
-    /*_loadForm: function() {
-        this.config.fields = this.renderFormPanel(this.formInputs);
-        abstractModule.window.abstract.superclass._loadForm.call(this);
-    },
-
     renderForm: function () {
+        this.reset();
         this.setValues(this.defaultValues);
         this.setValues(this.record);
         abstractModule.window.abstract.superclass.renderForm.call(this);
     },
 
-    renderFormPanel: function (formInputs) {
-        var form = [];
-        Ext.iterate(formInputs, function (name, config) {
-            var formInput = abstractModule.function.getFormInput(name, config);
-            form.push(formInput);
-        }, this);
-        return form;
+    getFields: function (config) {
+        return [];
     },
 
-    //TODO check
-    renderFormFieldset: function (fields = {}) {
-        var fieldset = [];
-        Ext.each(fields, function (name) {
-            var formInput = abstractModule.function.getFormInput(name, this.formInputs[name]);
-            fieldset.push(formInput);
-        }, this);
-        return fieldset;
-    },*/
+    getFormInput: function (name, config = {}) {
+        return abstractModule.component.inputField(name, config);
+    },
 
-    /*beforeSubmit: function (record) {
+    _loadForm: function () {
+        if (this.config.fields.length == 0) {
+            this.config.fields = this.getFields(this.config);
+        }
+        abstractModule.window.abstract.superclass._loadForm.call(this);
+    },
+
+    beforeSubmit: function (record) {
         return true;
-    },*/
+    },
 
-    /*success: function () {
-        this.config.parent.refresh();
-    },*/
+    success: function (result) {
+    },
+
+    failure: function (result) {
+    }
 });

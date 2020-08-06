@@ -3,10 +3,21 @@
 abstract class AbstractObjectGetListProcessor extends modObjectGetListProcessor
 {
     /** @var string */
-    public $defaultSortField = 'id';
+    public $defaultSortField = 'menuindex';
 
     /** @var string */
     public $defaultSortDirection = 'ASC';
+
+    /** @var AbstractObject|AbstractSimpleObject */
+    private $objectFactory;
+
+    /**
+     * @return bool|string|null
+     */
+    public function initialize() {
+        $this->objectFactory = $this->modx->newObject($this->classKey);
+        return parent::initialize();
+    }
 
     /**
      * @param xPDOQuery $c
@@ -47,6 +58,12 @@ abstract class AbstractObjectGetListProcessor extends modObjectGetListProcessor
      */
     protected function searchQuery(xPDOQuery $c, $query)
     {
+        $searchableFields = $this->objectFactory->getSearchableFields();
+        foreach ($searchableFields as $field) {
+            $c->where([
+                'OR:' . $field . ':LIKE' => '%' . $query . '%',
+            ]);
+        }
         return $c;
     }
 

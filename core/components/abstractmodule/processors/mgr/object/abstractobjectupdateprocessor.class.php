@@ -16,14 +16,31 @@ abstract class AbstractObjectUpdateProcessor extends modObjectUpdateProcessor
      */
     public function beforeSave()
     {
+        $this->setUpdatedOn();
+        $this->setUpdatedBy();
         $this->validateElement();
         return parent::beforeSave();
     }
 
     private function setBoolean()
     {
-        foreach ($this->object->getBooleanFields() as $field) {
+        $booleanFields = $this->object->getBooleanFields();
+        foreach ($booleanFields as $field) {
             $this->setCheckbox($field);
+        }
+    }
+
+    private function setUpdatedOn()
+    {
+        if (key_exists('updated_on', $this->object->_fields)) {
+            $this->object->set('updated_on', date('Y-m-d H:i:s'));
+        }
+    }
+
+    private function setUpdatedBy()
+    {
+        if (key_exists('updated_by', $this->object->_fields)) {
+            $this->object->set('updated_by', $this->modx->user->id);
         }
     }
 
