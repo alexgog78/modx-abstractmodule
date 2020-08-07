@@ -24,7 +24,7 @@ abstract class AbstractObjectUpdateProcessor extends modObjectUpdateProcessor
 
     private function setBoolean()
     {
-        $booleanFields = $this->object->getBooleanFields();
+        $booleanFields = $this->object->booleanFields;
         foreach ($booleanFields as $field) {
             $this->setCheckbox($field);
         }
@@ -32,15 +32,15 @@ abstract class AbstractObjectUpdateProcessor extends modObjectUpdateProcessor
 
     private function setUpdatedOn()
     {
-        if (key_exists('updated_on', $this->object->_fields)) {
-            $this->object->set('updated_on', date('Y-m-d H:i:s'));
+        if ($this->object::$updatedOnField) {
+            $this->object->set($this->object::$updatedOnField, date('Y-m-d H:i:s'));
         }
     }
 
     private function setUpdatedBy()
     {
-        if (key_exists('updated_by', $this->object->_fields)) {
-            $this->object->set('updated_by', $this->modx->user->id);
+        if ($this->object::$updatedByField) {
+            $this->object->set($this->object::$updatedByField, $this->modx->user->id);
         }
     }
 

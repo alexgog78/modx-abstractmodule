@@ -8,15 +8,14 @@ abstract class AbstractMgrController extends modExtraManagerController
     /** @var bool */
     protected $loadLexicon = true;
 
+    /** @var bool */
+    protected $loadRichText = false;
+
     /** @var AbstractModule */
     protected $service;
 
     /** @var array */
     protected $languageTopics = [];
-
-
-
-
 
     /** @var string */
     protected $recordClassKey = null;
@@ -26,11 +25,6 @@ abstract class AbstractMgrController extends modExtraManagerController
 
     /** @var xPDOObject|null */
     protected $record = null;
-
-
-
-
-
 
     /**
      * @param $name
@@ -48,6 +42,9 @@ abstract class AbstractMgrController extends modExtraManagerController
     {
         if ($this->loadService) {
             $this->getService();
+        }
+        if ($this->loadRichText) {
+            $this->loadRichTextEditor();
         }
         parent::initialize();
     }
@@ -72,6 +69,7 @@ abstract class AbstractMgrController extends modExtraManagerController
         if ($this->recordClassKey) {
             $this->getRecord($scriptProperties);
         }
+
     }
 
     public function loadCustomCssJs()
@@ -96,11 +94,6 @@ abstract class AbstractMgrController extends modExtraManagerController
     {
         $this->service = $this->modx->getService($this->namespace, $this->namespace, $this->namespace_path . '/model/' . $this->namespace . '/');
     }
-
-
-
-
-
 
     /**
      * @param array $scriptProperties
@@ -127,23 +120,6 @@ abstract class AbstractMgrController extends modExtraManagerController
     }
 
     //TODO check
-    /*protected function loadRichTextEditor()
-    {
-        $richTextEditor = $this->modx->getOption('which_editor');
-        if (!$this->modx->getOption('use_editor') || empty($richTextEditor)) {
-            return;
-        }
-        $onRichTextEditorInit = $this->modx->invokeEvent('OnRichTextEditorInit', [
-            'editor' => $richTextEditor,
-        ]);
-        if (!is_array($onRichTextEditorInit)) {
-            return;
-        }
-        $onRichTextEditorInit = implode('', $onRichTextEditorInit);
-        $this->addHtml($onRichTextEditorInit);
-    }*/
-
-    //TODO check
     /*protected function loadCodeEditor($fields = [])
     {
         if (empty($fields)) {
@@ -166,4 +142,23 @@ abstract class AbstractMgrController extends modExtraManagerController
         }
         $this->addHtml('<script>Ext.onReady(function() {' . implode(PHP_EOL, $script) . '});</script>');
     }*/
+
+
+    private function loadRichTextEditor() {
+        $useEditor = $this->modx->getOption('use_editor');
+        $whichEditor = $this->modx->getOption('which_editor');
+        if ($useEditor && !empty($whichEditor))
+        {
+            // invoke the OnRichTextEditorInit event
+            $onRichTextEditorInit = $this->modx->invokeEvent('OnRichTextEditorInit',array(
+                'editor' => $whichEditor, // Not necessary for Redactor
+                'elements' => array('foo'), // Not necessary for Redactor
+            ));
+            if (is_array($onRichTextEditorInit))
+            {
+                $onRichTextEditorInit = implode('', $onRichTextEditorInit);
+            }
+            $this->setPlaceholder('onRichTextEditorInit', $onRichTextEditorInit);
+        }
+    }
 }

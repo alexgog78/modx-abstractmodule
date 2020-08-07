@@ -24,7 +24,7 @@ abstract class AbstractObjectCreateProcessor extends modObjectCreateProcessor
 
     private function setBoolean()
     {
-        $booleanFields = $this->object->getBooleanFields();
+        $booleanFields = $this->object->booleanFields;
         foreach ($booleanFields as $field) {
             $this->setCheckbox($field);
         }
@@ -32,15 +32,15 @@ abstract class AbstractObjectCreateProcessor extends modObjectCreateProcessor
 
     private function setCreatedOn()
     {
-        if (key_exists('created_on', $this->object->_fields)) {
-            $this->setProperty('created_on', date('Y-m-d H:i:s'));
+        if ($this->object::$createdOnField) {
+            $this->object->set($this->object::$createdOnField, date('Y-m-d H:i:s'));
         }
     }
 
     private function setCreatedBy()
     {
-        if (key_exists('created_by', $this->object->_fields)) {
-            $this->setProperty('created_by', $this->modx->user->id);
+        if ($this->object::$createdByField) {
+            $this->object->set($this->object::$createdByField, $this->modx->user->id);
         }
     }
 

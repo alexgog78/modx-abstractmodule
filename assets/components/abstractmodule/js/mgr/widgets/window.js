@@ -13,8 +13,8 @@ abstractModule.window.abstract = function (config) {
         width: config.width || 600,
         //autoHeight: true,
     });
-
     abstractModule.window.abstract.superclass.constructor.call(this, config);
+    this.on('beforeshow', this.beforeshow, this);
     this.on('beforeSubmit', this.beforeSubmit, this);
     this.on('success', this.success, this);
     this.on('failure', this.failure, this);
@@ -23,7 +23,6 @@ Ext.extend(abstractModule.window.abstract, MODx.Window, {
     defaultValues: {},
 
     renderForm: function () {
-        this.reset();
         this.setValues(this.defaultValues);
         this.setValues(this.record);
         abstractModule.window.abstract.superclass.renderForm.call(this);
@@ -42,6 +41,11 @@ Ext.extend(abstractModule.window.abstract, MODx.Window, {
             this.config.fields = this.getFields(this.config);
         }
         abstractModule.window.abstract.superclass._loadForm.call(this);
+    },
+
+    beforeshow: function () {
+        this.reset();
+        return true;
     },
 
     beforeSubmit: function (record) {

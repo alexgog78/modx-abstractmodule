@@ -58,7 +58,7 @@ abstract class AbstractObjectGetListProcessor extends modObjectGetListProcessor
      */
     protected function searchQuery(xPDOQuery $c, $query)
     {
-        $searchableFields = $this->objectFactory->getSearchableFields();
+        $searchableFields = $this->objectFactory::$searchableFields;
         foreach ($searchableFields as $field) {
             $c->where([
                 'OR:' . $field . ':LIKE' => '%' . $query . '%',

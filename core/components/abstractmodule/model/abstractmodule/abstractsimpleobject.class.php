@@ -2,11 +2,23 @@
 
 abstract class AbstractSimpleObject extends xPDOSimpleObject
 {
-    /** @var array */
-    protected $searchableFields = [];
+    /** @var string|null */
+    public static $createdOnField = 'created_on';
+
+    /** @var string|null */
+    public static $createdByField = 'created_by';
+
+    /** @var string|null */
+    public static $updatedOnField = 'updated_on';
+
+    /** @var string|null */
+    public static $updatedByField = 'updated_by';
 
     /** @var array */
-    private $booleanFields = [];
+    public static $searchableFields = [];
+
+    /** @var array */
+    public $booleanFields = [];
 
     /**
      * AbstractSimpleObject constructor.
@@ -25,26 +37,5 @@ abstract class AbstractSimpleObject extends xPDOSimpleObject
                 $this->booleanFields[] = $fieldKey;
             }
         }
-    }
-
-    /**
-     * @return array
-     */
-    public function getBooleanFields()
-    {
-        return $this->booleanFields;
-    }
-
-    /**
-     * @return array
-     */
-    public function getSearchableFields()
-    {
-        return $this->searchableFields;
-    }
-
-    public function myCallable()
-    {
-
     }
 }

@@ -77,22 +77,22 @@ Ext.extend(abstractModule.grid.abstract, MODx.grid.Grid, {
         }];
     },
 
-    getQuickCreateButton: function () {
-        return {
+    getQuickCreateButton: function (config = {}) {
+        return Ext.applyIf(config, {
             text: _('add'),
             cls: 'primary-button',
             handler: this._quickCreateRecord,
             scope: this
-        };
+        });
     },
 
-    getCreateButton: function () {
-        return {
+    getCreateButton: function (config = {}) {
+        return Ext.applyIf(config, {
             text: _('add'),
             cls: 'primary-button',
             handler: this._createRecord,
             scope: this
-        };
+        });
     },
 
     getSearchPanel: function () {

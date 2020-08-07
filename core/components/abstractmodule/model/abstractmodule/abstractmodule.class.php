@@ -51,7 +51,13 @@ abstract class AbstractModule
             $this->namespace = strtolower(get_class($this));
         }
 
-        $this->setConfig($config);
+        $abstractBasePath = $this->modx->getOption('abstractmodule.core_path', $config, MODX_CORE_PATH . 'components/abstractmodule/');
+        $abstractAssetsUrl = $this->modx->getOption('abstractmodule.assets_url', $config, MODX_ASSETS_URL . 'components/abstractmodule/');
+        $config = array_merge($config, [
+            'abstractJsUrl' => $abstractAssetsUrl . 'js/',
+            'abstractСssUrl' => $abstractAssetsUrl . 'css/',
+        ]);
+        $this->config = array_merge($config, $this->getConfig());
 
         if ($this->loadPackage) {
             $this->modx->addPackage($this->namespace, $this->config['modelPath'], $this->tablePrefix);
@@ -121,19 +127,14 @@ abstract class AbstractModule
 
     /**
      * @param array $config
+     * @return array
      */
-    protected function setConfig($config = [])
+    protected function getConfig($config = [])
     {
-        $abstractBasePath = $this->modx->getOption('abstractmodule.core_path', $config, MODX_CORE_PATH . 'components/abstractmodule/');
-        $abstractAssetsUrl = $this->modx->getOption('abstractmodule.assets_url', $config, MODX_ASSETS_URL . 'components/abstractmodule/');
-        $abstractConfig = [
-            'abstractJsUrl' => $abstractAssetsUrl . 'js/',
-            'abstractСssUrl' => $abstractAssetsUrl . 'css/',
-        ];
         $corePath = $this->modx->getOption($this->namespace . '.core_path', $config, MODX_CORE_PATH . 'components/' . $this->namespace . '/');
         $assetsPath = $this->modx->getOption($this->namespace . '.assets_path', $config, MODX_ASSETS_PATH . 'components/' . $this->namespace . '/');
         $assetsUrl = $this->modx->getOption($this->namespace . '.assets_url', $config, MODX_ASSETS_URL . 'components/' . $this->namespace . '/');
-        $moduleConfig = [
+        return array_merge($config, [
             'corePath' => $corePath,
             'assetsPath' => $assetsPath,
             'modelPath' => $corePath . 'model/',
@@ -145,8 +146,7 @@ abstract class AbstractModule
             'cssUrl' => $assetsUrl . 'css/',
             'connectorUrl' => $assetsUrl . 'connector.php',
             'actionUrl' => $assetsUrl . 'action.php',
-        ];
-        $this->config = array_merge($abstractConfig, $moduleConfig, $config);
+        ]);
     }
 
     /**

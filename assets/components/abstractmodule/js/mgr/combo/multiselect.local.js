@@ -5,7 +5,7 @@ abstractModule.combo.multiSelectLocal = function (config) {
     Ext.applyIf(config, {
         //Custom settings
         store: new Ext.data.SimpleStore({
-            id: (config.name || 'multiselect-local') + '-store',
+            id: null,
             fields: ['value'],
             data: []
         }),
