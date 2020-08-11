@@ -85,7 +85,7 @@ abstract class AbstractMgrController extends modExtraManagerController
      * @param array $placeholders
      * @return string|null
      */
-    protected function getLexicon($key, $placeholders = [])
+    protected function getLexiconTopic($key, $placeholders = [])
     {
         return $this->modx->lexicon($this->namespace . '_' . $key, $placeholders);
     }

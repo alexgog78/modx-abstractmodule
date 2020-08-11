@@ -4,16 +4,18 @@ abstractModule.formPanel.abstract = function (config) {
     config = config || {};
     Ext.applyIf(config, {
         //Custom settings
-        tabs: false,
-        pageHeader: '',
-        panelContent: [],
-        recordId: null,
-        record: null,
-        baseParams: {},
+        title: null,
+        components: [],
+        url: null,
+        baseParams: {
+            action: null
+        },
 
         //Core settings
+        items: [],
         cls: 'container',
-        header: false,
+        bodyStyle: '',
+        //header: false,
         useLoadingMask: true,
         listeners: {
             'setup': {fn: this.setup, scope: this},
@@ -24,74 +26,26 @@ abstractModule.formPanel.abstract = function (config) {
     abstractModule.formPanel.abstract.superclass.constructor.call(this, config);
 };
 Ext.extend(abstractModule.formPanel.abstract, MODx.FormPanel, {
-    formInputs: {},
-    defaultValues: {},
-
-    initComponent: function () {
-        this.panelContent = this.getContent();
-        var content = this.renderMainPlain(this.panelContent);
-        if (this.tabs) {
-            content = this.renderMainTabs(this.panelContent);
+    /*initComponent: function () {
+        if (this.title) {
+            this.items.push(this._getHeader(this.title));
+            this.title = '';
         }
-        this.items = [
-            this.renderHeader(this.pageHeader),
-            content,
-        ];
+        console.log(this.items);
         abstractModule.formPanel.abstract.superclass.initComponent.call(this);
-    },
+    },*/
 
-    getContent: function () {
-        return this.renderFormPanel(this.formInputs);
-    },
-
-    renderFormPanel: function (formInputs) {
-        var form = [];
-        Ext.iterate(formInputs, function (name, config) {
-            var formInput = abstractModule.function.getFormInput(name, config);
-            form.push(formInput);
-        }, this);
-        return [{
-            layout: 'form',
-            labelAlign: 'top',
-            labelSeparator: '',
-            border: false,
-            defaults: {
-                msgTarget: 'under',
-                anchor: '100%'
-            },
-            items: form
-        }];
-        //return form;
-    },
-
-    renderMainPlain: function (html) {
-        return abstractModule.function.getPanelMainPart(html);
-    },
-
-    renderMainTabs: function (tabs) {
-        return abstractModule.function.getTabs(tabs);
-    },
-
-    renderHeader: function (html) {
-        return abstractModule.function.getPanelHeader(html);
-    },
-
-    renderDescription: function (html) {
-        return abstractModule.function.getPanelDescription(html);
-    },
-
-    renderContent: function (html) {
-        return abstractModule.function.getPanelContent(html);
-    },
 
     setup: function () {
         //if (this.initialized) { this.clearDirty(); return true; }
-        console.log(this.record);
-        this.setValues(this.defaultValues);
-        this.setValues(this.record);
+        console.log(this.config.record);
+        //this.setValues(this.defaultValues);
+        //this.setValues(this.record);
         //console.log(this)
-        this.fireEvent('ready');
-        this.initialized = true;
+
+        this.fireEvent('ready',this.config.record);
+        MODx.fireEvent('ready');
+        //this.initialized = true;
 
         /*if (!this.recordId) {
             this.fireEvent('ready');
@@ -122,9 +76,9 @@ Ext.extend(abstractModule.formPanel.abstract, MODx.FormPanel, {
         });*/
     },
 
-    setValues: function (object) {
+    /*setValues: function (object) {
         this.getForm().setValues(object);
-    },
+    },*/
 
     success: function (o) {
         this.record = o.result.object;
@@ -137,5 +91,7 @@ Ext.extend(abstractModule.formPanel.abstract, MODx.FormPanel, {
         return true;
     },
 
-    //TODO renderFormInput
+    _getHeader: function (html) {
+        return abstractModule.component.panelHeader(html);
+    },
 });

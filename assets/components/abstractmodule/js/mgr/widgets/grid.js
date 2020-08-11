@@ -42,7 +42,6 @@ abstractModule.grid.abstract = function (config) {
 };
 Ext.extend(abstractModule.grid.abstract, MODx.grid.Grid, {
     _recordEditWindow: null,
-    _updateWindow: null,
 
     initComponent: function() {
         this.columns = this._getGridColumns();
@@ -168,7 +167,10 @@ Ext.extend(abstractModule.grid.abstract, MODx.grid.Grid, {
     },
 
     _quickCreateRecord: function (btn, e) {
-        this._createWindow = new MODx.load({
+        if (this._recordEditWindow) {
+            this._recordEditWindow.close();
+        }
+        this._recordEditWindow = new MODx.load({
             xtype: this.recordActions.create.xtype,
             title: _('create'),
             action: this.recordActions.create.action,
@@ -179,7 +181,7 @@ Ext.extend(abstractModule.grid.abstract, MODx.grid.Grid, {
                 }
             }
         });
-        this._createWindow.show(e.target);
+        this._recordEditWindow.show(e.target);
     },
 
     _createRecord: function (btn, e) {
@@ -187,7 +189,10 @@ Ext.extend(abstractModule.grid.abstract, MODx.grid.Grid, {
     },
 
     _quickUpdateRecord: function (btn, e) {
-        this._updateWindow = new MODx.load({
+        if (this._recordEditWindow) {
+            this._recordEditWindow.close();
+        }
+        this._recordEditWindow = new MODx.load({
             xtype: this.recordActions.update.xtype,
             title: _('update'),
             action: this.recordActions.update.action,
@@ -199,7 +204,7 @@ Ext.extend(abstractModule.grid.abstract, MODx.grid.Grid, {
                 }
             }
         });
-        this._updateWindow.show(e.target);
+        this._recordEditWindow.show(e.target);
     },
 
     _updateRecord: function (btn, e) {

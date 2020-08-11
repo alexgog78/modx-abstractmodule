@@ -15,6 +15,7 @@ abstractModule.window.abstract = function (config) {
     });
     abstractModule.window.abstract.superclass.constructor.call(this, config);
     this.on('beforeshow', this.beforeshow, this);
+    this.on('hide', this.onhide, this);
     this.on('beforeSubmit', this.beforeSubmit, this);
     this.on('success', this.success, this);
     this.on('failure', this.failure, this);
@@ -45,6 +46,10 @@ Ext.extend(abstractModule.window.abstract, MODx.Window, {
 
     beforeshow: function () {
         this.reset();
+        return true;
+    },
+
+    onhide: function () {
         return true;
     },
 
