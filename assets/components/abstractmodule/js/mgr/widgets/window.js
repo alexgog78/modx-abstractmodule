@@ -30,7 +30,7 @@ Ext.extend(abstractModule.window.abstract, MODx.Window, {
     },
 
     getFields: function (config) {
-        return [];
+        return this.fields;
     },
 
     getFormInput: function (name, config = {}) {
@@ -38,9 +38,7 @@ Ext.extend(abstractModule.window.abstract, MODx.Window, {
     },
 
     _loadForm: function () {
-        if (this.config.fields.length == 0) {
-            this.config.fields = this.getFields(this.config);
-        }
+        this.config.fields = this.getFields(this.config);
         abstractModule.window.abstract.superclass._loadForm.call(this);
     },
 

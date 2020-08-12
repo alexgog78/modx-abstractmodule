@@ -14,21 +14,30 @@ abstractModule.panel.abstract = function (config) {
 };
 Ext.extend(abstractModule.panel.abstract, MODx.Panel, {
     initComponent: function() {
-        if (this.title) {
-            this.items.push(this._getHeader(this.title));
-            this.title = '';
-        }
-        this.components = this.getComponents();
-        if (this.components.length > 1) {
-            this.items.push(this._renderTabsPanel());
-        } else {
-            this.items.push(this._renderPlainPanel());
+        if (this.items.length == 0) {
+            if (this.title) {
+                this.items.push(this._getHeader(this.title));
+                this.title = '';
+            }
+            this.components = this.getComponents(this.initialConfig);
+            this.items.push(this.components);
         }
         abstractModule.panel.abstract.superclass.initComponent.call(this);
     },
 
-    getComponents: function () {
-        return this.getContent(this.components);
+    getComponents: function (config) {
+        return this.components;
+    },
+
+    renderPlainPanel: function (items) {
+        return {
+            cls: 'x-form-label-left',
+            items: items,
+        };
+    },
+
+    renderTabsPanel: function (items) {
+        return abstractModule.component.tabs(items);
     },
 
     getDescription: function (html) {
@@ -41,16 +50,5 @@ Ext.extend(abstractModule.panel.abstract, MODx.Panel, {
 
     _getHeader: function (html) {
         return abstractModule.component.panelHeader(html);
-    },
-
-    _renderPlainPanel: function () {
-        return {
-            cls: 'x-form-label-left',
-            items: this.components,
-        };
-    },
-
-    _renderTabsPanel: function () {
-        return abstractModule.component.tabs(this.components);
     },
 });

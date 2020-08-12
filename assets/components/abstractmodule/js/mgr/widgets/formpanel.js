@@ -4,19 +4,16 @@ abstractModule.formPanel.abstract = function (config) {
     config = config || {};
     Ext.applyIf(config, {
         //Custom settings
-        title: null,
-        components: [],
         url: null,
         baseParams: {
             action: null
         },
+        title: null,
+        components: [],
 
         //Core settings
         items: [],
-        cls: 'container',
-        bodyStyle: '',
-        //header: false,
-        useLoadingMask: true,
+        cls: 'container form-with-labels',
         listeners: {
             'setup': {fn: this.setup, scope: this},
             'success': {fn: this.success, scope: this},
@@ -26,64 +23,30 @@ abstractModule.formPanel.abstract = function (config) {
     abstractModule.formPanel.abstract.superclass.constructor.call(this, config);
 };
 Ext.extend(abstractModule.formPanel.abstract, MODx.FormPanel, {
-    /*initComponent: function () {
-        if (this.title) {
-            this.items.push(this._getHeader(this.title));
-            this.title = '';
-        }
-        console.log(this.items);
-        abstractModule.formPanel.abstract.superclass.initComponent.call(this);
-    },*/
+    defaultValues: {},
 
-
-    setup: function () {
-        //if (this.initialized) { this.clearDirty(); return true; }
-        console.log(this.config.record);
-        //this.setValues(this.defaultValues);
-        //this.setValues(this.record);
-        //console.log(this)
-
-        this.fireEvent('ready',this.config.record);
-        MODx.fireEvent('ready');
-        //this.initialized = true;
-
-        /*if (!this.recordId) {
-            this.fireEvent('ready');
-            return true;
-        }
-        MODx.Ajax.request({
-            url: this.config.url,
-            params: {
-                action: this.baseParams.actionGet,
-                id: this.recordId
-            },
-            listeners: {
-                success: {
-                    fn: function (response) {
-                        var object = response.object;
-                        //TODO remove
-                        console.log(object);
-                        this.setValues(object);
-                        this.fireEvent('ready', object);
-
-                        //if (MODx.onLoadEditor) { MODx.onLoadEditor(this); }
-                        //this.clearDirty();
-
-                        MODx.fireEvent('ready');
-                    }, scope: this
-                }
+    initComponent: function() {
+        if (this.items.length == 0) {
+            if (this.title) {
+                this.items.push(this._getHeader(this.title));
+                this.title = '';
             }
-        });*/
+            this.components = this.getComponents(this.initialConfig);
+            this.items.push(this.components);
+        }
+        abstractModule.formPanel.abstract.superclass.initComponent.call(this);
     },
 
-    /*setValues: function (object) {
-        this.getForm().setValues(object);
-    },*/
+    setup: function () {
+        this._setValues(this.defaultValues);
+        this._setValues(this.record);
+        console.log(this.record);
+        this.fireEvent('ready', this.record);
+        MODx.fireEvent('ready');
+    },
 
     success: function (o) {
         this.record = o.result.object;
-        //this.getForm().setValues(o.result.object);
-        //console.log(this.record);
         return true;
     },
 
@@ -91,7 +54,40 @@ Ext.extend(abstractModule.formPanel.abstract, MODx.FormPanel, {
         return true;
     },
 
+    getComponents: function (config) {
+        return this.components;
+    },
+
+    renderPlainPanel: function (items) {
+        return {
+            cls: 'x-form-label-left',
+            items: items,
+        };
+    },
+
+    renderTabsPanel: function (items) {
+        return abstractModule.component.tabs(items, {
+            bodyCssClass: 'tab-panel-wrapper'
+        });
+    },
+
+    getDescription: function (html) {
+        return abstractModule.component.panelDescription(html);
+    },
+
+    getContent: function (items) {
+        return abstractModule.component.panelContent(items);
+    },
+
+    getFormInput: function (name, config = {}) {
+        return abstractModule.component.inputField(name, config);
+    },
+
     _getHeader: function (html) {
         return abstractModule.component.panelHeader(html);
+    },
+
+    _setValues: function (object) {
+        this.getForm().setValues(object);
     },
 });

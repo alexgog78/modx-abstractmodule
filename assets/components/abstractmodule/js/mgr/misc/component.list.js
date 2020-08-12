@@ -19,9 +19,16 @@ abstractModule.component = {
 
     panelContent: function (items, config = {}) {
         return Ext.applyIf(config, {
-            layout: 'anchor',
+            xtype: 'panel',
+            //layout: 'anchor',
+            //cls: 'main-wrapper',
+            layout: 'form',
             cls: 'main-wrapper',
             preventRender: true,
+            border: false,
+            labelAlign: 'top',
+            labelSeparator: '',
+            defaults: {msgTarget: 'under', anchor: '100%'},
             items: items || []
         });
     },
