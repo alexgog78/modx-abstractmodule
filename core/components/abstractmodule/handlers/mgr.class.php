@@ -12,6 +12,7 @@ abstract class AbstractHandlerMgr extends AbstractHandler
         $controller->addJavascript($this->module->abstractJsUrl . 'mgr/widgets/panel.js');
         $controller->addJavascript($this->module->abstractJsUrl . 'mgr/widgets/formpanel.js');
         $controller->addJavascript($this->module->abstractJsUrl . 'mgr/widgets/grid.js');
+        $controller->addJavascript($this->module->abstractJsUrl . 'mgr/widgets/localgrid.js');
         $controller->addJavascript($this->module->abstractJsUrl . 'mgr/widgets/window.js');
         $controller->addJavascript($this->module->abstractJsUrl . 'mgr/widgets/page.js');
         $controller->addJavascript($this->module->abstractJsUrl . 'mgr/combo/select.local.js');

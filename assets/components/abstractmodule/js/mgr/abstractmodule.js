@@ -1,16 +1,15 @@
 'use strict';
 
-//TODO check
-var abstractModule = {
+let AbstractModule = {
+    config: {},
     page: {},
-    window: {},
-    grid: {},
-    localGrid: {},
-    tree: {},
     panel: {},
     formPanel: {},
+    grid: {},
+    localGrid: {},
+    window: {},
+    tree: {},
     combo: {},
-    config: {},
     component: {},
     renderer: {},
     function: {},

@@ -1,6 +1,6 @@
 'use strict';
 
-abstractModule.component = {
+AbstractModule.component = {
     panelHeader: function (html, config = {}) {
         return Ext.applyIf(config, {
             xtype: 'modx-header',
@@ -131,36 +131,4 @@ abstractModule.component = {
             }
         });
     },
-
-    columns: function (items, config = {}) {
-
-        /*var items = [];
-        Ext.iterate(tabs, function (tabData) {
-            items.push(this.tab(tabData));
-        }, this);
-
-        return items;*/
-
-        /*{
-                layout: 'column',
-                defaults: {msgTarget: 'under', border: false, anchor: '100%'},
-                items: [{
-                    columnWidth: .5,
-                    layout: 'form',
-                    defaults: {msgTarget: 'under', border: false, anchor: '100%'},
-                    items: [
-                        {xtype: 'numberfield', name: 'sum', fieldLabel: _('jpayments.field.sum'), decimalPrecision: 2},
-                        {xtype: 'textfield', name: 'user_name', fieldLabel: _('jpayments.field.user_name')},
-                    ]
-                }, {
-                    columnWidth: .5,
-                    layout: 'form',
-                    defaults: {msgTarget: 'under', border: false, anchor: '100%'},
-                    items: [
-                        {xtype: 'jpayments-combo-resource', name: 'resource_id', fieldLabel: _('jpayments.field.resource'), context_key: config.context_key, decimalPrecision: 1},
-                        {xtype: 'textfield', name: 'user_phone', fieldLabel: _('jpayments.field.user_phone')},
-                    ]
-                }]
-            }*/
-    }
-}
+};

@@ -1,6 +1,6 @@
 'use strict';
 
-abstractModule.renderer = {
+AbstractModule.renderer = {
     boolean: function(value, cell, row) {
         switch (value) {
             case 0:

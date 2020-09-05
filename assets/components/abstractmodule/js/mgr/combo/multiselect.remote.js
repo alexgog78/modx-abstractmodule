@@ -1,15 +1,15 @@
 'use strict';
 
-abstractModule.combo.multiSelectRemote = function (config) {
+AbstractModule.combo.multiSelectRemote = function (config) {
     config = config || {};
     Ext.applyIf(config, {
         //Custom settings
         store: new Ext.data.JsonStore({
-            id: (config.id || 'multiselect-remote') + '-store',
+            id: null,
             url: null,
             baseParams: {
                 action: null,
-                combo: true
+                combo: true,
             },
             fields: [],
             root: 'results',
@@ -17,13 +17,14 @@ abstractModule.combo.multiSelectRemote = function (config) {
             autoLoad: false,
             autoSave: false,
         }),
-        displayField: null,
-        valueField: null,
-        dataIndex: null,
-        allowAddNewData: false,
+        displayField: 'value',
+        valueField: 'value',
+        //allowAddNewData: false,
 
         //Core settings
-        name: config.name || 'multiselect-remote',
+        name: config.name,
+        dataIndex: config.name,
+        allowAddNewData: true,
         //hiddenName: config.name || 'multiselect-remote',
         mode: 'remote',
         pageSize: 10,
@@ -32,7 +33,7 @@ abstractModule.combo.multiSelectRemote = function (config) {
         //emptyText: _('no'),
         emptyText: false,
         msgTarget: 'under',
-        addNewDataOnBlur: true,
+        //addNewDataOnBlur: true,//TODO check
         extraItemCls: 'x-tag',
         expandBtnCls: 'x-form-trigger',
         clearBtnCls: 'x-form-trigger',
@@ -76,6 +77,6 @@ abstractModule.combo.multiSelectRemote = function (config) {
     }
     config.name += '[]';
     config.hiddenName += '[]';
-    abstractModule.combo.multiSelectRemote.superclass.constructor.call(this, config);
+    AbstractModule.combo.multiSelectRemote.superclass.constructor.call(this, config);
 };
-Ext.extend(abstractModule.combo.multiSelectRemote, Ext.ux.form.SuperBoxSelect);
+Ext.extend(AbstractModule.combo.multiSelectRemote, Ext.ux.form.SuperBoxSelect);

@@ -1,30 +1,42 @@
 <?php
 
+require_once MODX_CORE_PATH . 'components/abstractmodule/helpers/abstractmgrhelper.trait.php';
+
 abstract class AbstractMgrController extends modExtraManagerController
 {
+    use AbstractMgrHelper;
+
     /** @var bool */
     protected $loadService = true;
-
-    /** @var bool */
-    protected $loadLexicon = true;
-
-    /** @var bool */
-    protected $loadRichText = false;
 
     /** @var AbstractModule */
     protected $service;
 
+    /** @var bool */
+    protected $loadRichText = false;
+
+    /** @var bool */
+    protected $loadObject = false;
+
+    /** @var string */
+    protected $objectClassKey;
+
+    /** @var string */
+    protected $objectGetProcessorPath;
+
+    /** @var string */
+    protected $objectPrimaryKey = 'id';
+
     /** @var array */
-    protected $languageTopics = [];
+    protected $object = [];
 
-    /** @var string */
-    protected $recordClassKey = null;
-
-    /** @var string */
-    protected $recordPrimaryKey = 'id';
-
-    /** @var xPDOObject|null */
-    protected $record = null;
+    /** @var array */
+    protected $languageTopics = [
+        'default',
+        'manager',
+        'record',
+        'status',
+    ];
 
     /**
      * @param $name
@@ -54,9 +66,9 @@ abstract class AbstractMgrController extends modExtraManagerController
      */
     public function getLanguageTopics()
     {
-        if ($this->loadLexicon) {
-            $this->languageTopics[] = $this->namespace . ':default';
-        }
+        array_walk($this->languageTopics, function (&$item) {
+            $item = $this->namespace . ':' . $item;
+        });
         return $this->languageTopics;
     }
 
@@ -66,17 +78,14 @@ abstract class AbstractMgrController extends modExtraManagerController
      */
     public function process(array $scriptProperties = [])
     {
-        if ($this->recordClassKey) {
+        if ($this->loadObject) {
             $this->getRecord($scriptProperties);
         }
-
     }
 
     public function loadCustomCssJs()
     {
-        if ($this->loadService) {
-            $this->service->loadDefaultMgrAssets($this);
-        }
+        $this->loadDefaultMgrAssets($this);
     }
 
     /**
@@ -101,64 +110,34 @@ abstract class AbstractMgrController extends modExtraManagerController
      */
     private function getRecord($scriptProperties = [])
     {
-        $primaryKey = $scriptProperties[$this->recordPrimaryKey];
+        $primaryKey = $scriptProperties[$this->objectPrimaryKey];
 
-        //Check request for primary key
-        if (empty($primaryKey) || strlen($primaryKey) !== strlen((integer)$primaryKey)) {
-            $this->failure($this->modx->lexicon($this->namespace . '.err_ns'));
-            return false;
-        }
-
-        //Check for record
-        $this->record = $this->modx->getObject($this->recordClassKey, [
-            $this->recordPrimaryKey => $primaryKey,
+        $response = $this->modx->runProcessor($this->objectGetProcessorPath, [
+            $this->objectPrimaryKey => $primaryKey,
+        ], [
+            'processors_path' => $this->service->processorsPath ?? ''
         ]);
-        if (!$this->record) {
-            $this->failure($this->modx->lexicon($this->namespace . '.err_nf'));
-            return false;
+        if ($response->isError()) {
+            $this->failure($response->getMessage());
         }
+        $this->object = $response->getObject();
     }
 
-    //TODO check
-    /*protected function loadCodeEditor($fields = [])
+    private function loadRichTextEditor()
     {
-        if (empty($fields)) {
-            return;
-        }
-        $ace = $this->modx->getService('ace', 'Ace', $this->modx->getOption('ace.core_path', null, $this->modx->getOption('core_path') . 'components/ace/') . 'model/ace/');
-        if (!$ace) {
-            return;
-        }
-        $ace->initialize();
-        $html_elements_mime = $this->modx->getOption('ace.html_elements_mime', null, false);
-
-        //$field = 'modx-template-content';
-        $modxTags = true;
-        $mimeType = 'text/x-smarty';
-
-        $script = [];
-        foreach ($fields as $field) {
-            $script[] = "MODx.ux.Ace.replaceComponent('$field', '$mimeType', $modxTags);";
-        }
-        $this->addHtml('<script>Ext.onReady(function() {' . implode(PHP_EOL, $script) . '});</script>');
-    }*/
-
-
-    private function loadRichTextEditor() {
         $useEditor = $this->modx->getOption('use_editor');
         $whichEditor = $this->modx->getOption('which_editor');
-        if ($useEditor && !empty($whichEditor))
-        {
-            // invoke the OnRichTextEditorInit event
-            $onRichTextEditorInit = $this->modx->invokeEvent('OnRichTextEditorInit',array(
-                'editor' => $whichEditor, // Not necessary for Redactor
-                'elements' => array('foo'), // Not necessary for Redactor
-            ));
-            if (is_array($onRichTextEditorInit))
-            {
-                $onRichTextEditorInit = implode('', $onRichTextEditorInit);
-            }
-            $this->setPlaceholder('onRichTextEditorInit', $onRichTextEditorInit);
+        if (!$useEditor || empty($whichEditor)) {
+            return;
         }
+        $onRichTextEditorInit = $this->modx->invokeEvent('OnRichTextEditorInit', [
+            'editor' => $whichEditor,
+            'elements' => ['ta'],
+        ]);
+        if (is_array($onRichTextEditorInit)) {
+            $onRichTextEditorInit = implode('', $onRichTextEditorInit);
+        }
+        $this->setPlaceholder('onRichTextEditorInit', $onRichTextEditorInit);
+        $this->addHtml($onRichTextEditorInit);
     }
 }

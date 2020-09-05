@@ -1,13 +1,13 @@
 'use strict';
 
-abstractModule.combo.browser = function (config) {
+AbstractModule.combo.browser = function (config) {
     config = config || {};
     Ext.applyIf(config, {
         source: config.source || MODx.config.default_media_source
     });
-    abstractModule.combo.browser.superclass.constructor.call(this, config);
+    AbstractModule.combo.browser.superclass.constructor.call(this, config);
 };
-Ext.extend(abstractModule.combo.browser, MODx.combo.Browser, {
+Ext.extend(AbstractModule.combo.browser, MODx.combo.Browser, {
     onTriggerClick: function (btn) {
         if (this.disabled) {
             return false;

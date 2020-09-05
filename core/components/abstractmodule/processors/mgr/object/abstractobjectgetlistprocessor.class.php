@@ -82,7 +82,29 @@ abstract class AbstractObjectGetListProcessor extends modObjectGetListProcessor
      */
     public function prepareRow(xPDOObject $object)
     {
-        $objectArray = parent::prepareRow($object);
-        return $objectArray;
+        $this->prepareJsonCombo($object);
+        return parent::prepareRow($object);
+    }
+
+    /**
+     * @param xPDOObject $object
+     */
+    private function prepareJsonCombo(xPDOObject $object)
+    {
+        $jsonFields = $this->objectFactory->jsonFields;
+        foreach ($jsonFields as $field) {
+            $combo = [];
+            foreach ($object->get($field) ?? [] as $value) {
+                if ($value === '' || is_array($value)) {
+                    continue;
+                }
+                $combo[] = [
+                    'value' => $value,
+                ];
+            }
+            if ($combo) {
+                $object->set($field, $combo);
+            }
+        }
     }
 }

@@ -1,5 +1,5 @@
 'use strict';
 
-abstractModule.function = {
+AbstractModule.function = {
 
-}
+};

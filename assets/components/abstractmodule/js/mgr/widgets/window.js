@@ -1,6 +1,6 @@
 'use strict';
 
-abstractModule.window.abstract = function (config) {
+AbstractModule.window.abstract = function (config) {
     config = config || {};
     Ext.applyIf(config, {
         //Custom settings
@@ -8,25 +8,25 @@ abstractModule.window.abstract = function (config) {
         action: null,
         record: [],
         fields: [],
+        width: config.width || 600,
 
         //Core settings
-        width: config.width || 600,
         //autoHeight: true,
     });
-    abstractModule.window.abstract.superclass.constructor.call(this, config);
+    AbstractModule.window.abstract.superclass.constructor.call(this, config);
     this.on('beforeshow', this.beforeshow, this);
     this.on('hide', this.onhide, this);
     this.on('beforeSubmit', this.beforeSubmit, this);
     this.on('success', this.success, this);
     this.on('failure', this.failure, this);
 };
-Ext.extend(abstractModule.window.abstract, MODx.Window, {
+Ext.extend(AbstractModule.window.abstract, MODx.Window, {
     defaultValues: {},
 
     renderForm: function () {
         this.setValues(this.defaultValues);
         this.setValues(this.record);
-        abstractModule.window.abstract.superclass.renderForm.call(this);
+        AbstractModule.window.abstract.superclass.renderForm.call(this);
     },
 
     getFields: function (config) {
@@ -34,12 +34,12 @@ Ext.extend(abstractModule.window.abstract, MODx.Window, {
     },
 
     getFormInput: function (name, config = {}) {
-        return abstractModule.component.inputField(name, config);
+        return AbstractModule.component.inputField(name, config);
     },
 
     _loadForm: function () {
         this.config.fields = this.getFields(this.config);
-        abstractModule.window.abstract.superclass._loadForm.call(this);
+        AbstractModule.window.abstract.superclass._loadForm.call(this);
     },
 
     beforeshow: function () {

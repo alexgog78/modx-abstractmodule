@@ -2,10 +2,12 @@
 
 /** @noinspection PhpIncludeInspection */
 require_once MODX_CORE_PATH . 'components/abstractmodule/helpers/abstracthelper.trait.php';
+//require_once MODX_CORE_PATH . 'components/abstractmodule/helpers/abstractmgrhelper.trait.php';
 
 abstract class AbstractModule
 {
     use AbstractHelper;
+    //use AbstractMgrHelper;
 
     /** @var modX */
     public $modx;
@@ -57,7 +59,7 @@ abstract class AbstractModule
             'abstractJsUrl' => $abstractAssetsUrl . 'js/',
             'abstractСssUrl' => $abstractAssetsUrl . 'css/',
         ]);
-        $this->config = array_merge($config, $this->getConfig());
+        $this->config = $this->getConfig($config);
 
         if ($this->loadPackage) {
             $this->modx->addPackage($this->namespace, $this->config['modelPath'], $this->tablePrefix);
@@ -89,41 +91,7 @@ abstract class AbstractModule
         return null;
     }
 
-    /**
-     * @param modManagerController $controller
-     */
-    public function loadDefaultMgrAssets(modManagerController $controller)
-    {
-        $controller->addCss($this->abstractСssUrl . 'mgr/default.css');
-        $controller->addJavascript($this->abstractJsUrl . 'mgr/abstractmodule.js');
-        $controller->addJavascript($this->abstractJsUrl . 'mgr/widgets/panel.js');
-        $controller->addJavascript($this->abstractJsUrl . 'mgr/widgets/formpanel.js');
-        $controller->addJavascript($this->abstractJsUrl . 'mgr/widgets/grid.js');
-        $controller->addJavascript($this->abstractJsUrl . 'mgr/widgets/localgrid.js');
-        $controller->addJavascript($this->abstractJsUrl . 'mgr/widgets/window.js');
-        $controller->addJavascript($this->abstractJsUrl . 'mgr/widgets/page.js');
-        $controller->addJavascript($this->abstractJsUrl . 'mgr/combo/select.local.js');
-        $controller->addJavascript($this->abstractJsUrl . 'mgr/combo/multiselect.local.js');
-        $controller->addJavascript($this->abstractJsUrl . 'mgr/combo/select.remote.js');
-        $controller->addJavascript($this->abstractJsUrl . 'mgr/combo/multiselect.remote.js');
-        $controller->addJavascript($this->abstractJsUrl . 'mgr/combo/browser.js');
-        $controller->addJavascript($this->abstractJsUrl . 'mgr/misc/renderer.list.js');
-        $controller->addJavascript($this->abstractJsUrl . 'mgr/misc/function.list.js');
-        $controller->addJavascript($this->abstractJsUrl . 'mgr/misc/component.list.js');
 
-        $controller->addCss($this->cssUrl . 'mgr/default.css');
-        $controller->addJavascript($this->jsUrl . 'mgr/' . $this->namespace . '.js');
-        $configJs = $this->modx->toJSON($this->config ?? []);
-        $controller->addHtml('<script type="text/javascript">' . get_class($this) . '.config = ' . $configJs . ';</script>');
-    }
-
-    /**
-     * @param modManagerController $controller
-     */
-    public function addMgrLexicon(modManagerController $controller)
-    {
-        $controller->addLexiconTopic($this->namespace . ':default');
-    }
 
     /**
      * @param array $config
@@ -134,7 +102,7 @@ abstract class AbstractModule
         $corePath = $this->modx->getOption($this->namespace . '.core_path', $config, MODX_CORE_PATH . 'components/' . $this->namespace . '/');
         $assetsPath = $this->modx->getOption($this->namespace . '.assets_path', $config, MODX_ASSETS_PATH . 'components/' . $this->namespace . '/');
         $assetsUrl = $this->modx->getOption($this->namespace . '.assets_url', $config, MODX_ASSETS_URL . 'components/' . $this->namespace . '/');
-        return array_merge($config, [
+        return array_merge([
             'corePath' => $corePath,
             'assetsPath' => $assetsPath,
             'modelPath' => $corePath . 'model/',
@@ -146,7 +114,7 @@ abstract class AbstractModule
             'cssUrl' => $assetsUrl . 'css/',
             'connectorUrl' => $assetsUrl . 'connector.php',
             'actionUrl' => $assetsUrl . 'action.php',
-        ]);
+        ], $config);
     }
 
     /**

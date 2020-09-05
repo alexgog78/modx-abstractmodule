@@ -1,6 +1,6 @@
 'use strict';
 
-abstractModule.page.abstract = function (config) {
+AbstractModule.page.abstract = function (config) {
     config = config || {};
     Ext.applyIf(config, {
         //Custom settings
@@ -27,16 +27,16 @@ abstractModule.page.abstract = function (config) {
         //Core settings
         buttons: []
     });
-    abstractModule.page.abstract.superclass.constructor.call(this, config);
+    AbstractModule.page.abstract.superclass.constructor.call(this, config);
 };
-Ext.extend(abstractModule.page.abstract, MODx.Component, {
+Ext.extend(AbstractModule.page.abstract, MODx.Component, {
     initComponent: function () {
-        abstractModule.page.abstract.superclass.initComponent.call(this);
+        AbstractModule.page.abstract.superclass.initComponent.call(this);
     },
 
     _loadActionButtons: function () {
         this.config.buttons = this.getButtons(this.config);
-        abstractModule.page.abstract.superclass._loadActionButtons.call(this);
+        AbstractModule.page.abstract.superclass._loadActionButtons.call(this);
     },
 
     getButtons: function (config) {

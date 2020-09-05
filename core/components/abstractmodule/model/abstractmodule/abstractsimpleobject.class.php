@@ -20,6 +20,9 @@ abstract class AbstractSimpleObject extends xPDOSimpleObject
     /** @var array */
     public $booleanFields = [];
 
+    /** @var array */
+    public $jsonFields = [];
+
     /**
      * AbstractSimpleObject constructor.
      * @param xPDO $xpdo
@@ -27,15 +30,62 @@ abstract class AbstractSimpleObject extends xPDOSimpleObject
     public function __construct(xPDO &$xpdo)
     {
         parent::__construct($xpdo);
-        $this->setBooleanFields();
+        $this->prepareFields();
     }
 
-    public function setBooleanFields()
+    /**
+     * @param null $cacheFlag
+     * @return bool
+     */
+    public function save($cacheFlag = null)
+    {
+        $this->setJsonFields();
+        return parent::save($cacheFlag);
+    }
+
+    private function prepareFields()
     {
         foreach ($this->_fieldMeta as $fieldKey => $fieldData) {
-            if ($fieldData['phptype'] == 'boolean') {
-                $this->booleanFields[] = $fieldKey;
+            $this->setBooleanFieldsList($fieldKey, $fieldData);
+            $this->setJsonFieldsList($fieldKey, $fieldData);
+        }
+    }
+
+    /**
+     * @param string $key
+     * @param array $meta
+     */
+    private function setBooleanFieldsList(string $key, array $meta)
+    {
+        if ($meta['phptype'] == 'boolean') {
+            $this->booleanFields[] = $key;
+        }
+    }
+
+    /**
+     * @param string $key
+     * @param array $meta
+     */
+    private function setJsonFieldsList(string $key, array $meta)
+    {
+        if ($meta['phptype'] == 'json') {
+            $this->jsonFields[] = $key;
+        }
+    }
+
+    private function setJsonFields()
+    {
+        foreach ($this->jsonFields as $field) {
+            $values = parent::get($field);
+            if (!$values) {
+                continue;
             }
+            foreach ($values as $key => $value) {
+                if ($value == '') {
+                    unset($values[$key]);
+                }
+            }
+            parent::set($field, $values);
         }
     }
 }

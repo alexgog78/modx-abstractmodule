@@ -1,6 +1,6 @@
 'use strict';
 
-abstractModule.combo.multiSelectLocal = function (config) {
+AbstractModule.combo.multiSelectLocal = function (config) {
     config = config || {};
     Ext.applyIf(config, {
         //Custom settings
@@ -9,20 +9,20 @@ abstractModule.combo.multiSelectLocal = function (config) {
             fields: ['value'],
             data: []
         }),
-        displayField: null,
+        displayField: 'value',
         valueField: 'value',
-        dataIndex: null,
         allowAddNewData: false,
 
         //Core settings
-        name: config.name || 'multiselect-local',
+        name: config.name,
+        dataIndex: config.name,
         mode: 'local',
         minChars: 1,
         allowBlank: true,
         //emptyText: _('no'),
         emptyText: false,
         msgTarget: 'under',
-        addNewDataOnBlur: true,
+        //addNewDataOnBlur: true,//TODO check
         extraItemCls: 'x-tag',
         expandBtnCls: 'x-form-trigger',
         clearBtnCls: 'x-form-trigger',
@@ -41,6 +41,6 @@ abstractModule.combo.multiSelectLocal = function (config) {
     }
     config.name += '[]';
     config.hiddenName += '[]';
-    abstractModule.combo.multiSelectLocal.superclass.constructor.call(this, config);
+    AbstractModule.combo.multiSelectLocal.superclass.constructor.call(this, config);
 };
-Ext.extend(abstractModule.combo.multiSelectLocal, Ext.ux.form.SuperBoxSelect);
+Ext.extend(AbstractModule.combo.multiSelectLocal, Ext.ux.form.SuperBoxSelect);

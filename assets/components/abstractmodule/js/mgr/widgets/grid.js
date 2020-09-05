@@ -1,6 +1,6 @@
 'use strict';
 
-abstractModule.grid.abstract = function (config) {
+AbstractModule.grid.abstract = function (config) {
     config = config || {};
     Ext.applyIf(config, {
         //Custom settings
@@ -14,19 +14,17 @@ abstractModule.grid.abstract = function (config) {
         fields: [],
         columns: [],
         recordActions: {
-            create: {
+            quickCreate: {
                 xtype: null,
                 action: null,
-                loadPage: function () {
-                    MODx.loadPage('', '');
-                }
             },
-            update: {
+            quickUpdate: {
                 xtype: null,
                 action: null,
-                loadPage: function () {
-                    MODx.loadPage('', '');
-                }
+            },
+            create: function () {
+            },
+            update: function () {
             },
             remove: {
                 action: null
@@ -38,18 +36,18 @@ abstractModule.grid.abstract = function (config) {
         remoteSort: true,
         anchor: '100%',
     });
-    abstractModule.grid.abstract.superclass.constructor.call(this, config)
+    AbstractModule.grid.abstract.superclass.constructor.call(this, config)
 };
-Ext.extend(abstractModule.grid.abstract, MODx.grid.Grid, {
+Ext.extend(AbstractModule.grid.abstract, MODx.grid.Grid, {
     _recordEditWindow: null,
 
-    initComponent: function() {
+    initComponent: function () {
         this.columns = this._getGridColumns();
         this.tbar = this.getToolbar();
         this.viewConfig = Ext.applyIf(this.config.viewConfig, {
             getRowClass: this.getRowClass
         });
-        abstractModule.grid.abstract.superclass.initComponent.call(this);
+        AbstractModule.grid.abstract.superclass.initComponent.call(this);
     },
 
     getToolbar: function () {
@@ -60,7 +58,7 @@ Ext.extend(abstractModule.grid.abstract, MODx.grid.Grid, {
         ];
     },
 
-    getRowClass: function(record) {
+    getRowClass: function (record) {
         return record.data.is_active ? 'grid-row-active' : 'grid-row-inactive';
     },
 
@@ -102,7 +100,7 @@ Ext.extend(abstractModule.grid.abstract, MODx.grid.Grid, {
     },
 
     getGridColumn: function (name, config = {}) {
-        return abstractModule.component.gridColumn(name, config);
+        return AbstractModule.component.gridColumn(name, config);
     },
 
     _getGridColumns: function () {
@@ -160,7 +158,7 @@ Ext.extend(abstractModule.grid.abstract, MODx.grid.Grid, {
         this.getBottomToolbar().changePage(1);
     },
 
-    _filterClear: function() {
+    _filterClear: function () {
         this.getStore().baseParams.query = null;
         Ext.getCmp(this.config.id + '-filter-search').reset();
         this.getBottomToolbar().changePage(1);
@@ -170,56 +168,54 @@ Ext.extend(abstractModule.grid.abstract, MODx.grid.Grid, {
         if (this._recordEditWindow) {
             this._recordEditWindow.close();
         }
-        this._recordEditWindow = new MODx.load({
-            xtype: this.recordActions.create.xtype,
+        let window = Ext.apply({
             title: _('create'),
-            action: this.recordActions.create.action,
             listeners: {
                 success: {
                     fn: this.refresh
-                    ,scope: this
+                    , scope: this
                 }
             }
-        });
+        }, this.recordActions.quickCreate);
+        this._recordEditWindow = new MODx.load(window);
         this._recordEditWindow.show(e.target);
-    },
-
-    _createRecord: function (btn, e) {
-        this.recordActions.create.loadPage.call(this);
     },
 
     _quickUpdateRecord: function (btn, e) {
         if (this._recordEditWindow) {
             this._recordEditWindow.close();
         }
-        this._recordEditWindow = new MODx.load({
-            xtype: this.recordActions.update.xtype,
+        let window = Ext.apply({
             title: _('update'),
-            action: this.recordActions.update.action,
             record: this.menu.record,
             listeners: {
                 success: {
                     fn: this.refresh
-                    ,scope: this
+                    , scope: this
                 }
             }
-        });
+        }, this.recordActions.quickUpdate);
+        this._recordEditWindow = new MODx.load(window);
         this._recordEditWindow.show(e.target);
     },
 
+    _createRecord: function (btn, e) {
+        this.recordActions.create.call(this);
+    },
+
     _updateRecord: function (btn, e) {
-        this.recordActions.update.loadPage.call(this);
+        this.recordActions.update.call(this);
     },
 
     _removeRecord: function (btn, e) {
+        let params = Ext.apply({
+            id: this.menu.record.id
+        }, this.recordActions.remove);
         MODx.msg.confirm({
             title: _('delete'),
             text: _('confirm_remove'),
             url: this.config.url,
-            params: {
-                action: this.recordActions.remove.action,
-                id: this.menu.record.id
-            },
+            params: params,
             listeners: {
                 success: {fn: this.refresh, scope: this},
             }

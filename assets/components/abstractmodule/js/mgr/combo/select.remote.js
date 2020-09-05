@@ -1,6 +1,6 @@
 'use strict';
 
-abstractModule.combo.selectRemote = function (config) {
+AbstractModule.combo.selectRemote = function (config) {
     config = config || {};
     Ext.applyIf(config, {
         //Custom settings
@@ -25,6 +25,6 @@ abstractModule.combo.selectRemote = function (config) {
     if (!config.hiddenName) {
         config.hiddenName = config.name;
     }
-    abstractModule.combo.selectRemote.superclass.constructor.call(this, config);
+    AbstractModule.combo.selectRemote.superclass.constructor.call(this, config);
 };
-Ext.extend(abstractModule.combo.selectRemote, MODx.combo.ComboBox);
+Ext.extend(AbstractModule.combo.selectRemote, MODx.combo.ComboBox);

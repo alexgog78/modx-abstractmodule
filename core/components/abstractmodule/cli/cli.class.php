@@ -3,6 +3,8 @@
 require_once dirname(dirname(dirname(dirname(__FILE__)))) . '/config/config.inc.php';
 require_once MODX_CORE_PATH . 'model/modx/modx.class.php';
 
+//TODO MODX LOG!!!!
+
 abstract class AbstractCLI
 {
     const LOG_LEVEL_INFO = 0;

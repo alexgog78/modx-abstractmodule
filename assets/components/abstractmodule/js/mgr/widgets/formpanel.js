@@ -1,6 +1,6 @@
 'use strict';
 
-abstractModule.formPanel.abstract = function (config) {
+AbstractModule.formPanel.abstract = function (config) {
     config = config || {};
     Ext.applyIf(config, {
         //Custom settings
@@ -18,11 +18,11 @@ abstractModule.formPanel.abstract = function (config) {
             'setup': {fn: this.setup, scope: this},
             'success': {fn: this.success, scope: this},
             'beforeSubmit': {fn: this.beforeSubmit, scope: this}
-        }
+        },
     });
-    abstractModule.formPanel.abstract.superclass.constructor.call(this, config);
+    AbstractModule.formPanel.abstract.superclass.constructor.call(this, config);
 };
-Ext.extend(abstractModule.formPanel.abstract, MODx.FormPanel, {
+Ext.extend(AbstractModule.formPanel.abstract, MODx.FormPanel, {
     defaultValues: {},
 
     initComponent: function() {
@@ -34,7 +34,7 @@ Ext.extend(abstractModule.formPanel.abstract, MODx.FormPanel, {
             this.components = this.getComponents(this.initialConfig);
             this.items.push(this.components);
         }
-        abstractModule.formPanel.abstract.superclass.initComponent.call(this);
+        AbstractModule.formPanel.abstract.superclass.initComponent.call(this);
     },
 
     setup: function () {
@@ -66,25 +66,25 @@ Ext.extend(abstractModule.formPanel.abstract, MODx.FormPanel, {
     },
 
     renderTabsPanel: function (items) {
-        return abstractModule.component.tabs(items, {
+        return AbstractModule.component.tabs(items, {
             bodyCssClass: 'tab-panel-wrapper'
         });
     },
 
-    getDescription: function (html) {
-        return abstractModule.component.panelDescription(html);
+    getDescription: function (html, config = {}) {
+        return AbstractModule.component.panelDescription(html, config);
     },
 
-    getContent: function (items) {
-        return abstractModule.component.panelContent(items);
+    getContent: function (items, config = {}) {
+        return AbstractModule.component.panelContent(items, config);
     },
 
     getFormInput: function (name, config = {}) {
-        return abstractModule.component.inputField(name, config);
+        return AbstractModule.component.inputField(name, config);
     },
 
     _getHeader: function (html) {
-        return abstractModule.component.panelHeader(html);
+        return AbstractModule.component.panelHeader(html);
     },
 
     _setValues: function (object) {
