@@ -1,6 +1,6 @@
 'use strict';
 
-let AbstractModule = {
+let abstractModule = {
     config: {},
     page: {},
     panel: {},
@@ -9,7 +9,17 @@ let AbstractModule = {
     localGrid: {},
     window: {},
     tree: {},
-    combo: {},
+    combo: {
+        select: {
+            local: {},
+            remote: {},
+        },
+        multiSelect: {
+            local: {},
+            remote: {},
+        },
+        browser: {}
+    },
     component: {},
     renderer: {},
     function: {},

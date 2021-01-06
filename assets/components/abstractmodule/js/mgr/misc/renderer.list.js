@@ -1,7 +1,7 @@
 'use strict';
 
-AbstractModule.renderer = {
-    boolean: function(value, cell, row) {
+abstractModule.renderer = {
+    boolean: function (value, cell, row) {
         switch (value) {
             case 0:
             case '0':
@@ -21,24 +21,25 @@ AbstractModule.renderer = {
         }
     },
 
-    image: function(value, cell, row) {
-        if (/(jpg|png|gif|jpeg)$/i.test(value)) {
-            if (!/^\//.test(value)) {
-                var src = '/' + value;
-            }
-            return '<img src="' + src + '" height="35" alt="" class="grid-image">';
+    image: function (value, cell, row) {
+        cell.css = 'grid-image';
+        if (!/(jpg|png|gif|jpeg)$/i.test(value)) {
+            value = abstractModule.config.cssUrl + 'mgr/core/no-photo.png';
         }
+        let src = MODx.config.connectors_url + 'system/phpthumb.php?src=' + value + '&w=70&h=35&zc=1&f=png&bg=ffffff';
+        value = '<img src="' + src + '" alt="">';
+        return value;
     },
 
-    color: function(value, cell, row) {
+    color: function (value, cell, row) {
         return '<div style="width: 30px; height: 20px; border-radius: 3px; background: #' + value + '">&nbsp;</div>';
     },
 
-    user: function(value, cell, row) {
+    user: function (value, cell, row) {
         if (!value) {
             return '';
         }
-        var id = row.get('id');
+        let id = row.get('user_id');
         if (!id) {
             return value;
         }
@@ -47,5 +48,5 @@ AbstractModule.renderer = {
             id,
             value
         );
-    }
+    },
 };

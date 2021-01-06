@@ -1,6 +1,6 @@
 'use strict';
 
-AbstractModule.grid.abstract = function (config) {
+abstractModule.grid.abstract = function (config) {
     config = config || {};
     Ext.applyIf(config, {
         //Custom settings
@@ -32,13 +32,21 @@ AbstractModule.grid.abstract = function (config) {
         },
 
         //Core settings
+        tbar: [],
         paging: true,
         remoteSort: true,
         anchor: '100%',
+        viewConfig: {
+            forceFit: true,
+            enableRowBody: true,
+            scrollOffset: 0,
+            autoFill: true,
+            showPreview: true,
+        },
     });
-    AbstractModule.grid.abstract.superclass.constructor.call(this, config)
+    abstractModule.grid.abstract.superclass.constructor.call(this, config)
 };
-Ext.extend(AbstractModule.grid.abstract, MODx.grid.Grid, {
+Ext.extend(abstractModule.grid.abstract, MODx.grid.Grid, {
     _recordEditWindow: null,
 
     initComponent: function () {
@@ -47,7 +55,7 @@ Ext.extend(AbstractModule.grid.abstract, MODx.grid.Grid, {
         this.viewConfig = Ext.applyIf(this.config.viewConfig, {
             getRowClass: this.getRowClass
         });
-        AbstractModule.grid.abstract.superclass.initComponent.call(this);
+        abstractModule.grid.abstract.superclass.initComponent.call(this);
     },
 
     getToolbar: function () {
@@ -59,7 +67,9 @@ Ext.extend(AbstractModule.grid.abstract, MODx.grid.Grid, {
     },
 
     getRowClass: function (record) {
-        return record.data.is_active ? 'grid-row-active' : 'grid-row-inactive';
+        return record.data.is_active
+            ? 'grid-row-active'
+            : 'grid-row-inactive';
     },
 
     getMenu: function () {
@@ -100,7 +110,7 @@ Ext.extend(AbstractModule.grid.abstract, MODx.grid.Grid, {
     },
 
     getGridColumn: function (name, config = {}) {
-        return AbstractModule.component.gridColumn(name, config);
+        return abstractModule.component.gridColumn(name, config);
     },
 
     _getGridColumns: function () {
@@ -153,8 +163,7 @@ Ext.extend(AbstractModule.grid.abstract, MODx.grid.Grid, {
     },
 
     _filterSearch: function (tf, newValue, oldValue) {
-        var query = newValue || tf.getValue();
-        this.getStore().baseParams.query = query;
+        this.getStore().baseParams.query = newValue || tf.getValue();
         this.getBottomToolbar().changePage(1);
     },
 

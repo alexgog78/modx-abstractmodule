@@ -1,13 +1,15 @@
 'use strict';
 
-AbstractModule.combo.browser = function (config) {
+Ext.namespace('abstractModule.combo.browser');
+
+abstractModule.combo.browser.abstract = function (config) {
     config = config || {};
     Ext.applyIf(config, {
         source: config.source || MODx.config.default_media_source
     });
-    AbstractModule.combo.browser.superclass.constructor.call(this, config);
+    abstractModule.combo.browser.abstract.superclass.constructor.call(this, config);
 };
-Ext.extend(AbstractModule.combo.browser, MODx.combo.Browser, {
+Ext.extend(abstractModule.combo.browser.abstract, MODx.combo.Browser, {
     onTriggerClick: function (btn) {
         if (this.disabled) {
             return false;
@@ -29,7 +31,13 @@ Ext.extend(AbstractModule.combo.browser, MODx.combo.Browser, {
                 'select': {
                     fn: function (data) {
                         this.setValue(data.fullRelativeUrl);
-                        this.fireEvent('select', data);
+                        let field = Ext.getCmp(this.config.name + '-preview');
+                        if (this.config.id) {
+                            field = Ext.getCmp(this.config.id + '-preview');
+                        }
+                        if (field) {
+                            field.setValue('<img src="/connectors/system/phpthumb.php?&h=100&aoe=0&far=0&src=' + data.fullRelativeUrl + '" alt="">');
+                        }
                     }, scope: this
                 }
             }

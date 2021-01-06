@@ -1,6 +1,6 @@
 'use strict';
 
-AbstractModule.panel.abstract = function (config) {
+abstractModule.panel.abstract = function (config) {
     config = config || {};
     Ext.applyIf(config, {
         title: null,
@@ -10,11 +10,11 @@ AbstractModule.panel.abstract = function (config) {
         cls: 'container',
         items: [],
     });
-    AbstractModule.panel.abstract.superclass.constructor.call(this, config);
+    abstractModule.panel.abstract.superclass.constructor.call(this, config);
 };
-Ext.extend(AbstractModule.panel.abstract, MODx.Panel, {
-    initComponent: function() {
-        if (this.items.length == 0) {
+Ext.extend(abstractModule.panel.abstract, MODx.Panel, {
+    initComponent: function () {
+        if (this.items.length === 0) {
             if (this.title) {
                 this.items.push(this._getHeader(this.title));
                 this.title = '';
@@ -22,7 +22,7 @@ Ext.extend(AbstractModule.panel.abstract, MODx.Panel, {
             this.components = this.getComponents(this.initialConfig);
             this.items.push(this.components);
         }
-        AbstractModule.panel.abstract.superclass.initComponent.call(this);
+        abstractModule.panel.abstract.superclass.initComponent.call(this);
     },
 
     getComponents: function (config) {
@@ -37,18 +37,18 @@ Ext.extend(AbstractModule.panel.abstract, MODx.Panel, {
     },
 
     renderTabsPanel: function (items) {
-        return AbstractModule.component.tabs(items);
+        return abstractModule.component.tabs(items);
     },
 
     getDescription: function (html, config = {}) {
-        return AbstractModule.component.panelDescription(html, config);
+        return abstractModule.component.panelDescription(html, config);
     },
 
     getContent: function (items, config = {}) {
-        return AbstractModule.component.panelContent(items, config);
+        return abstractModule.component.panelContent(items, config);
     },
 
     _getHeader: function (html) {
-        return AbstractModule.component.panelHeader(html);
+        return abstractModule.component.panelHeader(html);
     },
 });

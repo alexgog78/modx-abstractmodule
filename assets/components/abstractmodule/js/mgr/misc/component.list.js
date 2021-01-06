@@ -1,6 +1,6 @@
 'use strict';
 
-AbstractModule.component = {
+abstractModule.component = {
     panelHeader: function (html, config = {}) {
         return Ext.applyIf(config, {
             xtype: 'modx-header',
@@ -61,7 +61,7 @@ AbstractModule.component = {
                 },
             });
         }
-        var items = [];
+        let items = [];
         Ext.iterate(tabs, function (tabData) {
             items.push(this.tab(tabData));
         }, this);
@@ -74,6 +74,7 @@ AbstractModule.component = {
                 layoutOnTabChange: true,
                 labelAlign: 'top'
             },
+            forceLayout: true,
             deferredRender: false,
             anchor: '100%',
             items: items,
@@ -90,7 +91,7 @@ AbstractModule.component = {
                 },
             });
         }
-        var items = [];
+        let items = [];
         Ext.iterate(tabs, function (tabData) {
             items.push(this.tab(tabData));
         }, this);
@@ -130,5 +131,25 @@ AbstractModule.component = {
                 textAlign: 'center'
             }
         });
+    },
+
+    progressBarMessage: function (config = {}) {
+        return Ext.Msg.show(Ext.applyIf(config, {
+            title: _('please_wait'),
+            msg: _('saving'),
+            width: 410,
+            progress: true,
+            closable: false,
+        }));
+    },
+
+    waitMessage: function (config = {}) {
+        return Ext.Msg.show(Ext.applyIf(config, {
+            title: _('please_wait'),
+            msg: _('saving'),
+            width: 300,
+            wait: true,
+            closable: false,
+        }));
     },
 };

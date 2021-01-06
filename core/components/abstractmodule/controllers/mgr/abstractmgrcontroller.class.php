@@ -90,6 +90,7 @@ abstract class AbstractMgrController extends modExtraManagerController
 
     /**
      * TODO what for?
+     *
      * @param $key
      * @param array $placeholders
      * @return string|null
@@ -115,7 +116,7 @@ abstract class AbstractMgrController extends modExtraManagerController
         $response = $this->modx->runProcessor($this->objectGetProcessorPath, [
             $this->objectPrimaryKey => $primaryKey,
         ], [
-            'processors_path' => $this->service->processorsPath ?? ''
+            'processors_path' => $this->service->processorsPath ?? '',
         ]);
         if ($response->isError()) {
             $this->failure($response->getMessage());

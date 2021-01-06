@@ -1,6 +1,6 @@
 'use strict';
 
-AbstractModule.formPanel.abstract = function (config) {
+abstractModule.formPanel.abstract = function (config) {
     config = config || {};
     Ext.applyIf(config, {
         //Custom settings
@@ -10,6 +10,7 @@ AbstractModule.formPanel.abstract = function (config) {
         },
         title: null,
         components: [],
+        record: null,
 
         //Core settings
         items: [],
@@ -20,13 +21,13 @@ AbstractModule.formPanel.abstract = function (config) {
             'beforeSubmit': {fn: this.beforeSubmit, scope: this}
         },
     });
-    AbstractModule.formPanel.abstract.superclass.constructor.call(this, config);
+    abstractModule.formPanel.abstract.superclass.constructor.call(this, config);
 };
-Ext.extend(AbstractModule.formPanel.abstract, MODx.FormPanel, {
+Ext.extend(abstractModule.formPanel.abstract, MODx.FormPanel, {
     defaultValues: {},
 
-    initComponent: function() {
-        if (this.items.length == 0) {
+    initComponent: function () {
+        if (this.items.length === 0) {
             if (this.title) {
                 this.items.push(this._getHeader(this.title));
                 this.title = '';
@@ -34,15 +35,25 @@ Ext.extend(AbstractModule.formPanel.abstract, MODx.FormPanel, {
             this.components = this.getComponents(this.initialConfig);
             this.items.push(this.components);
         }
-        AbstractModule.formPanel.abstract.superclass.initComponent.call(this);
+        abstractModule.formPanel.abstract.superclass.initComponent.call(this);
     },
 
     setup: function () {
-        this._setValues(this.defaultValues);
-        this._setValues(this.record);
-        console.log(this.record);
+        if (!this.record) {
+            this.setDefaultValues();
+        } else {
+            this.setRecord();
+        }
         this.fireEvent('ready', this.record);
         MODx.fireEvent('ready');
+    },
+
+    setDefaultValues: function () {
+        this.getForm().setValues(this.defaultValues);
+    },
+
+    setRecord: function () {
+        this.getForm().setValues(this.record);
     },
 
     success: function (o) {
@@ -66,28 +77,24 @@ Ext.extend(AbstractModule.formPanel.abstract, MODx.FormPanel, {
     },
 
     renderTabsPanel: function (items) {
-        return AbstractModule.component.tabs(items, {
+        return abstractModule.component.tabs(items, {
             bodyCssClass: 'tab-panel-wrapper'
         });
     },
 
     getDescription: function (html, config = {}) {
-        return AbstractModule.component.panelDescription(html, config);
+        return abstractModule.component.panelDescription(html, config);
     },
 
     getContent: function (items, config = {}) {
-        return AbstractModule.component.panelContent(items, config);
+        return abstractModule.component.panelContent(items, config);
     },
 
     getFormInput: function (name, config = {}) {
-        return AbstractModule.component.inputField(name, config);
+        return abstractModule.component.inputField(name, config);
     },
 
     _getHeader: function (html) {
-        return AbstractModule.component.panelHeader(html);
-    },
-
-    _setValues: function (object) {
-        this.getForm().setValues(object);
+        return abstractModule.component.panelHeader(html);
     },
 });
