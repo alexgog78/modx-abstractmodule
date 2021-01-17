@@ -2,11 +2,15 @@
 
 require_once dirname(__DIR__) . '/helpers/log.trait.php';
 require_once dirname(__DIR__) . '/helpers/event.trait.php';
+require_once dirname(__DIR__) . '/helpers/mgr.trait.php';
+require_once dirname(__DIR__) . '/helpers/web.trait.php';
 
 abstract class abstractModule
 {
     use abstractModuleHelperLog;
     use abstractModuleHelperEvent;
+    use abstractModuleHelperMgr;
+    use abstractModuleHelperWeb;
 
     const PKG_VERSION = '1.0.0';
     const PKG_RELEASE = 'beta';
@@ -17,14 +21,17 @@ abstract class abstractModule
     /** @var modX */
     public $modx;
 
-    /** @var array */
-    public $config = [];
-
     /** @var bool */
     protected $loadPackage = true;
 
     /** @var bool */
     protected $loadLexicon = true;
+
+    /** @var array */
+    protected $abstractConfig = [];
+
+    /** @var array */
+    protected $config = [];
 
     /**
      * abstractModule constructor.
@@ -32,10 +39,11 @@ abstract class abstractModule
      * @param modX $modx
      * @param array $config
      */
-    public function __construct(modX &$modx, array $config = [])
+    public function __construct(modX $modx, array $config = [])
     {
         $this->modx = $modx;
-        $this->config = $this->getConfig($config);
+        $this->setAbstractConfig($config);
+        $this->setConfig($config);
         if ($this->loadPackage) {
             $this->modx->addPackage($this::PKG_NAMESPACE, $this->modelPath, $this::TABLE_PREFIX);
         }
@@ -57,25 +65,57 @@ abstract class abstractModule
     }
 
     /**
-     * @param array $config
      * @return array
      */
-    protected function getConfig($config = [])
+    public function getAbstractConfig()
     {
-        $abstractAssetsUrl = $this->modx->getOption('abstractmodule.assets_url', $config, MODX_ASSETS_URL . 'components/abstractmodule/');
+        return $this->abstractConfig;
+    }
 
-        $corePath = $this->modx->getOption($this::PKG_NAMESPACE . '.core_path', $config, MODX_CORE_PATH . 'components/' . $this::PKG_NAMESPACE . '/');
-        $assetsPath = $this->modx->getOption($this::PKG_NAMESPACE . '.assets_path', $config, MODX_ASSETS_PATH . 'components/' . $this::PKG_NAMESPACE . '/');
-        $assetsUrl = $this->modx->getOption($this::PKG_NAMESPACE . '.assets_url', $config, MODX_ASSETS_URL . 'components/' . $this::PKG_NAMESPACE . '/');
+    /**
+     * @return array
+     */
+    public function getConfig()
+    {
+        return $this->config;
+    }
 
-        return array_merge([
+    /**
+     * @param array $config
+     */
+    protected function setAbstractConfig($config = [])
+    {
+        $corePath = $this->modx->getOption(self::PKG_NAMESPACE . '.core_path', $config, MODX_CORE_PATH . 'components/' . self::PKG_NAMESPACE . '/');
+        $assetsPath = $this->modx->getOption(self::PKG_NAMESPACE . '.assets_path', $config, MODX_ASSETS_PATH . 'components/' . self::PKG_NAMESPACE . '/');
+        $assetsUrl = $this->modx->getOption(self::PKG_NAMESPACE . '.assets_url', $config, MODX_ASSETS_URL . 'components/' . self::PKG_NAMESPACE . '/');
+
+        $this->abstractConfig = array_merge([
             'corePath' => $corePath,
             'assetsPath' => $assetsPath,
             'modelPath' => $corePath . 'model/',
             'processorsPath' => $corePath . 'processors/',
 
-            'abstractJsUrl' => $abstractAssetsUrl . 'js/',
-            'abstractСssUrl' => $abstractAssetsUrl . 'css/',
+            'assetsUrl' => $assetsUrl,
+            'jsUrl' => $assetsUrl . 'js/',
+            'cssUrl' => $assetsUrl . 'css/',
+        ], $config);
+    }
+
+    /**
+     * @param array $config
+     */
+    protected function setConfig($config = [])
+    {
+        $corePath = $this->modx->getOption($this::PKG_NAMESPACE . '.core_path', $config, MODX_CORE_PATH . 'components/' . $this::PKG_NAMESPACE . '/');
+        $assetsPath = $this->modx->getOption($this::PKG_NAMESPACE . '.assets_path', $config, MODX_ASSETS_PATH . 'components/' . $this::PKG_NAMESPACE . '/');
+        $assetsUrl = $this->modx->getOption($this::PKG_NAMESPACE . '.assets_url', $config, MODX_ASSETS_URL . 'components/' . $this::PKG_NAMESPACE . '/');
+
+        $this->config = array_merge([
+            'corePath' => $corePath,
+            'assetsPath' => $assetsPath,
+            'modelPath' => $corePath . 'model/',
+            'processorsPath' => $corePath . 'processors/',
+            'eventsPath' => $corePath . 'events/',
 
             'assetsUrl' => $assetsUrl,
             'jsUrl' => $assetsUrl . 'js/',

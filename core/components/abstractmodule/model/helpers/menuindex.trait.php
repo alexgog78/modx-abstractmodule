@@ -9,18 +9,13 @@ trait abstractModuleModelHelperMenuindex
     private function setMenuindex()
     {
         if ($this->_new) {
-            $field = $this->getMenuindexField();
             $menuIndex = $this->xpdo->getCount(get_class($this), $this->getMenuindexConditions());
-            $this->set($field, $menuIndex);
+            $this->set($this->menuindexField, $menuIndex);
         }
     }
 
-    /**
-     * @return string
-     */
-    private function getMenuindexField()
+    private function removeMenuindex()
     {
-        return $this->menuindexField ?? 'menuindex';
     }
 
     /**

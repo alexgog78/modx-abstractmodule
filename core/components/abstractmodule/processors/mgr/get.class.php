@@ -3,12 +3,7 @@
 abstract class abstractModuleGetProcessor extends modObjectGetProcessor
 {
     /** @var string */
-    public $objectType = 'samplemodule';
-
-    /** @var array */
-    public $languageTopics = [
-        'samplemodule:status',
-    ];
+    public $objectType;
 
     /** @var object */
     protected $service;
@@ -21,5 +16,6 @@ abstract class abstractModuleGetProcessor extends modObjectGetProcessor
     {
         parent::__construct($modx, $properties);
         $this->service = $this->modx->{$this->objectType};
+        $this->languageTopics[] = $this->objectType . ':status';
     }
 }

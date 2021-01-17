@@ -9,7 +9,7 @@ abstract class abstractModuleGetListProcessor extends modObjectGetListProcessor
     use abstractModuleProcessorHelperComboQuery;
 
     /** @var string */
-    public $objectType = 'samplemodule';
+    public $objectType;
 
     /** @var string */
     public $defaultSortField = 'menuindex';
@@ -33,6 +33,7 @@ abstract class abstractModuleGetListProcessor extends modObjectGetListProcessor
     {
         parent::__construct($modx, $properties);
         $this->service = $this->modx->{$this->objectType};
+        $this->languageTopics[] = $this->objectType . ':status';
     }
 
     /**

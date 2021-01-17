@@ -1,18 +1,15 @@
 <?php
 
 require_once dirname(__DIR__) . '/helpers/setboolean.trait.php';
+require_once dirname(__DIR__) . '/helpers/softvalidate.trait.php';
 
 abstract class abstractModuleCreateProcessor extends modObjectCreateProcessor
 {
     use abstractModuleProcessorHelperSetBoolean;
+    use abstractModuleProcessorHelperSoftValidate;
 
     /** @var string */
-    public $objectType = 'samplemodule';
-
-    /** @var array */
-    public $languageTopics = [
-        'samplemodule:status',
-    ];
+    public $objectType;
 
     /** @var object */
     protected $service;
@@ -28,6 +25,7 @@ abstract class abstractModuleCreateProcessor extends modObjectCreateProcessor
     {
         parent::__construct($modx, $properties);
         $this->service = $this->modx->{$this->objectType};
+        $this->languageTopics[] = $this->objectType . ':status';
     }
 
     /**
@@ -48,18 +46,5 @@ abstract class abstractModuleCreateProcessor extends modObjectCreateProcessor
             $this->softValidate();
         }
         return parent::beforeSave();
-    }
-
-    private function softValidate()
-    {
-        if (!$this->object->validate()) {
-            /** @var modValidator $validator */
-            $validator = $this->object->getValidator();
-            if ($validator->hasMessages()) {
-                foreach ($validator->getMessages() as $message) {
-                    $this->addFieldError($message['field'], $this->modx->lexicon($message['message']));
-                }
-            }
-        }
     }
 }

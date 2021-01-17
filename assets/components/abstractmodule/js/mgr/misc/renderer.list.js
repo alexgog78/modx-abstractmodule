@@ -24,7 +24,7 @@ abstractModule.renderer = {
     image: function (value, cell, row) {
         cell.css = 'grid-image';
         if (!/(jpg|png|gif|jpeg)$/i.test(value)) {
-            value = abstractModule.config.cssUrl + 'mgr/core/no-photo.png';
+            value = abstractModule.config.cssUrl + 'mgr/no-photo.png';
         }
         let src = MODx.config.connectors_url + 'system/phpthumb.php?src=' + value + '&w=70&h=35&zc=1&f=png&bg=ffffff';
         value = '<img src="' + src + '" alt="">';

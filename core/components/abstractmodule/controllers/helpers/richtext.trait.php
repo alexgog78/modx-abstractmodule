@@ -11,7 +11,7 @@ trait abstractModuleControllerHelperRichText
         }
         $onRichTextEditorInit = $this->modx->invokeEvent('OnRichTextEditorInit', [
             'editor' => $whichEditor,
-            'elements' => ['ta'],
+            'elements' => ['ta', 'richtext'],
         ]);
         if (is_array($onRichTextEditorInit)) {
             $onRichTextEditorInit = implode('', $onRichTextEditorInit);

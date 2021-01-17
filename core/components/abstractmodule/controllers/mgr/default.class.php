@@ -10,11 +10,11 @@ abstract class abstractModuleMgrDefaultController extends modExtraManagerControl
     use abstractModuleControllerHelperAssets;
     use abstractModuleControllerHelperRichText;
 
-    /** @var string */
-    protected $assetsVersion;
+    /** @var bool */
+    protected $loadService = true;
 
     /** @var bool */
-    protected $loadRichText = true;
+    protected $loadRichText = false;
 
     /** @var array */
     protected $languageTopics = [];
@@ -36,22 +36,13 @@ abstract class abstractModuleMgrDefaultController extends modExtraManagerControl
 
     public function initialize()
     {
-        $this->service = $this->getService();
-        $this->assetsVersion = $this->getAssetsVersion();
+        if ($this->loadService) {
+            $this->getService();
+        }
+        $this->getAssetsVersion();
         if ($this->loadRichText) {
             $this->loadRichTextEditor();
         }
-    }
-
-    /**
-     * @return string
-     */
-    protected function getAssetsVersion()
-    {
-        if ($this->service::DEVELOPER_MODE) {
-            return time();
-        }
-        return $this->service::PKG_VERSION . '-' . $this->service::PKG_RELEASE;
     }
 
     /**
@@ -75,40 +66,7 @@ abstract class abstractModuleMgrDefaultController extends modExtraManagerControl
 
     public function loadCustomCssJs()
     {
-        $this->loadCoreCssJs();
+        $this->loadAbstractCssJs();
         $this->loadDefaultCssJs();
-        $this->addJavascript($this->service->jsUrl . 'mgr/combo/browser.image.js');
-        $this->addJavascript($this->service->jsUrl . 'mgr/combo/select.collection.js');
-        $this->addJavascript($this->service->jsUrl . 'mgr/combo/select.optionone.js');
-        $this->addJavascript($this->service->jsUrl . 'mgr/combo/select.optiontwo.js');
-        $this->addJavascript($this->service->jsUrl . 'mgr/combo/multiselect.tag.js');
-        $this->addJavascript($this->service->jsUrl . 'mgr/combo/multiselect.category.js');
-    }
-
-    /**
-     * @param string $script
-     */
-    public function addCss($script)
-    {
-        $script .= '?' . $this->assetsVersion;
-        parent::addCss($script);
-    }
-
-    /**
-     * @param string $script
-     */
-    public function addJavascript($script)
-    {
-        $script .= '?' . $this->assetsVersion;
-        parent::addJavascript($script);
-    }
-
-    /**
-     * @param string $script
-     */
-    public function addLastJavascript($script)
-    {
-        $script .= '?' . $this->assetsVersion;
-        parent::addLastJavascript($script);
     }
 }

@@ -17,6 +17,6 @@ trait abstractModuleProcessorHelperComboQuery
      */
     private function isComboQuery()
     {
-        return ($this->getProperty('combo')) ? true : false;
+        return $this->getProperty('combo') ? true : false;
     }
 }

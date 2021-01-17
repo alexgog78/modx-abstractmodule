@@ -6,7 +6,7 @@ trait abstractModuleProcessorHelperSearchQuery
      * @param xPDOQuery $c
      * @return xPDOQuery
      */
-    private function searchQuery(xPDOQuery $c)
+    protected function searchQuery(xPDOQuery $c)
     {
         $query = $this->getProperty('query');
         $valuesqry = $this->getProperty('valuesqry');
