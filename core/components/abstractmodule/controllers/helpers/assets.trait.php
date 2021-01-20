@@ -5,7 +5,7 @@ trait abstractModuleControllerHelperAssets
     /** @var string */
     protected $assetsVersion;
 
-    protected function getAssetsVersion()
+    protected function setAssetsVersion()
     {
         if (!$this->service) {
             $this->assetsVersion = '';

@@ -2,6 +2,9 @@
 
 abstract class abstractModuleEvent
 {
+    /** @var bool */
+    public static $useMgrContext = true;
+
     /** @var abstractModule */
     protected $service;
 

@@ -16,7 +16,7 @@ abstract class abstractModule
     const PKG_RELEASE = 'beta';
     const PKG_NAMESPACE = 'abstractmodule';
     const TABLE_PREFIX = '';
-    const DEVELOPER_MODE = true;
+    const DEVELOPER_MODE = false;
 
     /** @var modX */
     public $modx;

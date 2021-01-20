@@ -39,7 +39,7 @@ abstract class abstractModuleMgrDefaultController extends modExtraManagerControl
         if ($this->loadService) {
             $this->getService();
         }
-        $this->getAssetsVersion();
+        $this->setAssetsVersion();
         if ($this->loadRichText) {
             $this->loadRichTextEditor();
         }

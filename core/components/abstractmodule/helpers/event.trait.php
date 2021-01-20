@@ -29,10 +29,14 @@ trait abstractModuleHelperEvent
         require_once dirname(__DIR__) . '/events/event.class.php';
         require_once $handlerFile;
         $handlerClass = get_class($this) . 'Event' . $eventName;
+        if ($this->modx->context->key == 'mgr' && !$handlerClass::$useMgrContext) {
+            return;
+        }
         $handler = new $handlerClass($this, $scriptProperties);
         if (!($handler instanceof abstractModuleEvent)) {
             exit('Could not load event handler: ' . $handlerClass);
         }
+
         $handler->run();
     }
 }
