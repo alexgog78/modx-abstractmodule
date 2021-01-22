@@ -12,7 +12,7 @@ abstract class abstractModule
     use abstractModuleHelperMgr;
     use abstractModuleHelperWeb;
 
-    const PKG_VERSION = '1.0.0';
+    const PKG_VERSION = '1.1.0';
     const PKG_RELEASE = 'beta';
     const PKG_NAMESPACE = 'abstractmodule';
     const TABLE_PREFIX = '';

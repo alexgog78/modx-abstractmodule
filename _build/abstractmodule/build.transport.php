@@ -1,19 +1,22 @@
 <?php
 
-require_once dirname(__FILE__) . '/config.inc.php';
-require_once dirname(dirname(__FILE__)) . '/config.core.php';
-require_once MODX_CORE_PATH . 'components/abstractmodule/cli/abstractbuildtransport.class.php';
+/**
+ * @var modX $modx
+ */
+require_once dirname(__DIR__) . '/modx.php';
+require_once __DIR__ . '/build.config.php';
 
-class BuildTransport extends AbstractBuildTransport
-{
-    /** @var bool */
-    protected $coreFiles = true;
+/** $builder modPackageBuilder */
+$builder = $modx->loadClass('transport.modPackageBuilder', '', false, true);
+$builder = new modPackageBuilder($modx);
 
-    /** @var bool */
-    protected $assetsFiles = true;
-}
+/** Creating package */
+require_once PKG_TRANSPORT_PATH . 'package.inc.php';
 
-array_shift($argv);
-$build = new BuildTransport($argv);
-$build->run();
+/** Files */
+require_once PKG_TRANSPORT_PATH . 'files.inc.php';
+
+/** Create .zip file */
+$builder->pack();
+$modx->log(modX::LOG_LEVEL_INFO, 'Package transport  zip created');
 exit();
