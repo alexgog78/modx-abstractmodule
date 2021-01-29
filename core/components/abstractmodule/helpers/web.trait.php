@@ -16,7 +16,7 @@ trait abstractModuleHelperWeb
         $this->setWebConfig();
         $this->setWebAssetsVersion();
         $configJs = $this->modx->toJSON($this->webConfig);
-        $this->modx->regClientScript('<script type="text/javascript">' . get_class($this) . 'Config = ' . $configJs . ';</script>', true);
+        $this->modx->regClientScript('<script type="text/javascript">' . get_class($this) . ' = ' . $configJs . ';</script>', true);
         $this->getWebCssJs();
     }
 

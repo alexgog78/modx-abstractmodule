@@ -11,10 +11,10 @@ $builder = $modx->loadClass('transport.modPackageBuilder', '', false, true);
 $builder = new modPackageBuilder($modx);
 
 /** Creating package */
-require_once PKG_TRANSPORT_PATH . 'package.inc.php';
+require_once PKG_BUILD_TRANSPORT_PATH . 'package.inc.php';
 
 /** Files */
-require_once PKG_TRANSPORT_PATH . 'files.inc.php';
+require_once PKG_BUILD_TRANSPORT_PATH . 'files.inc.php';
 
 /** Create .zip file */
 $builder->pack();

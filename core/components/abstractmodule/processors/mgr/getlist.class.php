@@ -12,7 +12,7 @@ abstract class abstractModuleGetListProcessor extends modObjectGetListProcessor
     public $objectType;
 
     /** @var string */
-    public $defaultSortField = 'menuindex';
+    public $defaultSortField = 'sort_order';
 
     /** @var string */
     public $defaultSortDirection = 'ASC';

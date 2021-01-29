@@ -1,13 +1,13 @@
 <?php
 
 require_once dirname(__DIR__) . '/helpers/timestamps.trait.php';
-require_once dirname(__DIR__) . '/helpers/menuindex.trait.php';
+require_once dirname(__DIR__) . '/helpers/sortorder.trait.php';
 require_once dirname(__DIR__) . '/helpers/json.trait.php';
 
 abstract class abstractSimpleObject extends xPDOSimpleObject
 {
     use abstractModuleModelHelperTimestamps;
-    use abstractModuleModelHelperMenuindex;
+    use abstractModuleModelHelperSortOrder;
     use abstractModuleModelHelperJson;
 
     /** @var bool */
@@ -26,10 +26,10 @@ abstract class abstractSimpleObject extends xPDOSimpleObject
     public $updatedByField = 'updated_by';
 
     /** @var bool */
-    protected $menuindex = true;
+    protected $sortOrder = true;
 
     /** @var string */
-    protected $menuindexField = 'menuindex';
+    protected $sortOrderField = 'sort_order';
 
     /**
      * @param null|boolean|integer $cacheFlag
@@ -40,8 +40,8 @@ abstract class abstractSimpleObject extends xPDOSimpleObject
         if ($this->timestamps) {
             $this->setTimestamps();
         }
-        if ($this->menuindex) {
-            $this->setMenuindex();
+        if ($this->sortOrder) {
+            $this->setSortOrder();
         }
         $this->setJsonFields();
         return parent::save($cacheFlag);
@@ -53,8 +53,8 @@ abstract class abstractSimpleObject extends xPDOSimpleObject
      */
     public function remove(array $ancestors = [])
     {
-        if ($this->menuindex) {
-            $this->removeMenuindex();
+        if ($this->sortOrder) {
+            $this->removeSortOrder();
         }
         return parent::remove($ancestors);
     }

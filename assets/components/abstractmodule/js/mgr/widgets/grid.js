@@ -30,6 +30,8 @@ abstractModule.grid.abstract = function (config) {
                 action: null
             }
         },
+        enableDragDrop: true,
+        sortByField: 'sort_order',
 
         //Core settings
         tbar: [],
@@ -43,6 +45,7 @@ abstractModule.grid.abstract = function (config) {
             autoFill: true,
             showPreview: true,
         },
+        plugins: [],
     });
     abstractModule.grid.abstract.superclass.constructor.call(this, config)
 };
@@ -55,6 +58,16 @@ Ext.extend(abstractModule.grid.abstract, MODx.grid.Grid, {
         this.viewConfig = Ext.applyIf(this.config.viewConfig, {
             getRowClass: this.getRowClass
         });
+        if (this.enableDragDrop) {
+            this.plugins.push(new Ext.ux.dd.GridDragDropRowOrder({
+                copy: false,
+                scrollable: true,
+                targetCfg: {},
+                listeners: {
+                    'afterrowmove': {fn: this._onAfterRowMove, scope: this},
+                }
+            }));
+        }
         abstractModule.grid.abstract.superclass.initComponent.call(this);
     },
 
@@ -229,5 +242,18 @@ Ext.extend(abstractModule.grid.abstract, MODx.grid.Grid, {
                 success: {fn: this.refresh, scope: this},
             }
         });
-    }
+    },
+
+    _onAfterRowMove: function(dt, sri, ri, sels) {
+        var store = this.getStore();
+        var record = store.data.items[ri];
+        record.set(this.config.sortByField, ri + 1);
+        this.fireEvent('afteredit', {
+            grid: this,
+            record: record,
+            cancel:false
+        });
+        record.commit();
+        return true;
+    },
 });

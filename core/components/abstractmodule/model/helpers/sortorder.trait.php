@@ -1,0 +1,90 @@
+<?php
+
+trait abstractModuleModelHelperSortOrder
+{
+    private function setSortOrder()
+    {
+        if ($this->isNew()) {
+            $this->newSortOrder();
+        } else {
+            $this->updateSortOrder();
+        }
+    }
+    
+    private function newSortOrder()
+    {
+        $query = $this->xpdo->newQuery($this->_class, $this->getSortOrderConditions());
+        $query->select('MAX(' . $this->sortOrderField . ')');
+        $sortOrder = $this->xpdo->getValue($query->prepare()) + 1;
+        $this->set($this->sortOrderField, $sortOrder);
+    }
+
+    private function updateSortOrder()
+    {
+        $query = $this->xpdo->newQuery($this->_class, $this->getSortOrderConditions());
+        $query->select('MAX(' . $this->sortOrderField . ')');
+        $maxSortOrder = $this->xpdo->getValue($query->prepare());
+
+        $query = $this->xpdo->newQuery($this->_class, array_merge($this->getSortOrderConditions(), [
+            $this->getPK() => $this->getPrimaryKey()
+        ]));
+        $query->select($this->sortOrderField);
+        $oldSortOrder = $this->xpdo->getValue($query->prepare());
+        $newSortOrder = $this->get($this->sortOrderField);
+        if ($newSortOrder > $maxSortOrder) {
+            $newSortOrder = $maxSortOrder;
+            $this->set($this->sortOrderField, $newSortOrder);
+        }
+
+        if ($newSortOrder >= $oldSortOrder) {
+            $query = $this->xpdo->newQuery($this->_class);
+            $query->command('UPDATE');
+            $query->where(array_merge($this->getSortOrderConditions(), [
+                $this->sortOrderField . ':>=' => $oldSortOrder,
+                $this->sortOrderField . ':<=' => $newSortOrder,
+            ]));
+            $query->query['set'][$this->sortOrderField] = [
+                'value' => $this->sortOrderField . ' - 1',
+                'type' => false,
+            ];
+            $stmt = $query->prepare();
+            $stmt->execute();
+        } else {
+            $query = $this->xpdo->newQuery($this->_class);
+            $query->command('UPDATE');
+            $query->where(array_merge($this->getSortOrderConditions(), [
+                $this->sortOrderField . ':>=' => $newSortOrder,
+                $this->sortOrderField . ':<=' => $oldSortOrder,
+            ]));
+            $query->query['set'][$this->sortOrderField] = [
+                'value' => $this->sortOrderField . ' + 1',
+                'type' => false,
+            ];
+            $stmt = $query->prepare();
+            $stmt->execute();
+        }
+    }
+
+    private function removeSortOrder()
+    {
+        $query = $this->xpdo->newQuery($this->_class);
+        $query->command('UPDATE');
+        $query->where(array_merge($this->getSortOrderConditions(), [
+            $this->sortOrderField . ':>' => $this->get($this->sortOrderField),
+        ]));
+        $query->query['set'][$this->sortOrderField] = [
+            'value' => $this->sortOrderField . ' - 1',
+            'type' => false,
+        ];
+        $stmt = $query->prepare();
+        $stmt->execute();
+    }
+
+    /**
+     * @return array
+     */
+    protected function getSortOrderConditions()
+    {
+        return [];
+    }
+}
