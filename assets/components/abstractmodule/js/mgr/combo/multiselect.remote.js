@@ -9,7 +9,7 @@ abstractModule.combo.multiSelect.remote.abstract = function (config) {
             url: null,
             baseParams: {
                 action: null,
-                combo: true,
+                combo: 1,
             },
             fields: [],
             root: 'results',

@@ -178,6 +178,7 @@ Ext.extend(abstractModule.grid.abstract, MODx.grid.Grid, {
     _filterSearch: function (tf, newValue, oldValue) {
         this.getStore().baseParams.query = newValue || tf.getValue();
         this.getBottomToolbar().changePage(1);
+        return true;
     },
 
     _filterClear: function () {

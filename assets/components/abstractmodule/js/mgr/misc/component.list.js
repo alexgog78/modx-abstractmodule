@@ -72,10 +72,11 @@ abstractModule.component = {
                 border: false,
                 autoHeight: true,
                 layoutOnTabChange: true,
-                labelAlign: 'top'
+                labelAlign: 'top',
+                anchor: '100%',
             },
             forceLayout: true,
-            deferredRender: false,
+            //deferredRender: false,
             anchor: '100%',
             items: items,
         });

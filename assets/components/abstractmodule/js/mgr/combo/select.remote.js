@@ -7,7 +7,7 @@ abstractModule.combo.select.remote.abstract = function (config) {
         url: null,
         baseParams: {
             action: null,
-            combo: true
+            combo: 1
         },
         fields: [],
         displayField: null,
