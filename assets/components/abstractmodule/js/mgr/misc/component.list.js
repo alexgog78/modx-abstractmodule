@@ -76,7 +76,7 @@ abstractModule.component = {
                 anchor: '100%',
             },
             forceLayout: true,
-            //deferredRender: false,
+            deferredRender: false,
             anchor: '100%',
             items: items,
         });
