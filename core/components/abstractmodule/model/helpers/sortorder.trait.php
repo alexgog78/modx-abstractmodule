@@ -6,7 +6,7 @@ trait abstractModuleModelHelperSortOrder
     {
         if ($this->isNew()) {
             $this->newSortOrder();
-        } else {
+        } elseif ($this->isDirty($this->sortOrderField)) {
             $this->updateSortOrder();
         }
     }
