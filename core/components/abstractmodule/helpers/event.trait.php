@@ -32,7 +32,7 @@ trait abstractModuleHelperEvent
         if ($this->modx->context->key == 'mgr' && !$handlerClass::$useMgrContext) {
             return;
         }
-        $handler = new $handlerClass($this, $scriptProperties);
+        $handler = new $handlerClass($this, $eventName, $scriptProperties);
         if (!($handler instanceof abstractModuleEvent)) {
             exit('Could not load event handler: ' . $handlerClass);
         }

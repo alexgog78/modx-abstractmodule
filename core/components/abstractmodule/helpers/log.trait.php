@@ -19,8 +19,8 @@ trait abstractModuleHelperLog
         }
 
         $trace = debug_backtrace();
-        $file = $trace[1]['file'];
-        $line = $trace[1]['line'];
+        $file = $trace[0]['file'];
+        $line = $trace[0]['line'];
         $this->modx->log($level, $data, '', get_class($this), $file, $line);
     }
 }
