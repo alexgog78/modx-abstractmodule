@@ -248,7 +248,7 @@ Ext.extend(abstractModule.grid.abstract, MODx.grid.Grid, {
     _onAfterRowMove: function(dt, sri, ri, sels) {
         var store = this.getStore();
         var record = store.data.items[ri];
-        record.set(this.config.sortByField, ri + 1);
+        record.set(this.config.sortByField, ri);
         this.fireEvent('afteredit', {
             grid: this,
             record: record,

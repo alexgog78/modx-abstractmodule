@@ -24,8 +24,10 @@ abstract class abstractModule
     /** @var bool */
     protected $loadPackage = true;
 
-    /** @var bool */
-    protected $loadLexicon = true;
+    /** @var array */
+    protected $languageTopics = [
+        'default',
+    ];
 
     /** @var array */
     protected $abstractConfig = [];
@@ -47,8 +49,8 @@ abstract class abstractModule
         if ($this->loadPackage) {
             $this->modx->addPackage($this::PKG_NAMESPACE, $this->modelPath, $this::TABLE_PREFIX);
         }
-        if ($this->loadLexicon) {
-            $this->modx->lexicon->load($this::PKG_NAMESPACE . ':default');
+        foreach ($this->languageTopics as $topic) {
+            $this->modx->lexicon->load($this::PKG_NAMESPACE . ':' . $topic);
         }
     }
 

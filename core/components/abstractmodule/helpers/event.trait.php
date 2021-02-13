@@ -36,7 +36,6 @@ trait abstractModuleHelperEvent
         if (!($handler instanceof abstractModuleEvent)) {
             exit('Could not load event handler: ' . $handlerClass);
         }
-
         $handler->run();
     }
 }

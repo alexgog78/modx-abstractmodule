@@ -8,9 +8,6 @@ trait abstractModuleHelperWeb
     /** @var array */
     protected $webConfig = [];
 
-    /** @var array */
-    protected $languageTopics = [];
-
     public function loadWebDefaultCssJs()
     {
         $this->setWebConfig();

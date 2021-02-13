@@ -13,9 +13,7 @@ trait abstractModuleModelHelperSortOrder
     
     private function newSortOrder()
     {
-        $query = $this->xpdo->newQuery($this->_class, $this->getSortOrderConditions());
-        $query->select('MAX(' . $this->sortOrderField . ')');
-        $sortOrder = $this->xpdo->getValue($query->prepare()) + 1;
+        $sortOrder = $this->xpdo->getCount($this->_class, $this->getSortOrderConditions());
         $this->set($this->sortOrderField, $sortOrder);
     }
 
@@ -31,16 +29,16 @@ trait abstractModuleModelHelperSortOrder
         $query->select($this->sortOrderField);
         $oldSortOrder = $this->xpdo->getValue($query->prepare());
         $newSortOrder = $this->get($this->sortOrderField);
+
         if ($newSortOrder > $maxSortOrder) {
             $newSortOrder = $maxSortOrder;
-            $this->set($this->sortOrderField, $newSortOrder);
         }
 
-        if ($newSortOrder >= $oldSortOrder) {
+        if ($newSortOrder > $oldSortOrder) {
             $query = $this->xpdo->newQuery($this->_class);
             $query->command('UPDATE');
             $query->where(array_merge($this->getSortOrderConditions(), [
-                $this->sortOrderField . ':>=' => $oldSortOrder,
+                $this->sortOrderField . ':>' => $oldSortOrder,
                 $this->sortOrderField . ':<=' => $newSortOrder,
             ]));
             $query->query['set'][$this->sortOrderField] = [
@@ -49,12 +47,13 @@ trait abstractModuleModelHelperSortOrder
             ];
             $stmt = $query->prepare();
             $stmt->execute();
-        } else {
+        }
+        if ($newSortOrder < $oldSortOrder) {
             $query = $this->xpdo->newQuery($this->_class);
             $query->command('UPDATE');
             $query->where(array_merge($this->getSortOrderConditions(), [
+                $this->sortOrderField . ':<' => $oldSortOrder,
                 $this->sortOrderField . ':>=' => $newSortOrder,
-                $this->sortOrderField . ':<=' => $oldSortOrder,
             ]));
             $query->query['set'][$this->sortOrderField] = [
                 'value' => $this->sortOrderField . ' + 1',
@@ -63,6 +62,8 @@ trait abstractModuleModelHelperSortOrder
             $stmt = $query->prepare();
             $stmt->execute();
         }
+
+        $this->set($this->sortOrderField, $newSortOrder);
     }
 
     private function removeSortOrder()

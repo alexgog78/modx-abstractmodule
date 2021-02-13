@@ -32,5 +32,22 @@ abstract class abstractModuleEvent
         $this->scriptProperties = $scriptProperties;
     }
 
-    abstract function run();
+    public function run()
+    {
+        if (!$this->checkPermissions())
+        {
+            return;
+        }
+        $this->handleEvent();
+    }
+
+    /**
+     * @return bool
+     */
+    protected function checkPermissions()
+    {
+        return true;
+    }
+
+    abstract protected function handleEvent();
 }
