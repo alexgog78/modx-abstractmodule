@@ -83,6 +83,18 @@ abstract class abstractModule
     }
 
     /**
+     * @param string $key
+     * @param array $options
+     * @param mixed $default
+     * @param bool $skipEmpty
+     * @return mixed
+     */
+    public function getOption(string $key, $options = [], $default = null, $skipEmpty = false)
+    {
+        return $this->modx->getOption($this::PKG_NAMESPACE . '_' . $key, $options, $default, $skipEmpty);
+    }
+
+    /**
      * @param array $config
      */
     protected function setAbstractConfig($config = [])

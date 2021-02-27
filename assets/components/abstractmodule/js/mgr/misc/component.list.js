@@ -20,8 +20,6 @@ abstractModule.component = {
     panelContent: function (items, config = {}) {
         return Ext.applyIf(config, {
             xtype: 'panel',
-            //layout: 'anchor',
-            //cls: 'main-wrapper',
             layout: 'form',
             cls: 'main-wrapper',
             preventRender: true,
@@ -98,13 +96,15 @@ abstractModule.component = {
         }, this);
         return Ext.applyIf(config, {
             xtype: 'modx-vtabs',
-            /*defaults: {
-                layout: 'form',
-                border: false,
+            defaults: {
+                bodyCssClass: 'vertical-tabs-body',
+                autoScroll: true,
                 autoHeight: true,
-                layoutOnTabChange: true,
-                labelAlign: 'top'
-            },*/
+                autoWidth: true,
+                layout: 'form',
+                anchor: '100%',
+            },
+            forceLayout: true,
             deferredRender: false,
             anchor: '100%',
             items: items,

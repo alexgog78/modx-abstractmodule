@@ -39,7 +39,7 @@ abstractModule.grid.abstract = function (config) {
         remoteSort: true,
         anchor: '100%',
         viewConfig: {
-            forceFit: true,
+            forceFit: false,//TODO check
             enableRowBody: true,
             scrollOffset: 0,
             autoFill: true,
