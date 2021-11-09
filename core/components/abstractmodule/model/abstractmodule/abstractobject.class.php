@@ -1,49 +1,43 @@
 <?php
 
-require_once dirname(__DIR__) . '/helpers/timestamps.trait.php';
-require_once dirname(__DIR__) . '/helpers/sortorder.trait.php';
-require_once dirname(__DIR__) . '/helpers/json.trait.php';
+require_once __DIR__ . '/helpers/hastimestamps.trait.php';
+require_once __DIR__ . '/helpers/hasuser.trait.php';
+require_once __DIR__ . '/helpers/hassortorder.trait.php';
+require_once __DIR__ . '/helpers/hasjson.trait.php';
 
 abstract class abstractObject extends xPDOObject
 {
-    use abstractModuleModelHelperTimestamps;
-    use abstractModuleModelHelperSortOrder;
-    use abstractModuleModelHelperJson;
+    use abstractObjectHasTimestamps;
+    use abstractObjectHasUser;
+    use abstractObjectHasSortOrder;
+    use abstractObjectHasJson;
 
-    /** @var bool */
-    protected $timestamps = true;
+    const CREATED_ON = 'created_on';
+    const UPDATED_ON = 'updated_on';
 
-    /** @var string */
-    public $createdOnField = 'created_on';
+    const CREATED_BY = 'created_by';
+    const UPDATED_BY = 'updated_by';
 
-    /** @var string */
-    public $createdByField = 'created_by';
-
-    /** @var string */
-    public $updatedOnField = 'updated_on';
-
-    /** @var string */
-    public $updatedByField = 'updated_by';
-
-    /** @var bool */
-    protected $sortOrder = true;
-
-    /** @var string */
-    protected $sortOrderField = 'sort_order';
+    const SORT_ORDER = 'sort_order';
 
     /**
-     * @param null|boolean|integer $cacheFlag
+     * @param null|bool|integer $cacheFlag
      * @return bool
      */
     public function save($cacheFlag = null)
     {
-        if ($this->timestamps) {
+        if ($this->hasTimestamps()) {
             $this->setTimestamps();
         }
-        if ($this->sortOrder) {
+        if ($this->hasUser()) {
+            $this->setUser();
+        }
+        if ($this->hasSortOrder()) {
             $this->setSortOrder();
         }
-        $this->setJsonFields();
+        if ($this->hasJson()) {
+            $this->setJson();
+        }
         return parent::save($cacheFlag);
     }
 
@@ -53,7 +47,7 @@ abstract class abstractObject extends xPDOObject
      */
     public function remove(array $ancestors = [])
     {
-        if ($this->sortOrder) {
+        if ($this->hasSortOrder()) {
             $this->removeSortOrder();
         }
         return parent::remove($ancestors);

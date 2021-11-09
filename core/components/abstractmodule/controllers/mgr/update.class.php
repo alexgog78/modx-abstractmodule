@@ -26,7 +26,7 @@ abstract class abstractModuleMgrUpdateController extends abstractModuleMgrDefaul
      * @param array $scriptProperties
      * @return mixed
      */
-    private function getRecord($scriptProperties = [])
+    protected function getRecord($scriptProperties = [])
     {
         $objectPrimaryKey = $this->objectPrimaryKey;
         $objectPrimaryValue = $scriptProperties[$objectPrimaryKey];

@@ -1,6 +1,6 @@
 <?php
 
-trait abstractModuleHelperEvent
+trait abstractModuleEventHelper
 {
     /**
      * @param string $eventName
@@ -24,18 +24,18 @@ trait abstractModuleHelperEvent
     {
         $handlerFile = $this->eventsPath .  strtolower($eventName) . '.php';
         if (!file_exists($handlerFile)) {
+            $this->log('Could not load event handler file: ' . $handlerFile);
             return;
         }
-        require_once dirname(__DIR__) . '/events/event.class.php';
+        require_once MODX_CORE_PATH . 'components/abstractmodule/events/event.class.php';
+        require_once MODX_CORE_PATH . 'components/abstractmodule/events/mgrevent.class.php';
+        require_once MODX_CORE_PATH . 'components/abstractmodule/events/webevent.class.php';
         require_once $handlerFile;
-        $handlerClass = get_class($this) . 'Event' . $eventName;
-        if ($this->modx->context->key == 'mgr' && !$handlerClass::$useMgrContext) {
-            return;
-        }
+        $handlerClass = $this::PKG_NAME . 'Event' . $eventName;
         $handler = new $handlerClass($this, $eventName, $scriptProperties);
         if (!($handler instanceof abstractModuleEvent)) {
-            exit('Could not load event handler: ' . $handlerClass);
+            exit('Could not load event handler class: ' . $handlerClass);
         }
-        $handler->run();
+        $handler->handleEvent();
     }
 }

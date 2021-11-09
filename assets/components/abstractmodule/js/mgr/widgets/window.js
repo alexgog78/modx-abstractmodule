@@ -40,6 +40,14 @@ Ext.extend(abstractModule.window.abstract, MODx.Window, {
         return abstractModule.component.inputField(name, config);
     },
 
+    getFormInputImage: function (name, config = {}) {
+        return abstractModule.component.imageField(name, config);
+    },
+
+    getFormInputDatetime: function (name, config = {}) {
+        return abstractModule.component.datetimeField(name, config);
+    },
+
     setDefaultValues: function () {
         this.setValues(this.defaultValues);
     },

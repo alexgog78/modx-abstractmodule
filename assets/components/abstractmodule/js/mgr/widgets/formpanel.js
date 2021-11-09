@@ -94,6 +94,14 @@ Ext.extend(abstractModule.formPanel.abstract, MODx.FormPanel, {
         return abstractModule.component.inputField(name, config);
     },
 
+    getFormInputImage: function (name, config = {}) {
+        return abstractModule.component.imageField(name, config);
+    },
+
+    getFormInputDatetime: function (name, config = {}) {
+        return abstractModule.component.datetimeField(name, config);
+    },
+
     _getHeader: function (html) {
         return abstractModule.component.panelHeader(html);
     },

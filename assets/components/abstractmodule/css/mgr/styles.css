@@ -3,9 +3,15 @@
 }
 
 .formpanel-image {
+    margin-top: -26px;
     padding: 10px;
     border: 1px solid #e4e4e4;
-    border-radius: 3px;
+    border-radius: 0 0 3px 3px;
+    border-top-width: 0;
+}
+
+.formpanel-image img {
+    display: block;
 }
 
 .combo-image {

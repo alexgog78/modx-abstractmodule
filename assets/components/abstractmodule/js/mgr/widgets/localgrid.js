@@ -7,6 +7,7 @@ abstractModule.localGrid = function (config) {
         fields: [],
         columns: [],
         editWindow: {},
+        keyField: 'key',
 
         //Core settings
         deferredRender: true,
@@ -103,9 +104,9 @@ Ext.extend(abstractModule.localGrid, MODx.grid.LocalGrid, {
     },
 
     _removeRecord: function () {
-        let key = this.menu.record.key
+        let key = this.menu.record[this.config.keyField]
         let store = this.getStore()
-        let idx = store.find('key', key);
+        let idx = store.find(this.config.keyField, key);
         store.removeAt(idx);
     },
 });

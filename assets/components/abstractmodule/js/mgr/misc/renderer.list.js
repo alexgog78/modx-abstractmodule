@@ -24,9 +24,9 @@ abstractModule.renderer = {
     image: function (value, cell, row) {
         cell.css = 'grid-image';
         if (!/(jpg|png|gif|jpeg)$/i.test(value)) {
-            value = abstractModule.config.cssUrl + 'mgr/no-photo.png';
+            value = 'assets/components/abstractmodule/css/mgr/no-photo.png';
         }
-        let src = MODx.config.connectors_url + 'system/phpthumb.php?src=' + value + '&w=70&h=35&zc=1&f=png&bg=ffffff';
+        let src = MODx.config.connectors_url + 'system/phpthumb.php?src=' + value + '&w=70&h=35&zc=0&f=png&bg=ffffff';
         value = '<img src="' + src + '" alt="">';
         return value;
     },
@@ -36,17 +36,20 @@ abstractModule.renderer = {
     },
 
     user: function (value, cell, row) {
-        if (!value) {
-            return '';
-        }
-        let id = row.get('user_id');
-        if (!id) {
-            return value;
-        }
+        let name = row.get('user_fullname') ?? value;
         return String.format(
             '<a href="?a=security/user/update&id={0}" target="_blank">{1}</a>',
-            id,
-            value
+            value,
+            name
+        );
+    },
+
+    resource: function (value, cell, row) {
+        let name = row.get('resource_pagetitle') ?? value;
+        return String.format(
+            '<a href="?a=resource/update&id={0}" target="_blank">{1}</a>',
+            value,
+            name
         );
     },
 };

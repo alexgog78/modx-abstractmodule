@@ -8,7 +8,6 @@ trait abstractModuleProcessorHelperComboQuery
      */
     protected function comboQuery(xPDOQuery $c)
     {
-        $c->where(['is_active' => 1]);
         return $c;
     }
 

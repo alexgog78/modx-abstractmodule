@@ -2,7 +2,18 @@
 
 trait abstractModuleControllerHelperRichText
 {
-    private function loadRichTextEditor()
+    /** @var bool */
+    protected $richText = false;
+
+    /**
+     * @return bool
+     */
+    protected function hasRichText()
+    {
+        return $this->richText;
+    }
+
+    protected function loadRichText()
     {
         $useEditor = $this->modx->getOption('use_editor');
         $whichEditor = $this->modx->getOption('which_editor');
@@ -11,7 +22,10 @@ trait abstractModuleControllerHelperRichText
         }
         $onRichTextEditorInit = $this->modx->invokeEvent('OnRichTextEditorInit', [
             'editor' => $whichEditor,
-            'elements' => ['ta', 'richtext'],
+            'elements' => [
+                'ta',
+                'richtext',
+            ],
         ]);
         if (is_array($onRichTextEditorInit)) {
             $onRichTextEditorInit = implode('', $onRichTextEditorInit);

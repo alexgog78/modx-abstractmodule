@@ -12,6 +12,7 @@ abstractModule.combo.multiSelect.local.abstract = function (config) {
         displayField: 'value',
         valueField: 'value',
         allowAddNewData: false,
+        addNewDataOnBlur: true,
 
         //Core settings
         name: config.name || 'multiselect-local',

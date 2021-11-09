@@ -1,20 +1,15 @@
 <?php
 
-require_once dirname(__DIR__) . '/helpers/service.trait.php';
 require_once dirname(__DIR__) . '/helpers/assets.trait.php';
 require_once dirname(__DIR__) . '/helpers/richtext.trait.php';
 
 abstract class abstractModuleMgrDefaultController extends modExtraManagerController
 {
-    use abstractModuleControllerHelperService;
     use abstractModuleControllerHelperAssets;
     use abstractModuleControllerHelperRichText;
 
-    /** @var bool */
-    protected $loadService = true;
-
-    /** @var bool */
-    protected $loadRichText = false;
+    /** @var abstractModule */
+    protected $service;
 
     /** @var array */
     protected $languageTopics = [];
@@ -36,12 +31,9 @@ abstract class abstractModuleMgrDefaultController extends modExtraManagerControl
 
     public function initialize()
     {
-        if ($this->loadService) {
-            $this->getService();
-        }
-        $this->setAssetsVersion();
-        if ($this->loadRichText) {
-            $this->loadRichTextEditor();
+        $this->service =  $this->modx->getService($this->namespace, $this->namespace, $this->namespace_path . '/model/');
+        if ($this->hasRichText()) {
+            $this->loadRichText();
         }
     }
 
@@ -61,12 +53,11 @@ abstract class abstractModuleMgrDefaultController extends modExtraManagerControl
      */
     public function getPageTitle()
     {
-        return $this->modx->lexicon($this->pageTitle) . ' | ' . $this->modx->lexicon($this->namespace);
+        return $this->service->lexicon($this->pageTitle) . ' | ' . $this->modx->lexicon($this->namespace);
     }
 
     public function loadCustomCssJs()
     {
-        $this->loadAbstractCssJs();
-        $this->loadDefaultCssJs();
+        $this->service->loadMgrAssets($this);
     }
 }

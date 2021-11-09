@@ -1,6 +1,6 @@
 <?php
 
-trait abstractModuleHelperLog
+trait abstractModuleLogHelper
 {
     /**
      * @param $data
@@ -9,7 +9,7 @@ trait abstractModuleHelperLog
     public function log($data, $level = modX::LOG_LEVEL_ERROR)
     {
         if ($data instanceof xPDOObject) {
-            $data = $data->toArray('', false, true, true);
+            $data = $data->toArray('', false, true, false);
         }
         if ($data instanceof xPDOCriteria) {
             $data = $data->prepare()->queryString;
@@ -17,10 +17,7 @@ trait abstractModuleHelperLog
         if (is_array($data)) {
             $data = print_r($data, true);
         }
-
         $trace = debug_backtrace();
-        $file = $trace[0]['file'];
-        $line = $trace[0]['line'];
-        $this->modx->log($level, $data, '', get_class($this), $file, $line);
+        $this->modx->log($level, $data, '', $this::PKG_NAME, $trace[0]['file'], $trace[0]['line']);
     }
 }

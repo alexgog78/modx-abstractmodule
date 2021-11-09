@@ -85,7 +85,7 @@ Ext.extend(abstractModule.grid.abstract, MODx.grid.Grid, {
             : 'grid-row-inactive';
     },
 
-    getMenu: function () {
+    getMenu: function (grid, rowIndex) {
         return [{
             text: _('edit'),
             handler: this._quickUpdateRecord,

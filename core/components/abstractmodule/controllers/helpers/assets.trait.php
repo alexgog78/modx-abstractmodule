@@ -2,38 +2,12 @@
 
 trait abstractModuleControllerHelperAssets
 {
-    /** @var string */
-    protected $assetsVersion;
-
-    protected function setAssetsVersion()
-    {
-        if (!$this->service) {
-            $this->assetsVersion = '';
-            return;
-        }
-        if ($this->service::DEVELOPER_MODE) {
-            $this->assetsVersion = time();
-            return;
-        }
-        $this->assetsVersion = $this->service::PKG_VERSION . '-' . $this->service::PKG_RELEASE;
-    }
-
-    protected function loadAbstractCssJs()
-    {
-        $this->service->loadMgrAbstractCssJs($this);
-    }
-
-    protected function loadDefaultCssJs()
-    {
-        $this->service->loadMgrDefaultCssJs($this);
-    }
-
     /**
      * @param string $script
      */
     public function addCss($script)
     {
-        $script .= '?' . $this->assetsVersion;
+        $script .= '?' . $this->getAssetsVersion();
         parent::addCss($script);
     }
 
@@ -42,7 +16,7 @@ trait abstractModuleControllerHelperAssets
      */
     public function addJavascript($script)
     {
-        $script .= '?' . $this->assetsVersion;
+        $script .= '?' . $this->getAssetsVersion();
         parent::addJavascript($script);
     }
 
@@ -51,7 +25,15 @@ trait abstractModuleControllerHelperAssets
      */
     public function addLastJavascript($script)
     {
-        $script .= '?' . $this->assetsVersion;
+        $script .= '?' . $this->getAssetsVersion();
         parent::addLastJavascript($script);
+    }
+
+    /**
+     * @return string
+     */
+    protected function getAssetsVersion()
+    {
+        return $this->service->getAssetsVersion();
     }
 }

@@ -2,9 +2,6 @@
 
 abstract class abstractModuleEvent
 {
-    /** @var bool */
-    public static $useMgrContext = true;
-
     /** @var abstractModule */
     protected $service;
 
@@ -24,7 +21,7 @@ abstract class abstractModuleEvent
      * @param string $eventName
      * @param array $scriptProperties
      */
-    public function __construct(abstractModule $service, string $eventName, $scriptProperties = [])
+    public function __construct(abstractModule $service, string $eventName, array $scriptProperties = [])
     {
         $this->service = $service;
         $this->modx = $service->modx;
@@ -32,13 +29,12 @@ abstract class abstractModuleEvent
         $this->scriptProperties = $scriptProperties;
     }
 
-    public function run()
+    public function handleEvent()
     {
-        if (!$this->checkPermissions())
-        {
+        if (!$this->checkPermissions()) {
             return;
         }
-        $this->handleEvent();
+        $this->run();
     }
 
     /**
@@ -49,5 +45,5 @@ abstract class abstractModuleEvent
         return true;
     }
 
-    abstract protected function handleEvent();
+    abstract protected function run();
 }
