@@ -14,7 +14,7 @@ abstract class abstractModule
     use abstractModuleLogHelper;
     use abstractModuleProcessorHelper;
 
-    const PKG_VERSION = '1.1.0';
+    const PKG_VERSION = '1.1.1';
     const PKG_RELEASE = 'beta';
     const PKG_NAME = 'abstractModule';
     const PKG_NAMESPACE = 'abstractmodule';
@@ -101,6 +101,7 @@ abstract class abstractModule
             'assetsPath' => $assetsPath,
             'modelPath' => $corePath . 'model/',
             'processorsPath' => $corePath . 'processors/',
+            'controllersPath' => $corePath . 'controllers/',
             'eventsPath' => $corePath . 'events/',
 
             'baseAssetsUrl' => $baseAssetsUrl,
